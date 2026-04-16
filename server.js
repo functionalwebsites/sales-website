@@ -40,6 +40,34 @@ if (USE_SENDGRID) {
 }
 
 // ============================================================
+// CREATE CHECKOUT SESSION
+// ============================================================
+
+app.post('/webhook/stripe/create-session', express.json(), async (req, res) => {
+  try {
+    const { priceId, successUrl, cancelUrl } = req.body;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+    });
+
+    res.json({ sessionId: session.id });
+  } catch (error) {
+    console.error('Checkout session error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
 // STRIPE WEBHOOK HANDLER
 // ============================================================
 
