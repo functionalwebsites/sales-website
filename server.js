@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
 
 const app = express();
@@ -33,6 +32,16 @@ const CF_KV_NAMESPACE = process.env.CLOUDFLARE_KV_NAMESPACE;
 const CF_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const USE_SENDGRID = process.env.SENDGRID_API_KEY;
 
+// Lazy-load Stripe (only initialize when needed)
+let stripeClient;
+const getStripe = () => {
+  if (!stripeClient) {
+    const Stripe = require('stripe');
+    stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return stripeClient;
+};
+
 // Email transporter setup
 let emailTransporter;
 if (USE_SENDGRID) {
@@ -62,6 +71,7 @@ if (USE_SENDGRID) {
 app.post('/webhook/stripe/create-session', async (req, res) => {
   try {
     const { priceId, successUrl, cancelUrl } = req.body;
+    const stripe = getStripe();
     
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -90,6 +100,7 @@ app.post('/webhook/stripe/create-session', async (req, res) => {
 app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
+  const stripe = getStripe();
   
   try {
     event = stripe.webhooks.constructEvent(
