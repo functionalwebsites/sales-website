@@ -1,12 +1,11 @@
 /**
  * Stripe Checkout Integration for Functional Websites Pro
  *
- * This script reads Stripe keys from meta tags injected by the server.
- * The server must inject these in the <head>:
+ * This script reads Stripe keys from meta tags in the page <head>:
  *   <meta name="stripe-publishable-key" content="pk_live_...">
  *   <meta name="stripe-price-id" content="price_...">
  *
- * Stripe keys are NOT hardcoded here — they come from environment at build time.
+ * The checkout session is created by a same-origin Cloudflare Pages Function.
  */
 
 let stripe;
@@ -72,7 +71,7 @@ async function startStripeCheckout() {
     btn.disabled = true;
     
     // Create checkout session on your backend
-    const response = await fetch('https://sales-website-navy.vercel.app/webhook/stripe/create-session', {
+    const response = await fetch('/webhook/stripe/create-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

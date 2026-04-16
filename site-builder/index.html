@@ -1113,7 +1113,7 @@ function setBuilderTheme(theme) {
 // ============================================================
 
 // Pro token validation API endpoint
-const PRO_API_URL = 'https://pro.functionalwebsites.com/api/validate-token';
+const PRO_API_URL = `${window.location.origin}/api/validate-token`;
 
 // Check if user has Pro tier unlocked
 function isProUnlocked() {
