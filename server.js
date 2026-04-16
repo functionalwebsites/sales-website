@@ -62,6 +62,7 @@ if (USE_SENDGRID) {
 app.post('/webhook/stripe/create-session', async (req, res) => {
   try {
     const { priceId, successUrl, cancelUrl } = req.body;
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -74,6 +75,7 @@ app.post('/webhook/stripe/create-session', async (req, res) => {
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
+    
     res.json({ sessionId: session.id });
   } catch (error) {
     console.error('Checkout session error:', error);
@@ -88,6 +90,7 @@ app.post('/webhook/stripe/create-session', async (req, res) => {
 app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
+  
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
@@ -98,27 +101,33 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
     console.error(`⚠️  Webhook signature verification failed: ${err.message}`);
     return res.sendStatus(400);
   }
+  
   if (event.type === 'checkout.session.completed') {
     try {
       const session = event.data.object;
       const amount = session.amount_total / 100;
+      
       if (amount !== 9.99) {
         console.log(`Amount mismatch: ${amount} (expected 9.99), skipping`);
         return res.json({ received: true });
       }
+      
       const customerEmail = session.customer_details?.email || session.customer?.email;
       if (!customerEmail) {
         console.error('No customer email found');
         return res.status(400).json({ error: 'No customer email' });
       }
+      
       const token = crypto.randomBytes(16).toString('hex').toUpperCase();
       console.log(`Generated token for ${customerEmail}: ${token}`);
+      
       await storeTokenInKV(token, {
         email: customerEmail,
         stripeSessionId: session.id,
         amount: amount,
         purchasedAt: new Date().toISOString()
       });
+      
       await sendProTokenEmail(customerEmail, token);
       console.log(`✅ Pro token issued to ${customerEmail}`);
       return res.json({ received: true });
@@ -127,6 +136,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
       return res.status(500).json({ error: error.message });
     }
   }
+  
   return res.json({ received: true });
 });
 
@@ -136,6 +146,7 @@ app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (re
 
 async function storeTokenInKV(token, data) {
   const url = `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces/${CF_KV_NAMESPACE}/values/token:${token}`;
+  
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -144,10 +155,12 @@ async function storeTokenInKV(token, data) {
     },
     body: JSON.stringify(data),
   });
+  
   if (!response.ok) {
     const error = await response.text();
     throw new Error(`Cloudflare KV error: ${response.status} - ${error}`);
   }
+  
   return response.json();
 }
 
@@ -203,6 +216,7 @@ async function sendProTokenEmail(email, token) {
     `,
     text: `Welcome to Functional Websites Pro!\n\nYour Pro token: ${token}\n\nTo unlock Pro features:\n1. Open the Functional Websites Builder\n2. Click "🔓 Unlock Pro" in the top right\n3. Paste your token\n4. Click "Unlock Pro"\n\nWhat's included:\n- Custom block packs\n- Premium templates\n- Advanced CSS editor\n- Custom domain deployment\n- Email support\n\nKeep your token safe!\n\nQuestions? Reply to this email.\n\nFunctional Websites`
   };
+  
   try {
     await emailTransporter.sendMail(mailOptions);
     console.log(`✅ Email sent to ${email}`);
