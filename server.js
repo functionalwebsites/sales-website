@@ -244,6 +244,15 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/debug/env', (req, res) => {
+  res.json({
+    hasStripeKey: !!process.env.STRIPE_SECRET_KEY,
+    stripeKeyPrefix: process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.substring(0, 10) : 'MISSING',
+    hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
+    allEnvKeys: Object.keys(process.env).filter(k => k.includes('STRIPE') || k.includes('CLOUDFLARE'))
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Stripe webhook handler listening on port ${PORT}`);
