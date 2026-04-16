@@ -2,11 +2,11 @@
   "name": "functional-websites-stripe",
   "version": "1.0.0",
   "description": "Stripe webhook handler for Functional Websites Pro tier",
-  "main": "stripe-webhook-handler.js",
+  "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node stripe-webhook-handler.js",
-    "dev": "node stripe-webhook-handler.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
