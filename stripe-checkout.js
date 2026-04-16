@@ -72,7 +72,7 @@ async function startStripeCheckout() {
     btn.disabled = true;
     
     // Create checkout session on your backend
-    const response = await fetch('https://sales-website-jwhj545xu-cooper-carrascos-projects.vercel.app/webhook/stripe/create-session', {
+    const response = await fetch('https://sales-website-navy.vercel.app/webhook/stripe/create-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
