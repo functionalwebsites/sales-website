@@ -78,8 +78,8 @@ async function startStripeCheckout() {
       },
       body: JSON.stringify({
         priceId: PRO_PRICE_ID,
-        successUrl: window.location.origin + '/pricing?success=true',
-        cancelUrl: window.location.origin + '/pricing?canceled=true',
+        successUrl: window.location.origin + '/pricing/?success=true',
+        cancelUrl: window.location.origin + '/pricing/?canceled=true',
       })
     });
     
