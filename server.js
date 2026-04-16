@@ -1,24 +1,3 @@
-/**
- * Stripe Webhook Handler for Functional Websites Pro Tier
- *
- * This Node.js/Express handler:
- * 1. Receives webhook from Stripe when payment succeeds
- * 2. Generates a unique 32-character Pro token
- * 3. Stores token in Cloudflare KV
- * 4. Sends email with token to customer
- *
- * Environment Variables Required:
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-REMOVED
- */
-
 const crypto = require('crypto');
 const express = require('express');
 const nodemailer = require('nodemailer');
