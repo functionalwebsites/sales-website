@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build fast, simple, fully-owned websites. No database. No plugins. No lock-in. Free static site builder + professional services.">
+  <meta name="og:title" content="Functional Websites — Static Site Builder">
+  <meta name="og:description" content="Build fast, simple, fully-owned websites without the bloat.">
+  <title>Functional Websites — Fast, Simple, Fully-Owned Websites</title>
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --bg2: #16161e;
+      --bg3: #1e1e2e;
+      --border: #2a2a3e;
+      --accent: #34343f;
+      --accent2: #81818f;
+      --green: #4ade80;
+      --red: #f87171;
+      --text: #e2e2f0;
+      --text2: #8888aa;
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+
+    /* HEADER - Unified across website and builder */
+    .header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      line-height: 1;
+      min-height: 60px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 100%;
+      height: 100%;
+      fill: var(--green);
+    }
+
+    nav {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text2);
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #3dc76e;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
+
+    /* HERO */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .hero h1 span {
+      color: var(--green);
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text2);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+
+    .btn-large {
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+
+    .btn-primary.btn-large {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-secondary.btn-large {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* FEATURES GRID */
+    .features {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .features-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-bottom: 80px;
+    }
+
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      transition: border-color 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent2);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* COMPARISON */
+    .comparison {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 80px 24px;
+      background: linear-gradient(135deg, rgba(74,222,128,0.05) 0%, rgba(248,113,113,0.05) 100%);
+      border-radius: 16px;
+    }
+
+    .comparison h2 {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 60px;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table th {
+      background: var(--bg3);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .comparison-table tr:hover {
+      background: rgba(74,222,128,0.05);
+    }
+
+    .check { color: var(--green); font-weight: 600; }
+    .x { color: var(--red); }
+
+    /* PRICING */
+    .pricing {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .pricing-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 60px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+
+    .pricing-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .pricing-card:hover {
+      border-color: var(--green);
+      transform: translateY(-4px);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--green);
+      transform: scale(1.05);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: var(--green);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .pricing-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .pricing-card .price {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+
+    .pricing-card .period {
+      color: var(--text2);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .pricing-features li {
+      padding: 8px 0;
+      color: var(--text2);
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-features li:before {
+      content: "✓ ";
+      color: var(--green);
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    /* SERVICES */
+    .services {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .services-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .services-subtitle {
+      text-align: center;
+      color: var(--text2);
+      font-size: 16px;
+      margin-bottom: 60px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+
+    .service-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .service-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .service-price {
+      font-size: 24px;
+      color: var(--green);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .service-desc {
+      color: var(--text2);
+      font-size: 13px;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    /* CTA */
+    .cta {
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 60px 40px;
+      background: linear-gradient(135deg, rgba(74,222,128,0.1) 0%, rgba(74,222,128,0.05) 100%);
+      border: 1px solid var(--green);
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .cta p {
+      color: var(--text2);
+      margin-bottom: 32px;
+      font-size: 16px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      margin-top: 100px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-section h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .footer-section a {
+      display: block;
+      color: var(--text2);
+      font-size: 13px;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-section a:hover {
+      color: var(--text);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      text-align: center;
+      color: var(--text2);
+      font-size: 13px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      nav {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .hero {
+        padding: 40px 24px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+
+      .features-grid,
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="/stripe-checkout.js"></script>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-wrapper">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path d="M124.99998,63.77464c-33.75761,0-61.22533,27.46775-61.22533,61.22522,0,33.76176,27.46772,61.2255,61.22533,61.2255,33.76173,0,61.22536-27.46374,61.22536-61.2255,0-33.75747-27.46363-61.22522-61.22536-61.22522ZM113.19576,73.70539c-5.24093,3.38575-9.97977,7.57761-14.00227,12.45118-1.12043,1.35914-2.1796,2.76325-3.1735,4.21026-2.09593-1.39595-4.09805-2.94908-5.99805-4.65523,6.49394-5.7858,14.41656-9.99191,23.17382-12.0062ZM84.08719,91.93213c2.38774,2.16525,4.9184,4.11838,7.56944,5.85111-3.63878,7.32246-5.80005,15.34712-6.29394,23.56563h-12.86755c.76532-11.09812,4.98783-21.26146,11.59205-29.41674ZM72.60331,129.94289h12.85126c.63467,7.76121,2.75509,15.33495,6.20207,22.27373-2.65104,1.73881-5.18171,3.69195-7.56944,5.85305-6.34911-7.8387-10.49403-17.53285-11.48388-28.12678ZM90.02395,164.29228c1.90007-1.7081,3.9042-3.2633,5.99809-4.65717.83267,1.21234,1.71021,2.3959,2.63471,3.54708,4.12458,5.1449,9.0593,9.56935,14.54922,13.1185-8.75729-2.01236-16.69008-6.22054-23.18202-12.00842ZM120.70401,170.84337c-6.86334-3.81025-12.70424-9.07553-17.1676-15.35321,5.37559-2.41236,11.15935-3.90005,17.1676-4.37768v19.73089ZM120.70401,142.49411c-7.57768.52038-14.85939,2.41015-21.57991,5.55723-2.70618-5.57563-4.45309-11.68797-5.04701-18.10844h26.62692v12.55121ZM120.70401,121.34887h-26.73097c.47756-6.85521,2.30001-13.40838,5.21844-19.36353,6.70011,3.12452,13.95733,5.00419,21.51252,5.52056v13.84298ZM120.70401,98.89139c-5.97155-.47763-11.72671-1.94899-17.07577-4.33672,4.46741-6.26551,10.28586-11.53895,17.07577-15.35335v19.69007ZM159.97595,85.70952c-1.9449,1.74905-4.00206,3.34092-6.15513,4.76136-1.01023-1.48367-2.09396-2.92445-3.24293-4.31638-4.04906-4.90623-8.83277-9.12465-14.11859-12.52672,8.89202,1.98164,16.94107,6.2204,23.51665,12.08175ZM129.29596,79.33194c6.72051,3.82035,12.4757,9.07152,16.90433,15.29814-5.30008,2.34498-10.992,3.78783-16.90433,4.26131v-19.55946ZM129.29596,107.50589c7.48172-.51028,14.67983-2.35937,21.32888-5.43284,2.8939,5.93067,4.69595,12.45325,5.17358,19.27581h-26.50246v-13.84298ZM129.29596,129.94289h26.3963c-.60614,6.34894-2.3592,12.42461-5.07762,17.98391-6.64497-3.07153-13.83696-4.9184-21.31868-5.43284v-12.55108ZM129.29596,151.11248c5.90825.46947,11.59606,1.9144,16.89209,4.25315-4.42251,6.22455-10.17773,11.47572-16.89209,15.29814v-19.55129ZM136.46138,176.37417c5.32457-3.42657,10.13076-7.67972,14.20016-12.63077,1.11638-1.35928,2.17147-2.76547,3.16537-4.21233,2.14902,1.42044,4.20621,3.01231,6.15112,4.76122-6.57765,5.86135-14.62473,10.09817-23.51665,12.08189ZM165.91278,158.06967c-2.43879-2.21022-5.0266-4.19988-7.74088-5.96526,3.41633-6.9082,5.51634-14.43697,6.147-22.16152h13.08184c-.99386,10.59393-5.13881,20.28808-11.48796,28.12678ZM164.4107,121.34887c-.48974-8.17976-2.63063-16.1636-6.2388-23.45342,2.71434-1.7633,5.30208-3.75311,7.74088-5.96332,6.6083,8.15527,10.82672,18.32069,11.59208,29.41674h-13.09415Z"/><path d="M222.17682,134.82829l23.41662-12.14607-3.19748-25.03112-25.74334-6.40991c-1.9816-5.36282-4.42368-10.50373-7.27356-15.37863l11.8203-23.62087-17.29971-18.37109-24.63473,9.96199c-4.69123-3.14666-9.67007-5.89485-14.88628-8.2023l-4.31793-26.03796-24.79403-4.69386-14.05755,22.51225c-5.77186.22145-11.41635.94546-16.89186,2.13073l-18.7873-18.51651-22.8179,10.77607,1.86267,26.51771c-4.44631,3.51122-8.57799,7.40256-12.35252,11.62022l-26.14687-3.94686-12.12606,22.12996,17.05413,20.31136c-1.52977,5.40507-2.60469,10.99906-3.18078,16.73784l-23.41608,12.14607,3.19748,25.03112,25.74277,6.40976c1.98164,5.36313,4.42376,10.50389,7.27376,15.37909l-11.82034,23.62102,17.29971,18.37124,24.63503-9.9623c4.69112,3.14666,9.6698,5.89469,14.88589,8.20199l4.31801,26.03827,24.79403,4.69401,14.05759-22.51256c5.77186-.2216,11.41631-.94562,16.89182-2.13073l18.7873,18.51635,22.8179-10.77591-1.86271-26.51771c4.44619-3.51122,8.57788-7.40241,12.35241-11.62006l26.14722,3.94686,12.1261-22.12996-17.05436-20.31151c1.52969-5.40507,2.60461-10.9989,3.18067-16.738ZM124.99975,199.17443c-40.90011,0-74.17462-33.27444-74.17462-74.17459S84.09964,50.82511,124.99975,50.82511s74.17466,33.2746,74.17466,74.17474-33.27452,74.17459-74.17466,74.17459Z"/></svg>
+        </div>
+        Functional Websites
+      </div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/marketplace">Marketplace</a>
+        <a href="#services">Services</a>
+        <a href="#comparison">Why Static?</a>
+        <div class="nav-actions">
+          <a href="/builder" class="btn btn-secondary">Open Builder</a>
+          <button class="btn btn-primary" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Get Started</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Build <span>fast, simple,</span> fully-owned websites</h1>
+    <p>No database. No plugins. No lock-in. Just you, your content, and the open web.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary btn-large" onclick="window.location.href='/builder'">Start Building Free</button>
+      <button class="btn btn-secondary btn-large" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Get a Custom Site</button>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <h2 class="features-title">Everything you need</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Static sites serve instantly. No database queries. No server processing. Your site loads faster than your competition.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure by Default</h3>
+        <p>No database = no data breaches. No plugins = no vulnerabilities. Your site is as secure as HTML can be.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👤</div>
+        <h3>You Own Your Site</h3>
+        <p>Export your site anytime as plain HTML files. Never locked in. If we disappear, your site still works.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>SEO Optimized</h3>
+        <p>Fast sites rank better. Built-in SEO tools. Automatic sitemap, meta tags, and structured data.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Cheap to Scale</h3>
+        <p>CDN hosting costs pennies. No servers to manage. Handle viral traffic without breaking the bank.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Easy to Customize</h3>
+        <p>Drag-and-drop editor for visuals. HTML/CSS for power users. Or we build it for you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="comparison" id="comparison">
+    <h2>Why Static Wins</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th style="font-weight: 600;">Feature</th>
+          <th>Functional Sites</th>
+          <th>WordPress</th>
+          <th>Squarespace</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight: 500;">Page Load Speed</td>
+          <td><span class="check">⚡ &lt;1s</span></td>
+          <td><span class="x">❌ 2-4s</span></td>
+          <td><span class="x">❌ 1.5-3s</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 500;">Security Breaches Risk</td>
+          <td><span class="check">✓ None</span></td>
+          <td><span class="x">❌ High</span></td>
+          <td><span class="check">✓ Low</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 500;">Own Your Data</td>
+          <td><span class="check">✓ Yes</span></td>
+          <td><span class="check">✓ Yes</span></td>
+          <td><span class="x">❌ No</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 500;">Monthly Cost</td>
+          <td><span class="check">$0-12</span></td>
+          <td><span class="check">$5-15</span></td>
+          <td><span class="x">$12-33</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 500;">Plugin Bloat</td>
+          <td><span class="check">✓ None</span></td>
+          <td><span class="x">❌ Heavy</span></td>
+          <td><span class="check">✓ None</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 500;">Easy Export</td>
+          <td><span class="check">✓ Yes</span></td>
+          <td><span class="check">✓ Yes</span></td>
+          <td><span class="x">❌ No</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <h2 class="pricing-title">Flexible Pricing</h2>
+
+    <div class="pricing-grid">
+      <!-- FREE -->
+      <div class="pricing-card">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <div class="period">forever</div>
+        <ul class="pricing-features">
+          <li>5 project sites</li>
+          <li>15 templates</li>
+          <li>Basic editor</li>
+          <li>Local preview</li>
+          <li>Export as HTML</li>
+          <li>Community support</li>
+        </ul>
+        <button class="btn btn-large btn-secondary" style="width: 100%;" onclick="window.location.href='/builder'">Get Started</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">POPULAR</div>
+        <h3>Pro</h3>
+        <div class="price">$9.99</div>
+        <div class="period">one-time fee</div>
+        <ul class="pricing-features">
+          <li>Unlimited projects</li>
+          <li>100+ premium templates</li>
+          <li>Advanced editor</li>
+          <li>Custom domain</li>
+          <li>1-click deployment</li>
+          <li>Custom blocks & themes</li>
+          <li>SEO tools</li>
+          <li>Email support</li>
+        </ul>
+        <button class="btn btn-large btn-primary" style="width: 100%; background: var(--green); color: #000;" onclick="startStripeCheckout()">Buy Pro — $9.99</button>
+      </div>
+
+      <!-- BUSINESS -->
+      <div class="pricing-card">
+        <h3>Business</h3>
+        <div class="price">Custom</div>
+        <div class="period">tailored pricing</div>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>Team collaboration</li>
+          <li>API access</li>
+          <li>White-label builder</li>
+          <li>Priority support</li>
+          <li>Custom integrations</li>
+          <li>Dedicated account manager</li>
+        </ul>
+        <button class="btn btn-large btn-secondary" style="width: 100%;">Contact Sales</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <h2 class="services-title">Don't Want to Build?</h2>
+    <p class="services-subtitle">We'll build your static site for you. Same speed and simplicity, zero effort.</p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>Starter Site</h3>
+        <div class="service-price">$599</div>
+        <p class="service-desc">Perfect for solopreneurs and small businesses starting online.</p>
+        <p style="font-size: 12px; color: var(--text2); line-height: 1.8; margin-bottom: 0;">
+          ✓ 5 pages<br>
+          ✓ Mobile responsive<br>
+          ✓ Contact form<br>
+          ✓ SEO setup<br>
+          ✓ Deployment
+        </p>
+      </div>
+
+      <div class="service-card">
+        <h3>Professional Site</h3>
+        <div class="service-price">$1,499</div>
+        <p class="service-desc">For established businesses wanting a strong online presence.</p>
+        <p style="font-size: 12px; color: var(--text2); line-height: 1.8; margin-bottom: 0;">
+          ✓ 10 pages<br>
+          ✓ Blog setup<br>
+          ✓ Newsletter integration<br>
+          ✓ Image optimization<br>
+          ✓ 3 months support
+        </p>
+      </div>
+
+      <div class="service-card">
+        <h3>E-Commerce Site</h3>
+        <div class="service-price">$2,499</div>
+        <p class="service-desc">Sell products without the complexity of traditional platforms.</p>
+        <p style="font-size: 12px; color: var(--text2); line-height: 1.8; margin-bottom: 0;">
+          ✓ Product catalog<br>
+          ✓ Shopping cart<br>
+          ✓ Stripe integration<br>
+          ✓ Order management<br>
+          ✓ 6 months support
+        </p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 60px;">
+      <p style="color: var(--text2); margin-bottom: 24px;">Ready to discuss your project?</p>
+      <button class="btn btn-primary btn-large" onclick="window.location.href='mailto:cooper.carrasco@brandywinetech.com'">Book a Discovery Call</button>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Start Building Today</h2>
+    <p>The free tier is fully functional. Build a complete site. Own the HTML. No credit card required.</p>
+    <button class="btn btn-primary btn-large" onclick="window.location.href='/builder'">Open the Builder</button>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Product</h4>
+        <a href="/builder">Builder</a>
+        <a href="/templates">Templates</a>
+        <a href="/docs">Docs</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <div class="footer-section">
+        <h4>Services</h4>
+        <a href="#services">Custom Sites</a>
+        <a href="/pricing">Pricing</a>
+        <a href="mailto:cooper.carrasco@brandywinetech.com">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <a href="/docs">Getting Started</a>
+        <a href="/blog">Why Static?</a>
+        <a href="/docs/faq">FAQ</a>
+      </div>
+      <div class="footer-section">
+        <h4>Company</h4>
+        <a href="https://twitter.com/functionalweb">Twitter</a>
+        <a href="https://github.com">GitHub</a>
+        <a href="mailto:cooper.carrasco@brandywinetech.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Functional Websites. Built static. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

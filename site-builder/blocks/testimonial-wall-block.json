@@ -1,0 +1,52 @@
+{
+  "format": "functional-websites-library",
+  "version": 1,
+  "title": "Testimonial Wall Block",
+  "exportedAt": "2026-04-13T00:00:00.000Z",
+  "pageTemplates": [],
+  "blocks": [
+    {
+      "id": "blk_testimonial_wall",
+      "name": "Testimonial Wall",
+      "description": "A native testimonial grid with editable reviews, star ratings, layout controls, and highlight toggles.",
+      "category": "Social Proof",
+      "author": "Codex",
+      "priceLabel": "Custom Block",
+      "source": "blocks/testimonial-wall-block.json",
+      "block": {
+        "id": "testimonial_wall_block",
+        "type": "testimonialWall",
+        "props": {
+          "title": "What Customers Say",
+          "intro": "Social proof helps visitors trust you faster. Add a few real reviews to show the quality of your work.",
+          "bgColor": "#f5f8fc",
+          "padding": "80px 20px",
+          "maxWidth": "1100px",
+          "columns": "3",
+          "showStars": true,
+          "highlightFirst": false,
+          "testimonials": [
+            {
+              "name": "Jordan M.",
+              "role": "Homeowner",
+              "quote": "Fast response, fair pricing, and clear communication from start to finish.",
+              "rating": "5"
+            },
+            {
+              "name": "Taylor R.",
+              "role": "Local Customer",
+              "quote": "Professional, efficient, and respectful of our home. We would absolutely hire them again.",
+              "rating": "5"
+            },
+            {
+              "name": "Avery S.",
+              "role": "Repeat Client",
+              "quote": "One of the easiest contractor experiences we have had. Everything felt organized and trustworthy.",
+              "rating": "5"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
