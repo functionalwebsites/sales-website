@@ -1191,7 +1191,7 @@ function showProUpsell(featureName, featureDescription) {
   document.body.appendChild(modal);
 }
 
-// Show modal for entering pro token
+// Show modal for entering pro token or promo code
 function showProTokenModal() {
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
@@ -1199,26 +1199,55 @@ function showProTokenModal() {
     <div class="modal" style="width: 420px;">
       <h2 class="modal-title">Unlock Pro Features</h2>
       <p style="color: var(--text2); margin-bottom: 20px;">
-        Enter your Pro token (sent to your email after purchase) to unlock premium features.
+        Choose how to unlock premium features.
       </p>
 
-      <input
-        type="text"
-        id="pro-token-input"
-        class="input"
-        placeholder="Paste your Pro token here..."
-        style="margin-bottom: 16px; font-family: monospace; font-size: 12px;"
-      />
+      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <button class="btn btn-secondary" id="tab-token" style="flex: 1;" onclick="switchToTokenTab()">Enter Token</button>
+        <button class="btn btn-secondary" id="tab-promo" style="flex: 1;" onclick="switchToPromoTab()">Use Promo Code</button>
+      </div>
 
-      <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
-        Don't have a token? <a href="/pricing/" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
-      </p>
+      <div id="token-section">
+        <input
+          type="text"
+          id="pro-token-input"
+          class="input"
+          placeholder="Paste your Pro token here..."
+          style="margin-bottom: 16px; font-family: monospace; font-size: 12px;"
+        />
+
+        <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
+          Don't have a token? <a href="/pricing/" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
+        </p>
+      </div>
+
+      <div id="promo-section" style="display: none;">
+        <input
+          type="email"
+          id="promo-email-input"
+          class="input"
+          placeholder="Your email address"
+          style="margin-bottom: 12px;"
+        />
+
+        <input
+          type="text"
+          id="promo-code-input"
+          class="input"
+          placeholder="Promo code"
+          style="margin-bottom: 16px;"
+        />
+
+        <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
+          Don't have a promo code? <a href="/pricing/" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
+        </p>
+      </div>
 
       <div class="modal-actions">
         <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove();">
           Cancel
         </button>
-        <button class="btn btn-primary" onclick="confirmProToken();">
+        <button class="btn btn-primary" id="unlock-btn" onclick="confirmProToken();">
           Unlock Pro
         </button>
       </div>
@@ -1226,6 +1255,11 @@ function showProTokenModal() {
   `;
   document.body.appendChild(modal);
   document.getElementById('pro-token-input').focus();
+  // Set initial state
+  document.getElementById('tab-token').className = 'btn btn-primary';
+  document.getElementById('tab-promo').className = 'btn btn-secondary';
+  document.getElementById('unlock-btn').onclick = () => confirmProToken();
+  document.getElementById('unlock-btn').textContent = 'Unlock Pro';
 }
 
 // Confirm pro token entry
@@ -1249,6 +1283,67 @@ async function confirmProToken() {
   } catch (error) {
     console.error('Error validating token:', error);
     toast('Error validating token', 'error');
+  }
+}
+
+// Switch to token tab
+function switchToTokenTab() {
+  document.getElementById('token-section').style.display = 'block';
+  document.getElementById('promo-section').style.display = 'none';
+  document.getElementById('tab-token').className = 'btn btn-primary';
+  document.getElementById('tab-promo').className = 'btn btn-secondary';
+  document.getElementById('unlock-btn').onclick = () => confirmProToken();
+  document.getElementById('unlock-btn').textContent = 'Unlock Pro';
+  document.getElementById('pro-token-input').focus();
+}
+
+// Switch to promo tab
+function switchToPromoTab() {
+  document.getElementById('token-section').style.display = 'none';
+  document.getElementById('promo-section').style.display = 'block';
+  document.getElementById('tab-token').className = 'btn btn-secondary';
+  document.getElementById('tab-promo').className = 'btn btn-primary';
+  document.getElementById('unlock-btn').onclick = () => confirmPromoCode();
+  document.getElementById('unlock-btn').textContent = 'Get Free Pro';
+  document.getElementById('promo-email-input').focus();
+}
+
+// Show modal for entering promo code
+function showPromoCodeModal() {
+  showProTokenModal();
+  setTimeout(() => switchToPromoTab(), 100);
+}
+
+// Confirm promo code entry
+async function confirmPromoCode() {
+  const email = document.getElementById('promo-email-input').value.trim();
+  const code = document.getElementById('promo-code-input').value.trim();
+
+  if (!email || !code) {
+    toast('Please fill in all fields', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/free-plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code })
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      toast('Success! Check your email for your Pro token.', 'success');
+      // Close modal
+      document.querySelector('.modal-overlay').remove();
+      // Reload to activate pro
+      setTimeout(() => location.reload(), 2000);
+    } else {
+      toast(result.error || 'Invalid promo code', 'error');
+    }
+  } catch (error) {
+    console.error('Promo code error:', error);
+    toast('Network error. Please try again.', 'error');
   }
 }
 
