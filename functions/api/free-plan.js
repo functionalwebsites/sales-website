@@ -14,12 +14,21 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const { email, code } = body;
 
+    console.log('Free plan request received:', { email, code, hasSecret: !!context.env.FREE_PLAN });
+
     if (!email || !code) {
+      console.log('Missing email or code:', { email, code });
       return json({ error: 'Email and code are required' }, 400);
     }
 
     // Validate the special code against the FREE_PLAN secret
-    if (code !== context.env.FREE_PLAN) {
+    if (!context.env.FREE_PLAN) {
+      console.log('FREE_PLAN secret not set!');
+      return json({ error: 'Server configuration error: FREE_PLAN secret not set' }, 500);
+    }
+
+    if (code.trim() !== (context.env.FREE_PLAN || '').trim()) {
+      console.log('Code mismatch:', { received: code, expected: context.env.FREE_PLAN });
       return json({ error: 'Invalid promo code' }, 400);
     }
 
