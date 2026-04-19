@@ -346,7 +346,7 @@
     .comparison-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 640px;
+      table-layout: fixed;
     }
 
     .comparison-table th,
@@ -354,6 +354,18 @@
       padding: 16px;
       text-align: left;
       border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      overflow-wrap: anywhere;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+      width: 34%;
+    }
+
+    .comparison-table th:not(:first-child),
+    .comparison-table td:not(:first-child) {
+      width: 22%;
     }
 
     .comparison-table th {
@@ -368,6 +380,8 @@
 
     .check { color: var(--green); font-weight: 600; }
     .x { color: var(--red); }
+    .mobile-only { display: none; }
+    .desktop-only { display: inline; }
 
     /* PRICING */
     .pricing {
@@ -639,13 +653,44 @@
       }
 
       .comparison {
-        margin: 48px auto;
-        padding: 48px 16px;
+        margin: 48px 16px;
+        padding: 48px 24px;
       }
 
       .comparison h2 {
         margin-bottom: 28px;
       }
+
+      .comparison-table-wrap {
+        overflow: visible;
+      }
+
+      /* .comparison-table {
+        font-size: 11px;
+      } */
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 10px 6px;
+        line-height: 1.2;
+      }
+
+      .comparison-table th:first-child,
+      .comparison-table td:first-child {
+        width: 31%;
+      }
+
+      .comparison-table th:not(:first-child),
+      .comparison-table td:not(:first-child) {
+        width: 23%;
+      }
+
+      .comparison-table th {
+        font-size: 10px;
+      }
+
+      .mobile-only { display: inline; }
+      .desktop-only { display: none; }
 
       .pricing-card.featured {
         transform: scale(1);
@@ -654,6 +699,10 @@
       .features-grid,
       .services-grid {
         grid-template-columns: 1fr;
+      }
+
+      .cta {
+        margin: 80px 24px;
       }
     }
   </style>
@@ -746,20 +795,20 @@
         <thead>
           <tr>
             <th style="font-weight: 600;">Feature</th>
-            <th>Functional Websites</th>
+            <th><span class="desktop-only">Functional Websites</span><span class="mobile-only">FW</span></th>
             <th>WordPress</th>
-            <th>Squarespace</th>
+            <th><span class="desktop-only">Squarespace</span><span class="mobile-only">Square</span></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="font-weight: 500;">Page Load Speed</td>
+            <td style="font-weight: 500;">Load Speed</td>
             <td><span class="check">⚡ &lt;1s</span></td>
             <td><span class="x">❌ 2-4s</span></td>
             <td><span class="x">❌ 1.5-3s</span></td>
           </tr>
           <tr>
-            <td style="font-weight: 500;">Security Breaches Risk</td>
+            <td style="font-weight: 500;">Security Risk</td>
             <td><span class="check">✓ None</span></td>
             <td><span class="x">❌ High</span></td>
             <td><span class="check">✓ Low</span></td>
@@ -804,12 +853,13 @@
         <div class="price">$0</div>
         <div class="period">forever</div>
         <ul class="pricing-features">
-          <li>5 project sites</li>
-          <li>15 templates</li>
-          <li>Basic editor</li>
+          <li>Full site builder access</li>
+          <li>Built-in starter templates</li>
+          <li>Drag-and-drop editor</li>
+          <li>Mobile-responsive sites</li>
           <li>Local preview</li>
-          <li>Export as HTML</li>
-          <li>Community support</li>
+          <li>Export as HTML/ZIP</li>
+          <li>No custom blocks or templates</li>
         </ul>
         <button class="btn btn-large btn-secondary" style="width: 100%;" onclick="window.location.href='/site-builder'">Get Started</button>
       </div>
@@ -821,31 +871,31 @@
         <div class="price">$9.99</div>
         <div class="period">one-time fee</div>
         <ul class="pricing-features">
-          <li>Unlimited projects</li>
-          <li>100+ premium templates</li>
-          <li>Advanced editor</li>
-          <li>Custom domain</li>
-          <li>1-click deployment</li>
-          <li>Custom blocks & themes</li>
-          <li>SEO tools</li>
-          <li>Email support</li>
+          <li>Everything in Free</li>
+          <li>Marketplace access</li>
+          <li>Premium templates</li>
+          <li>Custom blocks & templates</li>
+          <li>Create your own blocks</li>
+          <li>Upload your own blocks</li>
+          <li>Create your own templates</li>
+          <li>Upload your own templates</li>
         </ul>
         <button class="btn btn-large btn-primary" style="width: 100%; background: var(--green); color: #000;" onclick="startStripeCheckout()">Buy Pro — $9.99</button>
       </div>
 
       <!-- BUSINESS -->
       <div class="pricing-card">
-        <h3>Business</h3>
+        <h3>Custom</h3>
         <div class="price">Custom</div>
-        <div class="period">tailored pricing</div>
+        <div class="period">tailored setup</div>
         <ul class="pricing-features">
           <li>Everything in Pro</li>
-          <li>Team collaboration</li>
-          <li>API access</li>
           <li>White-label builder</li>
-          <li>Priority support</li>
-          <li>Custom integrations</li>
-          <li>Dedicated account manager</li>
+          <li>Custom branded version</li>
+          <li>Reseller-ready setup</li>
+          <li>Internal business version</li>
+          <li>Tailored implementation</li>
+          <li>Custom feature planning</li>
         </ul>
         <button class="btn btn-large btn-secondary" style="width: 100%;">Contact Sales</button>
       </div>
