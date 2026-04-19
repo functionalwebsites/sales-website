@@ -18,3 +18,4 @@ logs/
 npm-debug.log*
 other-docs/
 other-files/
+.md
