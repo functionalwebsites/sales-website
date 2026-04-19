@@ -237,28 +237,6 @@ async function sendWithCloudflareSockets(config, email, content) {
   }
 }
 
-async function sendWithNodemailer(config, email, content) {
-  const nodemailer = await import('nodemailer');
-  const createTransport = nodemailer.default?.createTransport || nodemailer.createTransport;
-  const transporter = createTransport({
-    host: config.host,
-    port: config.port,
-    secure: config.port === 465,
-    auth: {
-      user: config.user,
-      pass: config.pass,
-    },
-  });
-
-  await transporter.sendMail({
-    from: config.from,
-    to: email,
-    subject: content.subject,
-    text: content.text,
-    html: content.html,
-  });
-}
-
 export async function sendProTokenEmail(env, email, token) {
   const config = getEmailConfig(env);
 
@@ -268,18 +246,5 @@ export async function sendProTokenEmail(env, email, token) {
   }
 
   const content = createEmailContent(token);
-
-  try {
-    await sendWithCloudflareSockets(config, email, content);
-  } catch (error) {
-    if (
-      error?.message?.includes('No such module "cloudflare:sockets"') ||
-      error?.message?.includes('cloudflare:sockets')
-    ) {
-      await sendWithNodemailer(config, email, content);
-      return;
-    }
-
-    throw error;
-  }
+  await sendWithCloudflareSockets(config, email, content);
 }
