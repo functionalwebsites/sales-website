@@ -1241,6 +1241,11 @@ function showProTokenModal() {
         <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
           Don't have a promo code? <a href="/pricing/" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
         </p>
+
+        <div
+          id="promo-result"
+          style="display:none; white-space:pre-wrap; background: var(--bg3); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 12px; color: var(--text);"
+        ></div>
       </div>
 
       <div class="modal-actions">
@@ -1314,6 +1319,14 @@ function showPromoCodeModal() {
   setTimeout(() => switchToPromoTab(), 100);
 }
 
+function renderPromoResult(message, isError = false) {
+  const el = document.getElementById('promo-result');
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.border = isError ? '1px solid #ef4444' : '1px solid #4ade80';
+  el.textContent = message;
+}
+
 // Confirm promo code entry
 async function confirmPromoCode() {
   const email = document.getElementById('promo-email-input').value.trim();
@@ -1333,16 +1346,30 @@ async function confirmPromoCode() {
 
     const result = await response.json();
     if (response.ok) {
-      toast('Success! Check your email for your Pro token.', 'success');
-      // Close modal
-      document.querySelector('.modal-overlay').remove();
-      // Reload to activate pro
-      setTimeout(() => location.reload(), 2000);
+      const lines = [
+        'Promo code accepted.',
+        `Token: ${result.token || 'not returned'}`,
+        `Email sent: ${result.emailSent ? 'yes' : 'no'}`
+      ];
+      if (result.emailError) lines.push(`Email error: ${result.emailError}`);
+      lines.push('', 'You can copy the token now and paste it into "Enter Token", or use it later from your email.');
+      renderPromoResult(lines.join('\n'), !result.emailSent);
+
+      if (result.token) {
+        const tokenInput = document.getElementById('pro-token-input');
+        tokenInput.value = result.token;
+      }
+
+      document.getElementById('tab-token').className = 'btn btn-primary';
+      document.getElementById('tab-promo').className = 'btn btn-secondary';
+      toast(result.emailSent ? 'Promo code worked. Token is shown below.' : 'Promo code worked, but email did not send.', result.emailSent ? 'success' : 'error');
     } else {
+      renderPromoResult(result.error || 'Invalid promo code', true);
       toast(result.error || 'Invalid promo code', 'error');
     }
   } catch (error) {
     console.error('Promo code error:', error);
+    renderPromoResult('Network error. Please try again.', true);
     toast('Network error. Please try again.', 'error');
   }
 }
