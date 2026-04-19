@@ -48,14 +48,18 @@ export async function onRequestPost(context) {
     await context.env.TOKENS.put(`token:${token}`, JSON.stringify(tokenData));
 
     // Send email with token
+    let emailSent = false;
+    let emailErrorMessage = null;
+
     try {
       await sendProTokenEmail(context.env, email, token);
+      emailSent = true;
     } catch (emailError) {
+      emailErrorMessage = emailError?.message || 'Email send failed';
       console.error('Email send failed:', emailError);
-      // Don't fail the request if email fails, but log it
     }
 
-    return json({ success: true, token });
+    return json({ success: true, token, emailSent, emailError: emailErrorMessage });
   } catch (error) {
     console.error('Free plan error:', error);
     return json({ error: error.message || 'Failed to process promo code' }, 500);

@@ -59,6 +59,7 @@ export async function onRequestPost(context) {
 
     try {
       await sendProTokenEmail(context.env, customerEmail, token);
+      console.log(`Token email sent to ${customerEmail} for session ${session.id}`);
     } catch (emailError) {
       console.error('Email send failed:', emailError);
     }

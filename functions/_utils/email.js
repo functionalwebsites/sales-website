@@ -135,10 +135,11 @@ class SmtpConnection {
     }
   }
 
-  async expect(code) {
+  async expect(expectedCodes) {
+    const allowedCodes = Array.isArray(expectedCodes) ? expectedCodes : [expectedCodes];
     const response = await this.readResponse();
-    if (response.code !== code) {
-      throw new Error(`SMTP expected ${code} but received ${response.code}: ${response.line}`);
+    if (!allowedCodes.includes(response.code)) {
+      throw new Error(`SMTP expected ${allowedCodes.join(' or ')} but received ${response.code}: ${response.line}`);
     }
     return response;
   }
@@ -185,6 +186,7 @@ class SmtpConnection {
 
 async function sendWithCloudflareSockets(config, email, content) {
   const { connect } = await import('cloudflare:sockets');
+  console.log(`Opening SMTP connection to ${config.host}:${config.port} for ${email}`);
   const socket = connect(
     { hostname: config.host, port: config.port },
     { secureTransport: config.port === 465 ? 'on' : 'starttls' }
@@ -216,7 +218,7 @@ async function sendWithCloudflareSockets(config, email, content) {
     await connection.send(`MAIL FROM:<${config.from}>`);
     await connection.expect(250);
     await connection.send(`RCPT TO:<${email}>`);
-    await connection.expect(250);
+    await connection.expect([250, 251]);
     await connection.send('DATA');
     await connection.expect(354);
 
@@ -229,7 +231,8 @@ async function sendWithCloudflareSockets(config, email, content) {
     });
 
     await connection.sendData(message);
-    await connection.expect(250);
+    const accepted = await connection.expect(250);
+    console.log(`SMTP accepted email for ${email}: ${accepted.line}`);
     await connection.send('QUIT');
     await connection.expect(221);
   } finally {
@@ -241,10 +244,11 @@ export async function sendProTokenEmail(env, email, token) {
   const config = getEmailConfig(env);
 
   if (!hasRequiredConfig(config)) {
-    console.log(`Skipping Pro token email for ${email}: missing SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, or EMAIL_FROM`);
-    return;
+    throw new Error('Missing SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, or EMAIL_FROM');
   }
 
+  console.log(`Preparing Pro token email for ${email} using ${config.host}:${config.port} from ${config.from}`);
   const content = createEmailContent(token);
   await sendWithCloudflareSockets(config, email, content);
+  return { sent: true };
 }
