@@ -1,13 +1,3 @@
-/**
- * Stripe Checkout Integration for Functional Websites Pro
- *
- * This script reads Stripe keys from meta tags in the page <head>:
- *   <meta name="stripe-publishable-key" content="pk_live_...">
- *   <meta name="stripe-price-id" content="price_...">
- *
- * The checkout session is created by a same-origin Cloudflare Pages Function.
- */
-
 let stripe;
 let STRIPE_PUBLISHABLE_KEY;
 let PRO_PRICE_ID;

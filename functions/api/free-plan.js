@@ -10,6 +10,10 @@ function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
 async function findExistingTokenByEmail(kv, email) {
   let cursor;
 
@@ -50,6 +54,10 @@ export async function onRequestPost(context) {
     if (!normalizedEmail || !code) {
       console.log('Missing email or code:', { email: normalizedEmail, code });
       return json({ error: 'Email and code are required' }, 400);
+    }
+
+    if (!isValidEmail(normalizedEmail)) {
+      return json({ error: 'Please enter a valid email address' }, 400);
     }
 
     // Validate the special code against the FREE_PLAN secret
@@ -96,7 +104,7 @@ export async function onRequestPost(context) {
       console.error('Email send failed:', emailError);
     }
 
-    return json({ success: true, token, emailSent, emailError: emailErrorMessage });
+    return json({ success: true, emailSent, emailError: emailErrorMessage });
   } catch (error) {
     console.error('Free plan error:', error);
     return json({ error: error.message || 'Failed to process promo code' }, 500);

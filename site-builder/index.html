@@ -1358,21 +1358,17 @@ async function confirmPromoCode() {
     if (response.ok) {
       const lines = [
         'Promo code accepted.',
-        `Token: ${result.token || 'not returned'}`,
         `Email sent: ${result.emailSent ? 'yes' : 'no'}`
       ];
       if (result.emailError) lines.push(`Email error: ${result.emailError}`);
-      lines.push('', 'You can copy the token now and paste it into "Enter Token", or use it later from your email.');
+      lines.push('', result.emailSent
+        ? 'Check your email for your Pro token, then paste it into "Enter Token".'
+        : 'The token was not shown here. Use a valid email and try again so it can be delivered by email.');
       renderPromoResult(lines.join('\n'), !result.emailSent);
-
-      if (result.token) {
-        const tokenInput = document.getElementById('pro-token-input');
-        tokenInput.value = result.token;
-      }
 
       document.getElementById('tab-token').className = 'btn btn-primary';
       document.getElementById('tab-promo').className = 'btn btn-secondary';
-      toast(result.emailSent ? 'Promo code worked. Token is shown below.' : 'Promo code worked, but email did not send.', result.emailSent ? 'success' : 'error');
+      toast(result.emailSent ? 'Promo code worked. Check your email for the token.' : 'Promo code worked, but email did not send.', result.emailSent ? 'success' : 'error');
     } else {
       renderPromoResult(result.error || 'Invalid promo code', true);
       toast(result.error || 'Invalid promo code', 'error');
