@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete documentation for Functional Websites Site Builder - from creation to deployment.">
+  <title>Documentation — Functional Websites</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --bg2: #16161e;
+      --bg3: #1e1e2e;
+      --border: #2a2a3e;
+      --accent: #34343f;
+      --accent2: #81818f;
+      --green: #4ade80;
+      --red: #f87171;
+      --text: #e2e2f0;
+      --text2: #8888aa;
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+
+    /* HEADER */
+    .header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      line-height: 1;
+      min-height: 80px;
+    }
+
+    .logo-link {
+      display: inline-flex;
+      align-items: center;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 100%;
+      height: 100%;
+      fill: var(--green);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text2);
+      font-size: 14px;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #3dc76e;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
+
+    /* CONTENT */
+    .docs-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    .docs-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .docs-header h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .docs-header h1 span {
+      color: var(--green);
+    }
+
+    .docs-header p {
+      font-size: 18px;
+      color: var(--text2);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* GUIDE CARDS */
+    .guides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    .guide-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s;
+    }
+
+    .guide-card:hover {
+      border-color: var(--green);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(74, 222, 128, 0.1);
+    }
+
+    .guide-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+    }
+
+    .guide-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .guide-card p {
+      color: var(--text2);
+      font-size: 14px;
+      margin-bottom: 24px;
+      flex-grow: 1;
+      line-height: 1.6;
+    }
+
+    .guide-card a {
+      display: inline-block;
+      padding: 10px 16px;
+      background: var(--green);
+      color: #000;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .guide-card a:hover {
+      background: #3dc76e;
+    }
+
+    /* SECTION */
+    .docs-section {
+      margin-bottom: 80px;
+    }
+
+    .docs-section h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      color: var(--text);
+    }
+
+    .docs-section h2 span {
+      color: var(--green);
+    }
+
+    .section-intro {
+      background: var(--bg2);
+      border-left: 4px solid var(--green);
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 32px;
+      color: var(--text2);
+    }
+
+    /* QUICK LINKS */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .quick-link {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .quick-link:hover {
+      background: var(--bg2);
+      border-color: var(--green);
+    }
+
+    .quick-link strong {
+      display: block;
+      color: var(--green);
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .quick-link span {
+      display: block;
+      color: var(--text2);
+      font-size: 14px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      margin-top: 100px;
+      text-align: center;
+      color: var(--text2);
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .docs-header h1 {
+        font-size: 32px;
+      }
+
+      .guides-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-wrapper">
+      <a class="logo-link" href="/" aria-label="Functional Websites home">
+        <div class="logo">
+          <div class="logo-mark">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 3h18v2H3V3zm0 8h18v2H3v-2zm0 8h18v2H3v-2z"/>
+            </svg>
+          </div>
+          Functional Websites
+        </div>
+      </a>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/docs" style="color: var(--green);">Docs</a>
+        <a href="/site-builder" class="btn btn-primary">Open Builder</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- DOCS HEADER -->
+  <section class="docs-container">
+    <div class="docs-header">
+      <h1>Complete <span>Documentation</span></h1>
+      <p>Everything you need to build and deploy your static website using the Functional Websites Site Builder.</p>
+    </div>
+
+    <!-- GETTING STARTED SECTION -->
+    <div class="docs-section">
+      <h2>🚀 <span>Getting Started</span></h2>
+      <div class="guides-grid">
+        <div class="guide-card">
+          <div class="guide-icon">🎨</div>
+          <h3>Site Builder Basics</h3>
+          <p>Learn the fundamentals of the Functional Websites Site Builder, including the editor interface, drag-and-drop components, and how to create your first page.</p>
+          <a href="/docs/getting-started">Learn More →</a>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-icon">🧩</div>
+          <h3>Custom Blocks</h3>
+          <p>Discover how to use and create custom blocks to extend your site's functionality with reusable, modular components.</p>
+          <a href="/docs/custom-blocks">Learn More →</a>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-icon">📐</div>
+          <h3>Custom Templates</h3>
+          <p>Master custom templates to create consistent, reusable page layouts and speed up your design workflow.</p>
+          <a href="/docs/custom-templates">Learn More →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEPLOYMENT SECTION -->
+    <div class="docs-section">
+      <h2>🌐 <span>Deployment Guides</span></h2>
+      <div class="section-intro">
+        <strong>Ready to go live?</strong> Learn how to deploy your static website to GitHub Pages, Cloudflare Pages, or any other static host. Your site is 100% portable HTML—choose the platform that works best for you.
+      </div>
+      <div class="guides-grid">
+        <div class="guide-card">
+          <div class="guide-icon">🐙</div>
+          <h3>Deploy to GitHub Pages</h3>
+          <p>Host your site for free on GitHub Pages with automatic deployments from your repository. Perfect for open-source projects and portfolios.</p>
+          <a href="/docs/deploy-github">Learn More →</a>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-icon">☁️</div>
+          <h3>Deploy to Cloudflare</h3>
+          <p>Deploy to Cloudflare Pages for edge-optimized performance, free SSL, and advanced security features. Get your site live in minutes.</p>
+          <a href="/docs/deploy-cloudflare">Learn More →</a>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-icon">📦</div>
+          <h3>Export & Self-Host</h3>
+          <p>Export your site as plain HTML files and deploy anywhere—traditional hosting, FTP, or any platform that serves static files.</p>
+          <a href="/docs/export-selfhost">Learn More →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK REFERENCE -->
+    <div class="docs-section">
+      <h2>⚡ <span>Quick Reference</span></h2>
+      <div class="quick-links">
+        <a href="/docs/getting-started" class="quick-link">
+          <strong>Builder Interface</strong>
+          <span>Tour the editor and learn the toolbar</span>
+        </a>
+        <a href="/docs/custom-blocks" class="quick-link">
+          <strong>Block Library</strong>
+          <span>Browse available custom blocks</span>
+        </a>
+        <a href="/docs/custom-templates" class="quick-link">
+          <strong>Template Gallery</strong>
+          <span>Explore pre-built templates</span>
+        </a>
+        <a href="/docs/deploy-github" class="quick-link">
+          <strong>GitHub Setup</strong>
+          <span>Enable GitHub Pages in 5 minutes</span>
+        </a>
+        <a href="/docs/deploy-cloudflare" class="quick-link">
+          <strong>Cloudflare Setup</strong>
+          <span>Deploy and connect your domain</span>
+        </a>
+        <a href="/docs/export-selfhost" class="quick-link">
+          <strong>Export & Self-Host</strong>
+          <span>Deploy anywhere with pure HTML</span>
+        </a>
+        <a href="/" class="quick-link">
+          <strong>Open the Builder</strong>
+          <span>Start building your site now</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- HELP -->
+    <div class="docs-section">
+      <h2>❓ <span>Need Help?</span></h2>
+      <div class="section-intro">
+        <p>Can't find what you're looking for? Explore our other resources:</p>
+        <ul style="list-style: none; margin-top: 16px; text-align: left;">
+          <li>📧 Email support: <a href="mailto:cooper@functionalwebsites.com" style="color: var(--green);">cooper@functionalwebsites.com</a></li>
+          <li>🎯 Check out the <a href="/" style="color: var(--green);">main site</a> for pricing and services</li>
+          <li>💬 Have suggestions? We'd love to hear from you!</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 Functional Websites. All documentation is open and free. <a href="/" style="color: var(--green);">Back to home</a></p>
+  </footer>
+</body>
+</html>

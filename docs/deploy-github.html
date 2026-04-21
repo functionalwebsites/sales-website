@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Deploy your Functional Websites static site to GitHub Pages for free.">
+  <title>Deploy to GitHub Pages — Functional Websites Docs</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <style>
+    :root { --bg: #0f0f13; --bg2: #16161e; --bg3: #1e1e2e; --border: #2a2a3e; --green: #4ade80; --text: #e2e2f0; --text2: #8888aa; --radius: 8px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.8; }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 24px; margin-bottom: 40px; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 18px; font-weight: 700; }
+    .header-nav a { color: var(--text2); margin-left: 24px; font-size: 14px; }
+    .header-nav a:hover { color: var(--text); }
+    .wrapper { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 250px 1fr; gap: 40px; }
+    .sidebar { position: sticky; top: 20px; height: fit-content; }
+    .sidebar-nav { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; list-style: none; }
+    .sidebar-nav li { margin-bottom: 12px; }
+    .sidebar-nav a { display: block; padding: 8px 12px; border-radius: 6px; color: var(--text2); transition: all 0.2s; }
+    .sidebar-nav a:hover, .sidebar-nav a.active { background: var(--bg3); color: var(--green); }
+    .content { padding: 40px 0; }
+    h1 { font-size: 40px; font-weight: 700; margin-bottom: 12px; }
+    h1 span { color: var(--green); }
+    .subtitle { color: var(--text2); font-size: 16px; margin-bottom: 40px; }
+    h2 { font-size: 28px; font-weight: 700; margin: 50px 0 20px 0; padding-top: 20px; border-top: 1px solid var(--border); }
+    h3 { font-size: 20px; font-weight: 600; margin: 30px 0 15px 0; color: var(--green); }
+    p { margin-bottom: 16px; }
+    ul, ol { margin-left: 20px; margin-bottom: 16px; }
+    li { margin-bottom: 8px; }
+    code { background: var(--bg3); padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; color: var(--green); font-size: 13px; }
+    .code-block { background: var(--bg3); border-left: 3px solid var(--green); padding: 16px; border-radius: 6px; margin: 20px 0; overflow-x: auto; font-size: 12px; font-family: 'Courier New', monospace; }
+    .step { background: var(--bg2); border: 1px solid var(--border); padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid var(--green); }
+    .step strong { color: var(--green); }
+    .tip { background: rgba(74, 222, 128, 0.1); border-left: 4px solid var(--green); padding: 16px; border-radius: 6px; margin: 24px 0; }
+    .tip strong { color: var(--green); }
+    footer { border-top: 1px solid var(--border); padding: 40px 0; margin-top: 80px; text-align: center; color: var(--text2); font-size: 13px; }
+    @media (max-width: 768px) { .wrapper { grid-template-columns: 1fr; gap: 20px; } .sidebar { position: static; } h1 { font-size: 28px; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/docs" class="logo">📚 Docs</a>
+      <nav class="header-nav"><a href="/">Home</a> <a href="/site-builder">Builder</a> <a href="/pricing">Pricing</a></nav>
+    </div>
+  </header>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="/docs/getting-started">Getting Started</a></li>
+        <li><a href="/docs/custom-blocks">Custom Blocks</a></li>
+        <li><a href="/docs/custom-templates">Custom Templates</a></li>
+        <li><a href="/docs/deploy-github" class="active">Deploy to GitHub</a></li>
+        <li><a href="/docs/deploy-cloudflare">Deploy to Cloudflare</a></li>
+        <li><a href="/docs/export-selfhost">Export & Self-Host</a></li>
+      </ul>
+    </aside>
+
+    <div class="content">
+      <h1>Deploy to <span>GitHub Pages</span></h1>
+      <p class="subtitle">Host your site for free on GitHub Pages with automatic deployments from your GitHub repository. Perfect for portfolios, blogs, and open-source projects.</p>
+
+      <h2>What is GitHub Pages?</h2>
+      <p>GitHub Pages is a free static site hosting service. Push your HTML files to a GitHub repository, and they're automatically published at <code>username.github.io/repo-name</code> or your custom domain.</p>
+
+      <p><strong>Benefits:</strong></p>
+      <ul>
+        <li>✅ Free hosting</li>
+        <li>✅ Automatic deployments from Git</li>
+        <li>✅ Custom domain support</li>
+        <li>✅ HTTPS by default</li>
+        <li>✅ Version control built-in</li>
+      </ul>
+
+      <h2>Prerequisites</h2>
+      <ul>
+        <li>A GitHub account (free at <a href="https://github.com">github.com</a>)</li>
+        <li>Git installed on your computer</li>
+        <li>Your site exported from the Site Builder as HTML files</li>
+      </ul>
+
+      <h2>Step-by-Step Setup</h2>
+
+      <div class="step">
+        <strong>Step 1: Export Your Site</strong><br>
+        In the Site Builder, click <strong>File > Export</strong>. Download the ZIP file containing all your site files.
+      </div>
+
+      <div class="step">
+        <strong>Step 2: Create a GitHub Repository</strong><br>
+        Go to <a href="https://github.com/new">github.com/new</a> and create a new repository. Name it something descriptive (e.g., <code>my-portfolio-site</code>). Make it public. Don't add a README yet.
+      </div>
+
+      <div class="step">
+        <strong>Step 3: Prepare Your Files</strong><br>
+        <ol>
+          <li>Extract the ZIP file from Step 1</li>
+          <li>Copy all files and folders into your repository folder on your computer</li>
+          <li>Make sure <code>index.html</code> is at the root level</li>
+        </ol>
+      </div>
+
+      <div class="step">
+        <strong>Step 4: Initialize Git & Push</strong><br>
+        Open terminal in your repository folder and run:
+        <div class="code-block">git init
+git add .
+git commit -m "Initial site commit"
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git branch -M main
+git push -u origin main</div>
+      </div>
+
+      <div class="step">
+        <strong>Step 5: Enable GitHub Pages</strong><br>
+        <ol>
+          <li>Go to your repository on GitHub</li>
+          <li>Click <strong>Settings</strong> (top right)</li>
+          <li>Scroll to <strong>"Pages"</strong> (left sidebar)</li>
+          <li>Under <strong>"Source"</strong>, select <strong>"Deploy from a branch"</strong></li>
+          <li>Select <strong>main</strong> branch and <strong>/root</strong> folder</li>
+          <li>Click <strong>Save</strong></li>
+        </ol>
+      </div>
+
+      <div class="tip">
+        <strong>🎉 Done!</strong> Your site is now live at <code>https://username.github.io/repo-name</code>. It may take a few minutes to build.
+      </div>
+
+      <h2>Using Your Custom Domain</h2>
+
+      <h3>Connect Your Domain</h3>
+      <ol>
+        <li>Own a domain (e.g., from GoDaddy, Namecheap, etc.)</li>
+        <li>Go to your domain registrar's DNS settings</li>
+        <li>Create DNS records pointing to GitHub:
+          <div class="code-block">A records:
+185.199.108.153
+185.199.109.153
+185.199.110.153
+185.199.111.153</div>
+        </li>
+        <li>Wait for DNS to propagate (5-48 hours)</li>
+      </ol>
+
+      <h3>Configure in GitHub</h3>
+      <ol>
+        <li>Go to <strong>Settings > Pages</strong></li>
+        <li>Under <strong>"Custom domain"</strong>, enter your domain (e.g., <code>mysite.com</code>)</li>
+        <li>GitHub automatically enables HTTPS</li>
+      </ol>
+
+      <p>Your site now loads at your custom domain!</p>
+
+      <h2>Automatic Deployments</h2>
+
+      <p>Every time you push changes to GitHub, your site automatically redeploys:</p>
+
+      <div class="code-block">git add .
+git commit -m "Update site content"
+git push</div>
+
+      <p>Your changes go live within seconds!</p>
+
+      <h2>Updating Your Site</h2>
+
+      <h3>Option A: Use Git (Recommended)</h3>
+      <ol>
+        <li>Export updated files from Site Builder</li>
+        <li>Replace files in your repo folder</li>
+        <li>Git add, commit, push</li>
+      </ol>
+
+      <h3>Option B: Edit Directly on GitHub</h3>
+      <ol>
+        <li>Go to your repository</li>
+        <li>Click file to edit</li>
+        <li>Click pencil icon to edit</li>
+        <li>Commit changes (auto-deploys)</li>
+      </ol>
+
+      <h2>Troubleshooting</h2>
+
+      <h3>Site Not Showing?</h3>
+      <ul>
+        <li>Check that <code>index.html</code> is in the root folder</li>
+        <li>Wait a few minutes for the build to complete</li>
+        <li>Go to <strong>Settings > Pages</strong> to check build status</li>
+      </ul>
+
+      <h3>Broken Links After Deployment?</h3>
+      <p>If your site is at <code>username.github.io/repo-name/</code>, make sure internal links include the repo path or use relative paths (e.g., <code>./about.html</code>).</p>
+
+      <h3>HTTPS Not Working?</h3>
+      <p>GitHub Pages automatically provides HTTPS. If it's not working, go to <strong>Settings > Pages</strong> and ensure "Enforce HTTPS" is checked.</p>
+
+      <h2>Best Practices</h2>
+
+      <ul>
+        <li>Keep a backup of your site locally</li>
+        <li>Use Git to track all changes</li>
+        <li>Create a <code>.gitignore</code> file to exclude unnecessary files</li>
+        <li>Use meaningful commit messages</li>
+        <li>Test locally before pushing</li>
+      </ul>
+
+      <div class="tip">
+        <strong>💡 Pro Tip:</strong> You can enable branch protection in GitHub Settings to require reviews before pushing to main.
+      </div>
+
+      <h2>Next Steps</h2>
+      <ul>
+        <li>Set up your GitHub Pages site now</li>
+        <li>Configure a custom domain</li>
+        <li>Create a README.md file documenting your site</li>
+        <li>Explore GitHub's additional features (CI/CD, Actions, etc.)</li>
+      </ul>
+
+      <h2>Resources</h2>
+      <ul>
+        <li><a href="https://docs.github.com/en/pages">GitHub Pages Documentation</a></li>
+        <li><a href="https://git-scm.com/doc">Git Documentation</a></li>
+        <li><a href="https://guides.github.com/features/mastering-markdown/">Mastering Markdown</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <footer style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+    <p><a href="/docs">← Back to Docs</a> | <a href="/">Home</a> | Email: <a href="mailto:cooper@functionalwebsites.com">cooper@functionalwebsites.com</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn how to use and create custom blocks in Functional Websites.">
+  <title>Custom Blocks — Functional Websites Docs</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --bg2: #16161e;
+      --bg3: #1e1e2e;
+      --border: #2a2a3e;
+      --green: #4ade80;
+      --text: #e2e2f0;
+      --text2: #8888aa;
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.8; }
+
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      margin-bottom: 40px;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .header-nav a {
+      color: var(--text2);
+      margin-left: 24px;
+      font-size: 14px;
+    }
+
+    .header-nav a:hover {
+      color: var(--text);
+    }
+
+    .wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 40px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+
+    .sidebar-nav {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 12px;
+    }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text2);
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: var(--bg3);
+      color: var(--green);
+    }
+
+    .content { padding: 40px 0; }
+
+    h1 {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1 span { color: var(--green); }
+
+    .subtitle {
+      color: var(--text2);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 50px 0 20px 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 30px 0 15px 0;
+      color: var(--green);
+    }
+
+    p {
+      margin-bottom: 16px;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+
+    li { margin-bottom: 8px; }
+
+    code {
+      background: var(--bg3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .code-block {
+      background: var(--bg3);
+      border-left: 3px solid var(--green);
+      padding: 16px;
+      border-radius: 6px;
+      margin: 20px 0;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    .tip {
+      background: rgba(74, 222, 128, 0.1);
+      border-left: 4px solid var(--green);
+      padding: 16px;
+      border-radius: 6px;
+      margin: 24px 0;
+    }
+
+    .tip strong { color: var(--green); }
+
+    .feature-list {
+      display: grid;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-item {
+      background: var(--bg3);
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 3px solid var(--green);
+    }
+
+    .feature-item strong { color: var(--green); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text2);
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .wrapper {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/docs" class="logo">📚 Docs</a>
+      <nav class="header-nav">
+        <a href="/">Home</a>
+        <a href="/site-builder">Builder</a>
+        <a href="/pricing">Pricing</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrapper">
+    <aside class="sidebar">
+      <ul class="sidebar-nav">
+        <li><a href="/docs/getting-started">Getting Started</a></li>
+        <li><a href="/docs/custom-blocks" class="active">Custom Blocks</a></li>
+        <li><a href="/docs/custom-templates">Custom Templates</a></li>
+        <li><a href="/docs/deploy-github">Deploy to GitHub</a></li>
+        <li><a href="/docs/deploy-cloudflare">Deploy to Cloudflare</a></li>
+        <li><a href="/docs/export-selfhost">Export & Self-Host</a></li>
+      </ul>
+    </aside>
+
+    <div class="content">
+      <h1>Custom <span>Blocks</span></h1>
+      <p class="subtitle">Extend your site builder with reusable, modular components. Create once, use everywhere.</p>
+
+      <h2>What Are Custom Blocks?</h2>
+      <p>Custom blocks are reusable components you create or import to extend the site builder's functionality. Instead of rebuilding the same component on multiple pages, create it once as a custom block and reuse it with a single click.</p>
+
+      <p>Examples of custom blocks include:</p>
+      <ul>
+        <li>Testimonial sections with ratings</li>
+        <li>Pricing tables</li>
+        <li>Product cards</li>
+        <li>Contact forms with validation</li>
+        <li>Video embeds (YouTube, Vimeo, etc.)</li>
+        <li>Interactive galleries</li>
+        <li>Call-to-action sections</li>
+      </ul>
+
+      <h2>Built-in Custom Blocks</h2>
+      <p>The site builder comes with several pre-made custom blocks in the Marketplace:</p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <strong>YouTube Embed</strong><br>
+          Drop in a YouTube video URL and instantly embed a responsive video player.
+        </div>
+
+        <div class="feature-item">
+          <strong>Testimonial Wall</strong><br>
+          Display customer testimonials in an attractive grid. Perfect for social proof sections.
+        </div>
+
+        <div class="feature-item">
+          <strong>Image Gallery</strong><br>
+          Create lightbox galleries with multiple image layouts. Great for portfolios.
+        </div>
+
+        <div class="feature-item">
+          <strong>Contact Form</strong><br>
+          Build contact forms with optional email notifications (when you have Pro).
+        </div>
+
+        <div class="feature-item">
+          <strong>Pricing Table</strong><br>
+          Compare plans side-by-side with feature lists and call-to-action buttons.
+        </div>
+      </div>
+
+      <h2>Using Custom Blocks</h2>
+
+      <h3>Finding Blocks</h3>
+      <ol>
+        <li>Click the <strong>"Blocks"</strong> button in the toolbar</li>
+        <li>Scroll to <strong>"Custom Blocks"</strong> section</li>
+        <li>Browse available blocks or search by name</li>
+      </ol>
+
+      <h3>Adding a Block to Your Page</h3>
+      <ol>
+        <li>Drag the block from the library onto your canvas</li>
+        <li>The block appears on your page with default content</li>
+        <li>Click the block to select it and edit in the properties panel</li>
+        <li>Customize text, colors, images, and settings</li>
+      </ol>
+
+      <h3>Configurable Options</h3>
+      <p>Each custom block has specific properties you can edit:</p>
+      <ul>
+        <li>Content (text, images, links)</li>
+        <li>Colors (background, text, accents)</li>
+        <li>Layout (spacing, alignment, sizing)</li>
+        <li>Interactivity (hover effects, animations)</li>
+        <li>Block-specific settings (e.g., YouTube URL for video embed)</li>
+      </ul>
+
+      <h2>Creating Custom Blocks</h2>
+
+      <div class="tip">
+        <strong>⭐ Pro Feature:</strong> Creating and uploading custom blocks is available in the Pro plan. Free users can use existing blocks but cannot create new ones.
+      </div>
+
+      <h3>Create a Custom Block</h3>
+      <ol>
+        <li>Design your component on a page (section, content, styling)</li>
+        <li>Select the entire component</li>
+        <li>Right-click and choose <strong>"Convert to Custom Block"</strong></li>
+        <li>Give your block a name, description, and thumbnail</li>
+        <li>Click <strong>"Save as Block"</strong></li>
+      </ol>
+
+      <h3>Your Block is Now Reusable</h3>
+      <p>Your custom block appears in the blocks library under "My Blocks". Drag it onto any page to reuse it. Edit each instance independently—changes to one don't affect others (they're instances, not linked).</p>
+
+      <h3>Uploading Blocks to the Marketplace</h3>
+      <p>Pro users can share their custom blocks with the community via the Marketplace:</p>
+      <ol>
+        <li>Go to <strong>Account > My Blocks</strong></li>
+        <li>Click the block and select <strong>"Publish to Marketplace"</strong></li>
+        <li>Add a description, preview images, and pricing (free or paid)</li>
+        <li>Submit for review</li>
+      </ol>
+
+      <p>Once approved, your block is available for other users to download and use. You can earn revenue from paid blocks!</p>
+
+      <h2>Block Structure (For Advanced Users)</h2>
+
+      <p>Custom blocks are stored as JSON files containing:</p>
+      <ul>
+        <li><strong>Structure:</strong> HTML markup</li>
+        <li><strong>Styling:</strong> CSS</li>
+        <li><strong>Interactivity:</strong> JavaScript (optional)</li>
+        <li><strong>Metadata:</strong> Name, description, preview image</li>
+        <li><strong>Schema:</strong> Configurable properties</li>
+      </ul>
+
+      <p>Advanced users can edit the JSON directly if needed. Find your blocks in the project folder under <code>/site-builder/blocks/</code>.</p>
+
+      <h2>Best Practices</h2>
+
+      <h3>Design for Reusability</h3>
+      <p>When creating a custom block, think about how you'll use it on multiple pages. Make it flexible—allow text, color, and image customization.</p>
+
+      <h3>Keep It Modular</h3>
+      <p>Break complex designs into smaller, focused blocks. A "Card" block is more reusable than a "Hero + Card + CTA" block.</p>
+
+      <h3>Document Your Block</h3>
+      <p>Add a clear description and preview image so you remember what the block does.</p>
+
+      <h3>Test Responsiveness</h3>
+      <p>Make sure your custom blocks look great on mobile, tablet, and desktop.</p>
+
+      <h3>Optimize for Performance</h3>
+      <p>Avoid heavy JavaScript or large images in blocks. Keep them lightweight for fast loading.</p>
+
+      <h2>Marketplace Discovery</h2>
+
+      <p>Browse community-created blocks in the Marketplace:</p>
+      <ul>
+        <li>Visit <a href="/marketplace">/marketplace</a></li>
+        <li>Filter by category or search for what you need</li>
+        <li>Preview blocks with screenshots and demos</li>
+        <li>Click <strong>"Add to Project"</strong> to install</li>
+      </ul>
+
+      <h2>Troubleshooting</h2>
+
+      <h3>Block Not Appearing?</h3>
+      <p>Make sure it's published and enabled. Go to <strong>Account > My Blocks</strong> and check the toggle.</p>
+
+      <h3>Block Lost When Exporting?</h3>
+      <p>All custom blocks are included when you export as HTML. They're embedded in the exported files.</p>
+
+      <h3>Need to Edit a Block?</h3>
+      <p>Locate the block in the blocks library, select it, and use the properties panel. Or recreate it by converting a new component.</p>
+
+      <div class="tip">
+        <strong>💡 Pro Tip:</strong> Save time by creating blocks for your most-used layouts. A testimonial block, pricing table, and CTA section can halve your design time!
+      </div>
+
+      <h2>Next Steps</h2>
+      <ul>
+        <li>Browse the <a href="/marketplace">Marketplace</a> for community blocks</li>
+        <li>Create your first custom block and reuse it across pages</li>
+        <li>Share your blocks with the community (Pro feature)</li>
+        <li>Explore <a href="/docs/custom-templates">Custom Templates</a> for page layouts</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+    <p><a href="/docs">← Back to Docs</a> | <a href="/">Home</a> | Email: <a href="mailto:cooper@functionalwebsites.com">cooper@functionalwebsites.com</a></p>
+  </footer>
+</body>
+</html>
