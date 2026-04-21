@@ -241,26 +241,42 @@ async function sendWithCloudflareSockets(config, email, content) {
 }
 
 export async function sendProTokenEmail(env, email, token) {
-  if (!env.EMAIL_FROM) {
-    throw new Error('Missing EMAIL_FROM');
+  if (!env.EMAIL_FROM || !env.CLOUDFLARE_ACCOUNT_ID || !env.CLOUDFLARE_API_TOKEN) {
+    throw new Error('Missing EMAIL_FROM, CLOUDFLARE_ACCOUNT_ID, or CLOUDFLARE_API_TOKEN');
   }
 
   console.log(`Preparing Pro token email for ${email} from ${env.EMAIL_FROM}`);
   const content = createEmailContent(token);
 
   try {
-    const result = await env.EMAIL.send({
-      to: email,
-      from: env.EMAIL_FROM,
-      subject: content.subject,
-      text: content.text,
-      html: content.html,
-    });
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: email,
+          from: env.EMAIL_FROM,
+          subject: content.subject,
+          text: content.text,
+          html: content.html,
+        }),
+      }
+    );
 
-    console.log(`Email sent successfully: ${result.messageId}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Email API failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log(`Email sent successfully: ${result.result?.id || 'unknown'}`);
     return { sent: true };
   } catch (error) {
-    console.error(`Email sending failed: ${error.code} - ${error.message}`);
+    console.error(`Email sending failed: ${error.message}`);
     throw error;
   }
 }
