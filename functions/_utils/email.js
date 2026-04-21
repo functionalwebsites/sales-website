@@ -241,14 +241,26 @@ async function sendWithCloudflareSockets(config, email, content) {
 }
 
 export async function sendProTokenEmail(env, email, token) {
-  const config = getEmailConfig(env);
-
-  if (!hasRequiredConfig(config)) {
-    throw new Error('Missing SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, or EMAIL_FROM');
+  if (!env.EMAIL_FROM) {
+    throw new Error('Missing EMAIL_FROM');
   }
 
-  console.log(`Preparing Pro token email for ${email} using ${config.host}:${config.port} from ${config.from}`);
+  console.log(`Preparing Pro token email for ${email} from ${env.EMAIL_FROM}`);
   const content = createEmailContent(token);
-  await sendWithCloudflareSockets(config, email, content);
-  return { sent: true };
+
+  try {
+    const result = await env.EMAIL.send({
+      to: email,
+      from: env.EMAIL_FROM,
+      subject: content.subject,
+      text: content.text,
+      html: content.html,
+    });
+
+    console.log(`Email sent successfully: ${result.messageId}`);
+    return { sent: true };
+  } catch (error) {
+    console.error(`Email sending failed: ${error.code} - ${error.message}`);
+    throw error;
+  }
 }
