@@ -58,6 +58,13 @@ button {
   min-height: 80px;
 }
 
+#header-placeholder {
+  min-height: 56px;
+  width: 100%;
+  position: fixed;
+  z-index: 9;
+}
+
 .logo-link {
   display: inline-flex;
   align-items: center;
