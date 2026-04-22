@@ -342,7 +342,7 @@ footer {
 @media (max-width: 640px) {
   .header-wrapper {
     padding: 12px;
-    min-height: 56px;
+    min-height: 60px;
   }
 
   .logo {
