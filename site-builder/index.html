@@ -519,7 +519,7 @@ select.input { appearance: none; }
     <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()">👁 Preview</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
     <button class="btn btn-primary btn-sm" onclick="saveProject()">💾 Save</button>
-    <button class="btn btn-green btn-sm d-only" onclick="openDeployModal()">🚀 Deploy</button>
+    <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">🚀 Deploy</button>
     <!-- Mobile overflow trigger -->
     <button class="btn btn-ghost btn-sm m-only" onclick="toggleMobileOverflow(event)" style="font-size:18px;padding:4px 8px;">⋮</button>
   </div>
@@ -534,7 +534,7 @@ select.input { appearance: none; }
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openHelpDocs()">? &nbsp;Help / Docs</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()">👁 &nbsp;Preview</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();downloadZip()">⬇ &nbsp;Download ZIP</button>
-    <button class="mob-overflow-item" onclick="closeMobileOverflow();openDeployModal()">🚀 &nbsp;Deploy</button>
+    <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">🚀 &nbsp;Deploy</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();switchEditorMode('code')">＜/＞ &nbsp;Code Editor</button>
   </div>
 
@@ -929,7 +929,7 @@ select.input { appearance: none; }
           <li>Pick a starter template, then use the left <strong>Add</strong> panel to add blocks.</li>
           <li>Click any block in the canvas to edit its settings in the right <strong>Properties</strong> panel.</li>
           <li>Use <strong>Save</strong> often. Your projects are stored in this browser's localStorage.</li>
-          <li>Use <strong>Preview</strong> to open the current page, or <strong>Download ZIP</strong> to export the full site.</li>
+          <li>Use <strong>Preview</strong> to open the current page, or <strong>Download ZIP</strong> to export the full site for free.</li>
         </ol>
       </div>
 
@@ -953,6 +953,7 @@ select.input { appearance: none; }
       <div class="help-card">
         <h3>Deploying</h3>
         <ul>
+          <li><strong>Direct deployment from the builder requires Pro.</strong> ZIP export stays free for all users.</li>
           <li><strong>GitHub Pages</strong> creates or updates files in a repository. After deploy, enable Pages in the repo settings and choose the deployed branch/folder.</li>
           <li><strong>Cloudflare Pages</strong> uses direct upload and needs a Cloudflare API token plus account ID in Settings.</li>
           <li>If GitHub says <strong>Not Found</strong>, check the saved username/org, token permissions, branch name, and whether the token can create repos in that org.</li>
@@ -1445,6 +1446,17 @@ function checkProThenExportBundle() {
   exportLibraryBundle();
 }
 
+function checkProThenDeploy() {
+  if (!isProUnlocked()) {
+    showProUpsell(
+      'Deploy Website',
+      'Deploy directly to GitHub Pages or Cloudflare Pages with Pro. ZIP export stays free for all users.'
+    );
+    return false;
+  }
+  return true;
+}
+
 // Wrap upload images with pro check (if image uploads should be pro)
 // Uncomment below if you want to gate image uploads
 // const originalUploadImages = window.uploadImages;
@@ -1464,6 +1476,20 @@ function initProFeatures() {
   const unlockProBtn = document.getElementById('btn-unlock-pro');
   if (unlockProBtn) {
     unlockProBtn.style.display = isPro ? 'none' : 'inline-flex';
+  }
+
+  const deployDesktopBtn = document.getElementById('btn-deploy-desktop');
+  if (deployDesktopBtn && !isPro) {
+    deployDesktopBtn.style.opacity = '0.7';
+    deployDesktopBtn.title = 'Pro feature. ZIP export is still free.';
+    deployDesktopBtn.innerHTML = '🔒 Deploy';
+  }
+
+  const deployMobileBtn = document.getElementById('btn-deploy-mobile');
+  if (deployMobileBtn && !isPro) {
+    deployMobileBtn.style.opacity = '0.7';
+    deployMobileBtn.title = 'Pro feature. ZIP export is still free.';
+    deployMobileBtn.innerHTML = '🔒 &nbsp;Deploy';
   }
 
   // Disable pro-only buttons for free users
@@ -4638,6 +4664,7 @@ async function restoreFromRepoZip(owner, repo, path, token, timestamp = 0) {
 // DEPLOY MODAL
 // ============================================================
 function openDeployModal() {
+  if (!checkProThenDeploy()) return;
   if (!STATE.currentProjectId) return;
 
   const gh = LS.get('github') || {};
@@ -4683,6 +4710,7 @@ function selectDeployTarget(t) {
 }
 
 async function startDeploy() {
+  if (!checkProThenDeploy()) return;
   if (!STATE.deployTarget) return;
   const asRelease = STATE.deployTarget === 'github' && document.getElementById('deploy-as-release').checked;
   document.getElementById('deploy-actions').classList.add('hidden');
