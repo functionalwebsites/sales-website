@@ -278,7 +278,7 @@
   <!-- HERO -->
   <section class="hero">
     <h1>Extend Your <span>Builder</span></h1>
-    <p>Unlock custom blocks and themes with Pro, then choose included advanced items, paid premium add-ons, or custom business solutions.</p>
+    <p>Premium blocks and themes to customize your websites. Free tier, Pro ($9.99), or Business plan.</p>
   </section>
 
   <!-- FILTERS -->
@@ -286,8 +286,8 @@
     <button class="filter-btn active" data-filter="all">All</button>
     <button class="filter-btn" data-filter="block">Blocks</button>
     <button class="filter-btn" data-filter="theme">Themes</button>
-    <button class="filter-btn" data-filter="free">Included with Pro</button>
-    <button class="filter-btn" data-filter="pro">Premium Add-ons</button>
+    <button class="filter-btn" data-filter="free">Free</button>
+    <button class="filter-btn" data-filter="pro">Pro Only</button>
   </div>
 
   <!-- MARKETPLACE -->
@@ -300,13 +300,13 @@
   <!-- INFO SECTION -->
   <section class="info-section">
     <h2>How to Unlock Premium Items</h2>
-    <p>All custom blocks and custom themes require a Pro plan first. Once Pro is unlocked, items fall into three groups: included advanced items, paid premium add-ons, and custom business builds.</p>
+    <p>All items below are available to use in your projects. Here's how it works:</p>
     <ul>
-      <li><strong>Advanced Items:</strong> Included with Pro. These are ready to use as soon as your Pro plan is active.</li>
-      <li><strong>Premium Items:</strong> Require Pro and a separate one-time purchase for each item or pack.</li>
+      <li><strong>Free Items:</strong> Free Items are unlocked with a pro account.</li>
+      <li><strong>Pro Items:</strong> Pro Items have additional one time fees </li>
       <li><strong>Business Items:</strong> Custom solutions for your business. Contact sales for pricing and details.</li>
     </ul>
-    <p>Start with Pro to unlock custom item support, then add premium blocks or themes only when you need them.</p>
+    <p>Upgrade to Pro to unlock custom blocks, premium themes, advanced editor features, and more.</p>
   </section>
   <div id="footer-placeholder"></div>
   <script>
@@ -316,71 +316,64 @@
           id: 'testimonial-wall',
           type: 'block',
           title: 'Testimonial Wall',
-          description: 'Beautiful customer testimonials grid with star ratings and quotes. Included with Pro once custom blocks are unlocked.',
+          description: 'Beautiful customer testimonials grid with star ratings and quotes. Perfect for building social proof.',
           icon: '⭐',
           tier: 'free',
-          category: 'block',
-          priceLabel: 'Included with Pro'
+          category: 'block'
         },
         {
           id: 'youtube-embed',
           type: 'block',
           title: 'YouTube Embed',
-          description: 'Embed YouTube videos with custom sizing and responsive behavior. Included with Pro once custom blocks are unlocked.',
+          description: 'Embed YouTube videos with custom sizing and responsive behavior. Works on all devices.',
           icon: '🎥',
           tier: 'free',
-          category: 'block',
-          priceLabel: 'Included with Pro'
+          category: 'block'
         },
         {
           id: 'pro-carousel',
           type: 'block',
           title: 'Advanced Carousel',
-          description: 'Full-featured image carousel with touch controls, animations, and auto-play. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Full-featured image carousel with touch controls, animations, and auto-play. Custom blocks unlock with Pro.',
           icon: '🎠',
           tier: 'pro',
-          category: 'block',
-          priceLabel: 'Add-on with Pro'
+          category: 'block'
         },
         {
           id: 'pro-form',
           type: 'block',
           title: 'Advanced Form Builder',
-          description: 'Create custom forms with validation, file uploads, and email notifications. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Create custom forms with validation, file uploads, and email notifications. Custom blocks unlock with Pro.',
           icon: '📝',
           tier: 'pro',
-          category: 'block',
-          priceLabel: 'Add-on with Pro'
+          category: 'block'
         },
         {
           id: 'plumber-template',
           type: 'theme',
           title: 'Plumber Pro Template',
-          description: 'Complete website template for plumbing and HVAC services. Included with Pro once custom themes are unlocked.',
+          description: 'Complete website template for plumbing and HVAC services. Includes booking and service pages.',
           icon: '🔧',
           tier: 'free',
-          category: 'theme',
-          priceLabel: 'Included with Pro'
+          category: 'theme'
         },
         {
           id: 'pro-saas',
           type: 'theme',
           title: 'SaaS Landing Page',
-          description: 'Modern SaaS template with hero section, pricing, testimonials, and CTA sections. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Modern SaaS template with hero section, pricing, testimonials, and CTA sections. Premium themes unlock with Pro.',
           icon: '🚀',
           tier: 'pro',
-          category: 'theme',
-          priceLabel: 'Add-on with Pro'
+          category: 'theme'
         },
         {
           id: 'pro-portfolio',
           type: 'theme',
           title: 'Portfolio Template',
-          description: 'Elegant portfolio site for creatives, designers, and photographers. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Elegant portfolio site for creatives, designers, and photographers. Premium themes unlock with Pro.',
           icon: '🎨',
           tier: 'pro',
-          category: 'theme',
-          priceLabel: 'Add-on with Pro'
+          category: 'theme'
         }
       ]
     };
@@ -412,20 +405,20 @@
 
       filtered.forEach((item) => {
         const card = document.createElement('div');
-        const isPremium = item.tier === 'pro';
+        const isPro = item.tier === 'pro';
         const isBlock = item.category === 'block';
 
         card.className = 'item-card';
         card.innerHTML = `
           <div class="item-preview">${item.icon}</div>
           <div class="item-content">
-            <span class="item-type">${isBlock ? 'Block' : 'Theme'} · ${isPremium ? 'Premium Add-on' : 'Advanced'}</span>
+            <span class="item-type">${isBlock ? 'Block' : 'Theme'} · ${isPro ? 'Pro' : 'Free'}</span>
             <h3 class="item-title">${item.title}</h3>
             <p class="item-description">${item.description}</p>
             <div class="item-footer">
-              ${isPremium ? `<span class="item-price">${item.priceLabel}</span>` : `<span class="item-free">${item.priceLabel}</span>`}
-              <button class="item-btn ${isPremium ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPremium})">
-                ${isPremium ? 'View Add-on' : 'Use with Pro'}
+              ${isPro ? '<span class="item-price">Pro $49</span>' : '<span class="item-free">Free</span>'}
+              <button class="item-btn ${isPro ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPro})">
+                ${isPro ? 'Upgrade' : 'Use'}
               </button>
             </div>
           </div>
@@ -435,11 +428,11 @@
       });
     }
 
-    function handleItemClick(itemId, isPremium) {
-      if (isPremium) {
-        alert(`This item requires an active Pro plan plus a separate one-time add-on purchase: ${itemId}.`);
+    function handleItemClick(itemId, isPro) {
+      if (isPro) {
+        alert(`Get Pro ($49 one-time) to unlock: ${itemId}. You'll have access to all premium blocks and themes.`);
       } else {
-        alert(`This advanced item is included with Pro: ${itemId}.`);
+        alert(`Added to your builder: ${itemId}`);
       }
     }
 
