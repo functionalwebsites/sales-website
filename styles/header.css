@@ -1,10 +1,9 @@
 /* ===== UNIFIED HEADER STYLES ===== */
-/* Shared across website and site builder */
-
+/* Shared across website and site builder, backup only */
 /* Header Container */
 .header {
   background: var(--bg2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: none;
   position: sticky;
   top: 0;
   z-index: 100;

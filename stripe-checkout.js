@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * Start Stripe Checkout
  * Call this when "Buy Pro" button is clicked
  */
+
 async function startStripeCheckout() {
   try {
     if (!stripe) {

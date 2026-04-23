@@ -18,7 +18,8 @@
   <style>
     /* HERO */
     .hero {
-      max-width: 1200px;
+      max-width: 100%;
+      background-color: var(--bg2);
       margin: 0 auto;
       padding: 80px 24px;
       text-align: center;
@@ -48,7 +49,7 @@
     .filters {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 24px 40px;
+      padding: 24px 40px;
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
@@ -267,7 +268,7 @@
       }
 
       .filters {
-        flex-direction: column;
+        flex-direction: row;
       }
     }
   </style>
@@ -310,6 +311,12 @@
   </section>
   <div id="footer-placeholder"></div>
   <script>
+    const PRO_TOKEN_KEY = 'fw_pro_token';
+    const isProUnlocked = () => {
+      const token = localStorage.getItem(PRO_TOKEN_KEY);
+      return Boolean(token && token.trim().length > 0);
+    };
+
     const marketplaceData = {
       items: [
         {
@@ -318,6 +325,8 @@
           title: 'Testimonial Wall',
           description: 'Beautiful customer testimonials grid with star ratings and quotes. Included with Pro once custom blocks are unlocked.',
           icon: '⭐',
+          downloadPath: '/site-builder/blocks/testimonial-wall-block.json',
+          downloadFilename: 'testimonial-wall-block.json',
           tier: 'free',
           category: 'block',
           priceLabel: 'Included with Pro'
@@ -328,6 +337,8 @@
           title: 'YouTube Embed',
           description: 'Embed YouTube videos with custom sizing and responsive behavior. Included with Pro once custom blocks are unlocked.',
           icon: '🎥',
+          downloadPath: '/site-builder/blocks/youtube-embed-block.json',
+          downloadFilename: 'youtube-embed-block.json',
           tier: 'free',
           category: 'block',
           priceLabel: 'Included with Pro'
@@ -414,6 +425,7 @@
         const card = document.createElement('div');
         const isPremium = item.tier === 'pro';
         const isBlock = item.category === 'block';
+        const isDownloadable = !isPremium && isProUnlocked() && !!item.downloadPath;
 
         card.className = 'item-card';
         card.innerHTML = `
@@ -424,8 +436,8 @@
             <p class="item-description">${item.description}</p>
             <div class="item-footer">
               ${isPremium ? `<span class="item-price">${item.priceLabel}</span>` : `<span class="item-free">${item.priceLabel}</span>`}
-              <button class="item-btn ${isPremium ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPremium})">
-                ${isPremium ? 'View Add-on' : 'Use with Pro'}
+              <button class="item-btn ${isPremium || !isDownloadable ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPremium})">
+                ${isPremium ? 'View Add-on' : isDownloadable ? 'Download' : 'Use with Pro'}
               </button>
             </div>
           </div>
@@ -435,11 +447,44 @@
       });
     }
 
-    function handleItemClick(itemId, isPremium) {
+    async function downloadItemAsset(downloadPath, downloadFilename) {
+      const response = await fetch(downloadPath);
+      if (!response.ok) throw new Error(`Could not download file (${response.status})`);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = downloadFilename || 'marketplace-item.json';
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    async function handleItemClick(itemId, isPremium) {
+      const item = marketplaceData.items.find((entry) => entry.id === itemId);
+      if (!item) return;
+
       if (isPremium) {
-        alert(`This item requires an active Pro plan plus a separate one-time add-on purchase: ${itemId}.`);
-      } else {
-        alert(`This advanced item is included with Pro: ${itemId}.`);
+        alert(`This item requires an active Pro plan plus a separate one-time add-on purchase: ${item.title}.`);
+        return;
+      }
+
+      if (!isProUnlocked()) {
+        alert(`This advanced item is included with Pro: ${item.title}.`);
+        return;
+      }
+
+      if (!item.downloadPath) {
+        alert(`No download file is configured for ${item.title}.`);
+        return;
+      }
+
+      try {
+        await downloadItemAsset(item.downloadPath, item.downloadFilename);
+      } catch (error) {
+        alert(`Download failed for ${item.title}: ${error.message}`);
       }
     }
 
