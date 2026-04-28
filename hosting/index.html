@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Static website hosting explained simply. Host free on GitHub Pages or Cloudflare Pages, or have Functional Websites set it up and manage it for you.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#4ade80">
+  <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
+  <meta name="msapplication-TileColor" content="#0f0f13">
+  <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#0f0f13">
+  <title>Static Website Hosting — Functional Websites</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <style>
+    .hero {
+      background: var(--bg2);
+      min-height: 70vh;
+      padding: 96px 24px 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero-inner,
+    .section,
+    .cta {
+      width: min(1120px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1.08;
+      margin-bottom: 24px;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 0 auto 32px;
+      color: var(--text2);
+      font-size: 18px;
+    }
+
+    .hero-actions,
+    .cta-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-large {
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 6px;
+    }
+
+    .section {
+      padding: 80px 0;
+    }
+
+    .section-header {
+      max-width: 760px;
+      margin-bottom: 34px;
+    }
+
+    .section-header.center {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h2 {
+      font-size: 32px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .section-header p,
+    .card p,
+    .comparison td,
+    .service-card p,
+    .note-box p,
+    .cta p {
+      color: var(--text2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .card,
+    .service-card,
+    .note-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .card h3,
+    .service-card h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .card ul,
+    .service-card ul {
+      list-style: none;
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .card li,
+    .service-card li {
+      color: var(--text);
+      font-size: 14px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .card li::before,
+    .service-card li::before {
+      content: "✓";
+      color: var(--green);
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .comparison-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg2);
+    }
+
+    .comparison {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    .comparison th,
+    .comparison td {
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .comparison th {
+      color: var(--text);
+      background: var(--bg3);
+      font-weight: 700;
+    }
+
+    .comparison tr:last-child td {
+      border-bottom: none;
+    }
+
+    .price {
+      color: var(--green);
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .service-note {
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .note-box {
+      margin-top: 24px;
+      border-color: rgba(74, 222, 128, 0.45);
+    }
+
+    .note-box strong {
+      color: var(--text);
+    }
+
+    .source-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .source-links a {
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .cta {
+      margin-top: 40px;
+      margin-bottom: 80px;
+      padding: 56px 36px;
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.12), rgba(74, 222, 128, 0.04));
+      border: 1px solid var(--green);
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .cta p {
+      max-width: 700px;
+      margin: 0 auto 24px;
+    }
+
+    @media (max-width: 860px) {
+      .grid,
+      .two-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 72px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Static Website Hosting</div>
+      <h1>You probably do not need a traditional hosting plan.</h1>
+      <p class="hero-copy">If your site is static HTML, CSS, and JavaScript, it can usually be hosted for free on GitHub Pages or Cloudflare Pages. You can do it yourself, pay us once to set it up, or use our optional custodian service if you would rather not touch the hosting accounts.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-large" href="mailto:cooper@functionalwebsites.com?subject=Hosting%20Setup%20Inquiry">Ask Us to Set It Up</a>
+        <a class="btn btn-secondary btn-large" href="#compare">Compare Free Options</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header center">
+      <h2>What "Hosting" Means for a Static Site</h2>
+      <p>Traditional hosting rents you server space. A static website usually does not need a server running WordPress, PHP, databases, plugins, or a control panel. It just needs a place to serve files quickly and securely.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Your site is just files</h3>
+        <p>Static sites are made of files a browser can read directly. That makes them simple to store, move, back up, and publish.</p>
+      </div>
+      <div class="card">
+        <h3>Free platforms work well</h3>
+        <p>GitHub Pages and Cloudflare Pages both support static websites, custom domains, HTTPS, and automatic deployment from a repository.</p>
+      </div>
+      <div class="card">
+        <h3>Help is optional</h3>
+        <p>You can manage the platform yourself, or we can handle the setup and act as the middle layer for updates.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="compare">
+    <div class="section-header">
+      <h2>GitHub Pages vs. Cloudflare Pages</h2>
+      <p>Both are good free choices for static websites. The right pick depends on how technical you want the setup to be and whether you already use Cloudflare for DNS.</p>
+    </div>
+
+    <div class="comparison-wrap">
+      <table class="comparison">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>GitHub Pages</th>
+            <th>Cloudflare Pages</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Best fit</td>
+            <td>Simple static sites where the files live in a GitHub repository.</td>
+            <td>Static sites that benefit from Cloudflare DNS, edge delivery, previews, and room for future technical features.</td>
+          </tr>
+          <tr>
+            <td>Cost for most static sites</td>
+            <td>Free for public repositories on GitHub Free. Private repository publishing requires a paid GitHub plan.</td>
+            <td>Free plan available with generous static site limits, including custom domains and build minutes.</td>
+          </tr>
+          <tr>
+            <td>Custom domain</td>
+            <td>Supported. You point DNS records to GitHub Pages and can use HTTPS.</td>
+            <td>Supported. Apex domains work best when the domain uses Cloudflare nameservers; subdomains can use a CNAME.</td>
+          </tr>
+          <tr>
+            <td>Traffic and limits</td>
+            <td>Good for normal small business traffic. GitHub lists soft limits such as published site size and monthly bandwidth.</td>
+            <td>Good for normal small business traffic. Cloudflare lists free-plan limits for builds, files, custom domains, and asset size.</td>
+          </tr>
+          <tr>
+            <td>Ease for non-technical owners</td>
+            <td>Simple once configured, but GitHub can feel unfamiliar if you do not use repositories.</td>
+            <td>Clear dashboard, but DNS and Pages settings can still be intimidating if you have never used Cloudflare.</td>
+          </tr>
+          <tr>
+            <td>My usual recommendation</td>
+            <td>Use it when you want the simplest repository-to-website setup and do not need extra platform features.</td>
+            <td>Use it when you want strong DNS control, fast global delivery, and a path toward more advanced web features later.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note-box">
+      <p><strong>Plain-English version:</strong> GitHub Pages is usually the simplest free home for a basic static site. Cloudflare Pages is usually the stronger long-term platform if your domain is already on Cloudflare or you may want more advanced web infrastructure later.</p>
+      <div class="source-links">
+        <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages">GitHub Pages docs</a>
+        <a href="https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/github-pages-limits">GitHub Pages limits</a>
+        <a href="https://developers.cloudflare.com/pages/platform/limits/">Cloudflare Pages limits</a>
+        <a href="https://developers.cloudflare.com/pages/configuration/custom-domains/">Cloudflare custom domains</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header center">
+      <h2>Optional Hosting Help</h2>
+      <p>You do not have to buy hosting from us. This is only for people who want the benefits of free static hosting without managing GitHub or Cloudflare themselves.</p>
+    </div>
+    <div class="two-grid">
+      <div class="service-card">
+        <h3>One-Time Setup</h3>
+        <div class="price">Flat fee</div>
+        <p class="service-note">GitHub Pages or Cloudflare Pages setup</p>
+        <p>We connect the repository, configure the deployment, point the domain, check HTTPS, and hand over the basic access details.</p>
+        <ul>
+          <li>Repository-to-site deployment setup</li>
+          <li>Custom domain connection</li>
+          <li>HTTPS check</li>
+          <li>Basic handoff so you know where things live</li>
+        </ul>
+      </div>
+
+      <div class="service-card">
+        <h3>Custodian Service</h3>
+        <div class="price">$60/year</div>
+        <p class="service-note">About $5/month, billed annually</p>
+        <p>We manage the static hosting layer for you. We monitor the repository and act as the middle layer for updates to the live website.</p>
+        <ul>
+          <li>We keep an eye on the repo and deployment status</li>
+          <li>We publish content updates when you provide the exact changes</li>
+          <li>We coordinate GitHub or Cloudflare hosting details</li>
+          <li>Design or custom code updates are available at an hourly rate</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <p><strong>This is not a design retainer.</strong> The custodian service covers the static hosting middle layer and simple provided updates. If you want new design work, layout changes, new functionality, or custom edits, that is handled separately at an hourly rate.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>Why This Beats Typical Hosting for Static Sites</h2>
+      <p>A typical shared hosting plan is often around $15/month before add-ons, renewals, backups, security tools, or managed services. For a static site, that is usually paying for machinery you do not need.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Lower recurring cost</h3>
+        <p>Free static hosting means the platform cost can be $0. Our custodian option is for convenience, not because the site technically needs paid hosting.</p>
+      </div>
+      <div class="card">
+        <h3>Less maintenance</h3>
+        <p>No database updates, plugin conflicts, PHP versions, server panels, or WordPress security chores for a normal static site.</p>
+      </div>
+      <div class="card">
+        <h3>Still portable</h3>
+        <p>Your website remains plain files in a repository. If you ever want to move platforms, the site can move with you.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Want the free hosting benefits without managing the setup?</h2>
+    <p>We can set up GitHub Pages or Cloudflare Pages for a fee, and the optional $60/year custodian service keeps us in the middle so you do not have to manage the static hosting workflow yourself.</p>
+    <div class="cta-actions">
+      <a class="btn btn-primary btn-large" href="mailto:cooper@functionalwebsites.com?subject=Hosting%20Setup%20Inquiry">Ask About Hosting Setup</a>
+      <a class="btn btn-secondary btn-large" href="/docs">Read the Docs</a>
+    </div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js"></script>
+</body>
+</html>
