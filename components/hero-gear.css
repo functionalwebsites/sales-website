@@ -1,0 +1,49 @@
+.gear-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.gear-hero::before,
+.gear-hero::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 100%;
+  width: clamp(520px, 72vw, 920px);
+  aspect-ratio: 1;
+  background: var(--green, #4ade80);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transform-origin: center;
+}
+
+.gear-hero::before {
+  -webkit-mask: url("/minigear-globe.svg") center / contain no-repeat;
+  mask: url("/minigear-globe.svg") center / contain no-repeat;
+}
+
+.gear-hero::after {
+  -webkit-mask: url("/minigear-gear.svg") center / contain no-repeat;
+  mask: url("/minigear-gear.svg") center / contain no-repeat;
+  animation: heroGearSpin 80s linear infinite;
+}
+
+.gear-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes heroGearSpin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gear-hero::after {
+    animation: none;
+  }
+}

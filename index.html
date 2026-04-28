@@ -19,14 +19,12 @@
   <meta name="stripe-price-id" content="price_1TMd9XQtO2WgU350cTZRFc4y">
   <title>Functional Websites — Fast, Simple, Fully-Owned Websites</title>
   <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/components/hero-gear.css">
   <style>
 
     /* HERO */
     .hero {
       /* max-width: 1200px; */
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
       margin: 0 auto;
       min-height: 80vh;
       padding: 80px 24px;
@@ -37,50 +35,6 @@
       align-items: center;
       text-align: center;
       background-color: var(--bg2);
-    }
-
-    .hero::before,
-    .hero::after {
-      content: "";
-      position: absolute;
-      left: 100%;
-      top: 100%;
-      width: clamp(520px, 72vw, 920px);
-      aspect-ratio: 1;
-      background: var(--green);
-      opacity: 0.6;
-      pointer-events: none;
-      z-index: 0;
-      transform: translate(-50%, -50%) rotate(0deg);
-      transform-origin: center;
-    }
-
-    .hero::before {
-      -webkit-mask: url("/minigear-globe.svg") center / contain no-repeat;
-      mask: url("/minigear-globe.svg") center / contain no-repeat;
-    }
-
-    .hero::after {
-      -webkit-mask: url("/minigear-gear.svg") center / contain no-repeat;
-      mask: url("/minigear-gear.svg") center / contain no-repeat;
-      animation: heroGearSpin 80s linear infinite;
-    }
-
-    .hero > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes heroGearSpin {
-      to {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero::after {
-        animation: none;
-      }
     }
 
     .hero h1 {
@@ -389,6 +343,33 @@
       line-height: 1.6;
     }
 
+    .clone-banner {
+      margin-top: 32px;
+      background: var(--bg2);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .clone-banner h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .clone-banner p {
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .clone-banner .btn {
+      flex: 0 0 auto;
+    }
+
     /* CTA */
     .cta {
       width: min(800px, calc(100% - 48px));
@@ -521,6 +502,11 @@
         grid-template-columns: 1fr;
       }
 
+      .clone-banner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
       .cta {
         margin: 80px 24px;
       }
@@ -533,7 +519,7 @@
   <div id="header-placeholder"></div>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero gear-hero">
     <h1>Build <span>fast, simple,</span> fully-owned websites</h1>
     <p>No database. No plugins. No lock-in. Just you, your content, and the open web.</p>
     <div class="hero-buttons">
@@ -736,6 +722,14 @@
           ✓ Scoped around the functionality you need
         </p>
       </div>
+    </div>
+
+    <div class="clone-banner">
+      <div>
+        <h3>Need to recreate an existing website?</h3>
+        <p>We offer basic static clones and cleaner editable rebuilds for sites you own or have permission to reproduce.</p>
+      </div>
+      <button class="btn btn-large btn-secondary" onclick="window.location.href='/services#website-cloning'">Website Cloning</button>
     </div>
 
     <div style="text-align: center; margin-top: 60px;">

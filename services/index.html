@@ -15,6 +15,7 @@
   <meta name="theme-color" content="#0f0f13">
   <title>Custom Website Services — Functional Websites</title>
   <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/components/hero-gear.css">
   <style>
     /* HERO */
     .hero {
@@ -203,6 +204,30 @@
       border-color: var(--text);
     }
 
+    .section-intro {
+      text-align: center;
+      color: var(--text2);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 760px;
+      margin: -36px auto 48px;
+    }
+
+    .clone-note {
+      margin-top: 28px;
+      background: var(--bg2);
+      border: 1px solid rgba(74, 222, 128, 0.35);
+      border-radius: 12px;
+      padding: 24px;
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .clone-note strong {
+      color: var(--text);
+    }
+
     /* TIMELINE / WHAT TO EXPECT */
     .timeline {
       max-width: 1000px;
@@ -353,7 +378,7 @@
   <div id="header-placeholder"></div>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero gear-hero">
     <h1>Website Services That Fit the Job</h1>
     <p>From a fast starter site to a fully custom system, we match the build to what your business actually needs.</p>
   </section>
@@ -450,6 +475,52 @@
 
         <button class="service-cta" onclick="window.location.href='mailto:cooper@functionalwebsites.com?subject=Systems%20Site%20Interest'">Get Started</button>
       </div>
+    </div>
+  </section>
+
+  <!-- WEBSITE CLONING -->
+  <section class="services" id="website-cloning">
+    <h2>Website Cloning</h2>
+    <p class="section-intro">If you already have a website you like, we can recreate it as a clean static site. This is for sites you own, manage, or have permission to reproduce.</p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>Basic Clone</h3>
+        <div class="service-price">One-Time Copy</div>
+        <p class="service-note">For preserving or moving an existing site</p>
+        <p class="service-description">A direct static clone of an existing website. The goal is to capture the current look and content as a working static version, not to rebuild it as an editable system.</p>
+
+        <ul class="service-features">
+          <li>One-and-done clone of the existing site</li>
+          <li>Static HTML, CSS, and asset export</li>
+          <li>Useful for archiving, moving, or simplifying a site</li>
+          <li>Not organized for ongoing editing</li>
+          <li>Contact for scope and details</li>
+        </ul>
+
+        <button class="service-cta" onclick="window.location.href='mailto:cooper@functionalwebsites.com?subject=Basic%20Website%20Clone%20Inquiry'">Ask About a Basic Clone</button>
+      </div>
+
+      <div class="service-card">
+        <h3>Custom Clone</h3>
+        <div class="service-price">Editable Rebuild</div>
+        <p class="service-note">For sites you want to maintain after the clone</p>
+        <p class="service-description">A cleaner rebuild of an existing site that keeps the design direction but organizes the code, sections, assets, and content so future edits are practical.</p>
+
+        <ul class="service-features">
+          <li>Rebuilt into an editable static structure</li>
+          <li>Cleaned-up sections, styles, and assets</li>
+          <li>Reusable patterns where it makes sense</li>
+          <li>Better handoff for future content updates</li>
+          <li>Contact for scope and details</li>
+        </ul>
+
+        <button class="service-cta" onclick="window.location.href='mailto:cooper@functionalwebsites.com?subject=Custom%20Website%20Clone%20Inquiry'">Ask About a Custom Clone</button>
+      </div>
+    </div>
+
+    <div class="clone-note">
+      <p><strong>Important:</strong> cloning is meant for your own website, a site you manage, or a site you have permission to reproduce. If you want to use another company's website only as inspiration, the better path is a custom design that captures the direction without copying their brand, content, or protected assets.</p>
     </div>
   </section>
 
