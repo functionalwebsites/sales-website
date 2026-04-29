@@ -68,6 +68,10 @@ a { color: var(--accent); text-decoration: none; }
 .text-sm { font-size: 12px; }
 .text-muted { color: var(--text2); }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.save-status { font-size: 11px; color: var(--text2); white-space: nowrap; }
+.save-status[data-state="dirty"] { color: var(--yellow); }
+.save-status[data-state="saving"] { color: var(--accent2); }
+.save-status[data-state="saved"] { color: var(--green); }
 
 /* ===== BUTTONS ===== */
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; transition: all .15s; }
@@ -271,7 +275,7 @@ select.input { appearance: none; }
 .mob-tab-icon { font-size: 20px; line-height: 1; color: var(--green); }
 
 /* ===== MOBILE OVERFLOW MENU ===== */
-.mob-overflow-menu { position: fixed; top: 49px; right: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 600; min-width: 190px; padding: 4px 0; }
+.mob-overflow-menu { position: fixed; top: 49px; right: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 1200; min-width: 190px; padding: 4px 0; }
 .mob-overflow-item { display: flex; width: 100%; align-items: center; gap: 10px; padding: 11px 14px; background: transparent; border: none; color: var(--text); font-size: 13px; cursor: pointer; text-align: left; font-family: inherit; }
 .mob-overflow-item:hover { background: var(--bg3); }
 .mob-overflow-item.divider { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 12px; }
@@ -378,6 +382,8 @@ select.input { appearance: none; }
 .img-lib-name { font-size: 10px; padding: 3px 5px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: var(--bg2); }
 .img-lib-del { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 3px; background: rgba(0,0,0,0.75); color: #fff; font-size: 11px; display: none; align-items: center; justify-content: center; border: none; cursor: pointer; line-height: 1; padding: 0; }
 .img-lib-item:hover .img-lib-del { display: flex; }
+.img-lib-note { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; color: var(--text2); font-size: 12px; line-height: 1.5; background: var(--bg3); }
+.img-lib-stats { color: var(--green); font-weight: 600; }
 
 /* ===== PROPS TABS ===== */
 .props-tabs { display: flex; border-bottom: 1px solid var(--border); margin: -12px -12px 12px; }
@@ -401,7 +407,7 @@ select.input { appearance: none; }
 <div id="view-dashboard" class="active">
   <header class="header">
     <div class="header-wrapper">
-      <a class="logo-link" href="https://functionalwebsites.com/" aria-label="Functional Websites home">
+      <a class="logo-link" href="https://functionalwebsites.com/" target="_blank" rel="noopener" aria-label="Functional Websites home">
       <div class="logo">
         <div class="logo-mark">
           <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path class="logo-globe" d="M124.99998,63.77464c-33.75761,0-61.22533,27.46775-61.22533,61.22522,0,33.76176,27.46772,61.2255,61.22533,61.2255,33.76173,0,61.22536-27.46374,61.22536-61.2255,0-33.75747-27.46363-61.22522-61.22536-61.22522ZM113.19576,73.70539c-5.24093,3.38575-9.97977,7.57761-14.00227,12.45118-1.12043,1.35914-2.1796,2.76325-3.1735,4.21026-2.09593-1.39595-4.09805-2.94908-5.99805-4.65523,6.49394-5.7858,14.41656-9.99191,23.17382-12.0062ZM84.08719,91.93213c2.38774,2.16525,4.9184,4.11838,7.56944,5.85111-3.63878,7.32246-5.80005,15.34712-6.29394,23.56563h-12.86755c.76532-11.09812,4.98783-21.26146,11.59205-29.41674ZM72.60331,129.94289h12.85126c.63467,7.76121,2.75509,15.33495,6.20207,22.27373-2.65104,1.73881-5.18171,3.69195-7.56944,5.85305-6.34911-7.8387-10.49403-17.53285-11.48388-28.12678ZM90.02395,164.29228c1.90007-1.7081,3.9042-3.2633,5.99809-4.65717.83267,1.21234,1.71021,2.3959,2.63471,3.54708,4.12458,5.1449,9.0593,9.56935,14.54922,13.1185-8.75729-2.01236-16.69008-6.22054-23.18202-12.00842ZM120.70401,170.84337c-6.86334-3.81025-12.70424-9.07553-17.1676-15.35321,5.37559-2.41236,11.15935-3.90005,17.1676-4.37768v19.73089ZM120.70401,142.49411c-7.57768.52038-14.85939,2.41015-21.57991,5.55723-2.70618-5.57563-4.45309-11.68797-5.04701-18.10844h26.62692v12.55121ZM120.70401,121.34887h-26.73097c.47756-6.85521,2.30001-13.40838,5.21844-19.36353,6.70011,3.12452,13.95733,5.00419,21.51252,5.52056v13.84298ZM120.70401,98.89139c-5.97155-.47763-11.72671-1.94899-17.07577-4.33672,4.46741-6.26551,10.28586-11.53895,17.07577-15.35335v19.69007ZM159.97595,85.70952c-1.9449,1.74905-4.00206,3.34092-6.15513,4.76136-1.01023-1.48367-2.09396-2.92445-3.24293-4.31638-4.04906-4.90623-8.83277-9.12465-14.11859-12.52672,8.89202,1.98164,16.94107,6.2204,23.51665,12.08175ZM129.29596,79.33194c6.72051,3.82035,12.4757,9.07152,16.90433,15.29814-5.30008,2.34498-10.992,3.78783-16.90433,4.26131v-19.55946ZM129.29596,107.50589c7.48172-.51028,14.67983-2.35937,21.32888-5.43284,2.8939,5.93067,4.69595,12.45325,5.17358,19.27581h-26.50246v-13.84298ZM129.29596,129.94289h26.3963c-.60614,6.34894-2.3592,12.42461-5.07762,17.98391-6.64497-3.07153-13.83696-4.9184-21.31868-5.43284v-12.55108ZM129.29596,151.11248c5.90825.46947,11.59606,1.9144,16.89209,4.25315-4.42251,6.22455-10.17773,11.47572-16.89209,15.29814v-19.55129ZM136.46138,176.37417c5.32457-3.42657,10.13076-7.67972,14.20016-12.63077,1.11638-1.35928,2.17147-2.76547,3.16537-4.21233,2.14902,1.42044,4.20621,3.01231,6.15112,4.76122-6.57765,5.86135-14.62473,10.09817-23.51665,12.08189ZM165.91278,158.06967c-2.43879-2.21022-5.0266-4.19988-7.74088-5.96526,3.41633-6.9082,5.51634-14.43697,6.147-22.16152h13.08184c-.99386,10.59393-5.13881,20.28808-11.48796,28.12678ZM164.4107,121.34887c-.48974-8.17976-2.63063-16.1636-6.2388-23.45342,2.71434-1.7633,5.30208-3.75311,7.74088-5.96332,6.6083,8.15527,10.82672,18.32069,11.59208,29.41674h-13.09415Z"/><path class="logo-gear" d="M222.17682,134.82829l23.41662-12.14607-3.19748-25.03112-25.74334-6.40991c-1.9816-5.36282-4.42368-10.50373-7.27356-15.37863l11.8203-23.62087-17.29971-18.37109-24.63473,9.96199c-4.69123-3.14666-9.67007-5.89485-14.88628-8.2023l-4.31793-26.03796-24.79403-4.69386-14.05755,22.51225c-5.77186.22145-11.41635.94546-16.89186,2.13073l-18.7873-18.51651-22.8179,10.77607,1.86267,26.51771c-4.44631,3.51122-8.57799,7.40256-12.35252,11.62022l-26.14687-3.94686-12.12606,22.12996,17.05413,20.31136c-1.52977,5.40507-2.60469,10.99906-3.18078,16.73784l-23.41608,12.14607,3.19748,25.03112,25.74277,6.40976c1.98164,5.36313,4.42376,10.50389,7.27376,15.37909l-11.82034,23.62102,17.29971,18.37124,24.63503-9.9623c4.69112,3.14666,9.6698,5.89469,14.88589,8.20199l4.31801,26.03827,24.79403,4.69401,14.05759-22.51256c5.77186-.2216,11.41631-.94562,16.89182-2.13073l18.7873,18.51635,22.8179-10.77591-1.86271-26.51771c4.44619-3.51122,8.57788-7.40241,12.35241-11.62006l26.14722,3.94686,12.1261-22.12996-17.05436-20.31151c1.52969-5.40507,2.60461-10.9989,3.18067-16.738ZM124.99975,199.17443c-40.90011,0-74.17462-33.27444-74.17462-74.17459S84.09964,50.82511,124.99975,50.82511s74.17466,33.2746,74.17466,74.17474-33.27452,74.17459-74.17466,74.17459Z"/></svg>
@@ -551,6 +557,7 @@ select.input { appearance: none; }
   <div class="editor-header">
     <button id="editor-back-btn" class="btn btn-ghost btn-sm" onclick="exitEditor()">← <span class="d-only">Dashboard</span></button>
     <div class="editor-title" id="editor-project-name"></div>
+    <div class="save-status d-only" id="save-status" data-state="saved">Saved</div>
     <div class="flex items-center gap-1 ml-auto d-only">
       <button id="btn-undo" class="btn btn-ghost btn-sm" onclick="undo()" title="Undo (Ctrl+Z)" disabled style="font-size:16px;padding:4px 7px;">↩</button>
       <button id="btn-redo" class="btn btn-ghost btn-sm" onclick="redo()" title="Redo (Ctrl+Shift+Z)" disabled style="font-size:16px;padding:4px 7px;">↪</button>
@@ -560,7 +567,6 @@ select.input { appearance: none; }
       <button class="editor-mode-tab" data-mode="code" onclick="switchEditorMode('code')">Code</button>
     </div>
     <button class="btn btn-secondary btn-sm d-only" onclick="openLibraryModal()">▦ Library</button>
-    <button class="btn btn-secondary btn-sm d-only" id="btn-site-theme-toggle" onclick="toggleSiteTheme()"><span style="color:var(--green);">○</span> Site Light</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)"><span style="color:var(--green);">▧</span> Images</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="openHelpDocs()">? Help</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
@@ -576,7 +582,6 @@ select.input { appearance: none; }
     <button class="mob-overflow-item" onclick="closeMobileOverflow();undo()" id="mob-btn-undo">↩ &nbsp;Undo</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();redo()" id="mob-btn-redo">↪ &nbsp;Redo</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();openImageLibrary(null)"><span style="color:var(--green);">▧</span> &nbsp;Images</button>
-    <button class="mob-overflow-item" onclick="closeMobileOverflow();toggleSiteTheme()" id="mob-btn-site-theme"><span style="color:var(--green);">○</span> &nbsp;Site Light</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openLibraryModal()">▦ &nbsp;Custom Library</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openHelpDocs()">? &nbsp;Help / Docs</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()"><span style="color:var(--green);">◉</span> &nbsp;Preview</button>
@@ -662,7 +667,7 @@ select.input { appearance: none; }
         <div class="code-tab" data-file="css" onclick="switchCodeTab('css')">style.css</div>
         <div class="code-tab" data-file="js" onclick="switchCodeTab('js')">script.js</div>
       </div>
-      <div id="html-tab-note" class="text-muted text-sm ml-auto" style="font-style:italic;padding:0 8px;">Read-only preview</div>
+      <div id="html-tab-note" class="text-muted text-sm ml-auto" style="font-style:italic;padding:0 8px;">Read-only preview. Library images are shown as images/ files.</div>
       <button id="btn-apply-code" class="btn btn-primary btn-sm" style="margin:6px 0;display:none;" onclick="applyCode()">▶ Apply</button>
     </div>
     <div class="code-area">
@@ -769,6 +774,21 @@ select.input { appearance: none; }
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modal-delete')">Cancel</button>
       <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unsaved Exit Modal -->
+<div id="modal-unsaved-exit" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-title">Unsaved Changes</div>
+    <p style="color:var(--text2);margin-bottom:16px;">You have unsaved changes in this website. Save before returning to the dashboard?</p>
+    <div class="modal-actions" style="justify-content:space-between;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-danger" onclick="continueWithoutSaving()">Continue Without Saving</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-unsaved-exit')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveAndExitEditor()">Save &amp; Exit</button>
+      </div>
     </div>
   </div>
 </div>
@@ -913,6 +933,10 @@ select.input { appearance: none; }
       </div>
     </div>
     <input type="file" id="img-upload-input" accept="image/*" multiple style="display:none" onchange="uploadImages(this)">
+    <div class="img-lib-note">
+      Images are stored once in this project's image library. Blocks use short internal references while you edit, and exports/deploys write real files into an <code>images/</code> folder. HTML view stays readable instead of filling with data URL text.
+      <div class="img-lib-stats" id="img-lib-stats"></div>
+    </div>
     <div id="img-lib-grid" class="img-lib-grid"></div>
     <div id="img-lib-empty" class="text-muted text-sm" style="text-align:center;padding:32px 0;">No images yet. Upload files or import from a URL.</div>
     <div class="modal-actions" style="flex-shrink:0;">
@@ -978,6 +1002,7 @@ select.input { appearance: none; }
           <li>Use <strong>Save</strong> often. Your projects are stored in this browser's localStorage.</li>
           <li>Use <strong>Preview</strong> to open the current page, or <strong>Download ZIP</strong> to export the full site for free.</li>
         </ol>
+        <p style="margin-top:12px;"><a href="/docs/" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">Open full docs in a new tab</a></p>
       </div>
 
       <div class="help-card">
@@ -1049,6 +1074,7 @@ const STATE = {
   imgLibTargetBlockId: null,
   imgLibSelectedId: null,
   imgLibCallback: null,
+  pendingScrollBlockId: null,
 };
 
 const BUILDER_MANIFEST_FILE = 'functional-websites-manifest.json';
@@ -1062,6 +1088,19 @@ const UNDO_LIMIT = 50;
 let _undoStack = [];
 let _redoStack = [];
 let _undoPending = false;
+let _saveState = 'saved';
+
+function setSaveStatus(state, text = '') {
+  _saveState = state;
+  const el = document.getElementById('save-status');
+  if (!el) return;
+  el.dataset.state = state;
+  el.textContent = text || (state === 'dirty' ? 'Unsaved changes' : state === 'saving' ? 'Saving...' : 'Saved');
+}
+
+function markDirty() {
+  if (_saveState !== 'saving') setSaveStatus('dirty');
+}
 
 function _snapshot() {
   return JSON.stringify({
@@ -1089,10 +1128,12 @@ function pushUndo() {
   if (_undoStack.length > UNDO_LIMIT) _undoStack.shift();
   _redoStack = [];
   _updateUndoUI();
+  markDirty();
 }
 
 // Debounced version for high-frequency inputs (typing in a field)
 function pushUndoDebounced() {
+  markDirty();
   if (_undoPending) return;
   _undoPending = true;
   setTimeout(() => { pushUndo(); _undoPending = false; }, 600);
@@ -1275,7 +1316,7 @@ function showProTokenModal() {
         />
 
         <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
-          Don't have a token? <a href="/pricing/" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
+          Don't have a token? <a href="/pricing/" target="_blank" rel="noopener" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
         </p>
       </div>
 
@@ -1297,7 +1338,7 @@ function showProTokenModal() {
         />
 
         <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
-          Don't have a promo code? <a href="/pricing/" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
+          Don't have a promo code? <a href="/pricing/" target="_blank" rel="noopener" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
         </p>
 
         <div
@@ -1574,10 +1615,29 @@ function saveProjectsMeta() {
   LS.set('projects', STATE.projects);
 }
 function getProjectData(id) {
-  return LS.get('proj_'+id) || createBlankProjectData('Untitled');
+  return normalizeProjectData(LS.get('proj_'+id) || createBlankProjectData('Untitled'));
 }
 function saveProjectData(id, data) {
-  LS.set('proj_'+id, data);
+  LS.set('proj_'+id, normalizeProjectData(data));
+}
+
+function normalizeProjectData(data) {
+  if (!data) return createBlankProjectData('Untitled');
+  data.siteTheme = 'light';
+  if (!Array.isArray(data.images)) data.images = [];
+  data.images = data.images.map(img => {
+    const next = Object.assign({}, img);
+    if (!next.id) next.id = uid();
+    if (!next.name) next.name = `${next.id}.jpg`;
+    if (!next.type && next.dataURL) {
+      const match = String(next.dataURL).match(/^data:([^;]+);/);
+      next.type = match ? match[1] : 'image/jpeg';
+    }
+    return next;
+  });
+  if (!Array.isArray(data.templates)) data.templates = [];
+  if (!data.navbars) data.navbars = {};
+  return data;
 }
 
 function normalizeLibraryData(data = {}) {
@@ -1854,6 +1914,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       if (!pd.navbars[p.navbarId]) ensureNavbar(p.navbarId);
       const nc = pd.navbars[p.navbarId];
       const pages = pd.pages || [];
+      const brand = pd.brand || {};
       const pageLinks = nc.pageLinks === 'all'
         ? pages
         : pages.filter(pg => Array.isArray(nc.pageLinks) && nc.pageLinks.includes(pg.id));
@@ -1865,17 +1926,31 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const menuId = `${navId}-menu`;
       const breakpoint = Math.max(320, Number(nc.mobileBreakpoint || 768) || 768);
       const mobileLayout = nc.mobileLayout || 'hamburger';
-      const linkHtml = allLinks.map(l =>
-        `<a href="${l.href}" data-nav-link="true" style="color:${nc.linkColor||'#333'};text-decoration:none;font-weight:500;">${l.label}</a>`
-      ).join('');
+      const align = nc.align || 'split';
+      const justify = align === 'left' ? 'flex-start' : align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'space-between';
+      const textAlign = align === 'right' ? 'right' : align === 'center' ? 'center' : 'left';
+      const linkHtml = allLinks.map(l => {
+        const isButton = Boolean(l.asButton);
+        const styles = isButton
+          ? `color:${brand.btnPrimaryText || brand.accentText || '#ffffff'};background:${brand.btnPrimary || brand.accent || '#7c6af7'};border:1px solid ${brand.btnPrimary || brand.accent || '#7c6af7'};border-radius:6px;padding:10px 16px;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;justify-content:center;`
+          : `color:${nc.linkColor||'#333'};text-decoration:none;font-weight:500;`;
+        return `<a href="${escAttr(l.href || '#')}" data-nav-link="true" style="${styles}">${escapeHtmlForTextarea(l.label || 'Link')}</a>`;
+      }).join('');
+      const mobileAlignItems = align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start';
+      const mobileJustify = align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start';
       const stackCss = mobileLayout === 'stack'
-        ? `@media (max-width:${breakpoint}px){#${navId}{flex-direction:column;align-items:flex-start;gap:12px;}#${navId} .nav-links{display:flex !important;flex-direction:column;align-items:flex-start;gap:12px;width:100%;padding-top:8px;}#${navId} .nav-toggle{display:none !important;}}`
-        : `@media (max-width:${breakpoint}px){#${navId} .nav-toggle{display:inline-flex !important;}#${navId} .nav-links{display:none !important;position:absolute;top:calc(100% + 10px);left:24px;right:24px;background:${nc.bgColor||'#fff'};border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.12);padding:14px;flex-direction:column;gap:12px;}#${navId}[data-open=\"true\"] .nav-links{display:flex !important;}}`;
-      return `<nav ${sel} id="${navId}" data-open="false" style="background:${nc.bgColor||'#fff'};padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);position:relative;">
+        ? `@media (max-width:${breakpoint}px){#${navId}{flex-direction:column;align-items:${mobileAlignItems};gap:12px;text-align:${textAlign};}#${navId} .nav-links{display:flex !important;flex-direction:column;align-items:${mobileAlignItems};gap:12px;width:100%;padding-top:8px;}#${navId} .nav-toggle{display:none !important;}}`
+        : mobileLayout === 'center-stack'
+          ? `@media (max-width:${breakpoint}px){#${navId}{flex-direction:column;align-items:center;gap:12px;text-align:center;}#${navId} .nav-links{display:flex !important;flex-direction:column;align-items:center;gap:12px;width:100%;padding-top:8px;}#${navId} .nav-toggle{display:none !important;}}`
+          : mobileLayout === 'inline'
+            ? `@media (max-width:${breakpoint}px){#${navId}{flex-wrap:wrap;justify-content:${justify};}#${navId} .nav-links{display:flex !important;flex-direction:row;justify-content:${mobileJustify};gap:8px;flex-wrap:wrap;width:100%;}#${navId} .nav-toggle{display:none !important;}}`
+            : `@media (max-width:${breakpoint}px){#${navId}{z-index:30;}#${navId} .nav-toggle{display:inline-flex !important;}#${navId} .nav-links{display:none !important;position:absolute;z-index:9999;top:calc(100% + 10px);left:24px;right:24px;background:${nc.bgColor||'#fff'};border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.18);padding:14px;flex-direction:column;align-items:${mobileAlignItems};gap:12px;text-align:${textAlign};}#${navId}[data-open=\"true\"] .nav-links{display:flex !important;}}`;
+      return `<nav ${sel} id="${navId}" data-open="false" style="background:${nc.bgColor||'#fff'};padding:14px 24px;display:flex;align-items:center;justify-content:${justify};text-align:${textAlign};gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);position:relative;z-index:20;">
   <style>
     #${navId} .nav-brand{font-weight:700;font-size:18px;color:${nc.textColor||'#333'};}
-    #${navId} .nav-links{display:flex;align-items:center;gap:0;flex-wrap:wrap;}
+    #${navId} .nav-links{display:flex;align-items:center;justify-content:${mobileJustify};gap:0;flex-wrap:wrap;}
     #${navId} .nav-links a{padding:0 12px;}
+    #${navId} .nav-links a[style*="inline-flex"]{padding:10px 16px;}
     #${navId} .nav-toggle{display:none;align-items:center;justify-content:center;background:transparent;border:1px solid rgba(0,0,0,.12);border-radius:8px;color:${nc.textColor||'#333'};padding:8px 10px;font-size:18px;line-height:1;}
     ${stackCss}
   </style>
@@ -1888,8 +1963,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const heroAlign = p.align || 'center';
       const heroFlexAlign = heroAlign === 'left' ? 'flex-start' : heroAlign === 'right' ? 'flex-end' : 'center';
       const heroOverlayOpacity = Math.min(1, Math.max(0, Number(p.overlayOpacity || 0) || 0));
-      const heroBg = p.bgImage
-        ? `linear-gradient(rgba(${hexToRgb(p.overlayColor||'#000000')}, ${heroOverlayOpacity}), rgba(${hexToRgb(p.overlayColor||'#000000')}, ${heroOverlayOpacity})), ${p.bgColor||'#7c6af7'} url('${escCssUrl(p.bgImage)}') ${p.bgPosition||'center'} / ${p.bgSize||'cover'} no-repeat`
+      const heroImage = resolveImageAsset(p.bgImage, pd);
+      const heroBg = heroImage
+        ? `linear-gradient(rgba(${hexToRgb(p.overlayColor||'#000000')}, ${heroOverlayOpacity}), rgba(${hexToRgb(p.overlayColor||'#000000')}, ${heroOverlayOpacity})), ${p.bgColor||'#7c6af7'} url('${escCssUrl(heroImage)}') ${p.bgPosition||'center'} / ${p.bgSize||'cover'} no-repeat`
         : (p.bgColor||'#7c6af7');
       return `<section ${sel} style="background:${heroBg};color:${p.textColor||'#fff'};padding:100px 24px;min-height:${p.minHeight||'auto'};display:flex;align-items:center;justify-content:center;">
   <div style="width:100%;max-width:${p.contentWidth||'900px'};text-align:${heroAlign};display:flex;flex-direction:column;align-items:${heroFlexAlign};margin:0 auto;position:relative;z-index:1;">
@@ -1910,8 +1986,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     case 'image': {
       const rounded = p.rounded ? 'border-radius:8px;' : '';
       const imageAspect = p.aspectRatio ? `aspect-ratio:${p.aspectRatio};` : '';
+      const src = resolveImageAsset(p.src, pd);
       return `<div ${sel} style="padding:16px 24px;text-align:${p.align||'center'};">
-  ${p.src ? `<img src="${p.src}" alt="${p.alt||''}" style="width:${p.width||'100%'};height:${p.height||'auto'};object-fit:${p.fit||'contain'};${imageAspect}${rounded}display:inline-block;">` : `<div style="background:#e0e0e0;height:200px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#888;">Click to set image URL</div>`}
+  ${src ? `<img src="${src}" alt="${p.alt||''}" style="width:${p.width||'100%'};height:${p.height||'auto'};object-fit:${p.fit||'contain'};${imageAspect}${rounded}display:inline-block;">` : `<div style="background:#e0e0e0;height:200px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#888;">Click to set image URL</div>`}
   ${p.caption ? `<p style="font-size:13px;color:#888;margin-top:6px;">${p.caption}</p>` : ''}
 </div>`;
     }
@@ -1967,14 +2044,17 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       return `<div ${sel} style="height:${p.height||'40px'};"></div>`;
     }
     case 'cards': {
-      const cards = (p.cards||[]).map(c=>`
+      const cards = (p.cards||[]).map(c=>{
+        const cardImage = resolveImageAsset(c.img, pd);
+        return `
   <div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-  ${c.img ? `<img src="${c.img}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:180px;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#4ade80;font-size:32px;">▧</div>`}
+  ${cardImage ? `<img src="${cardImage}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:180px;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#4ade80;font-size:32px;">▧</div>`}
     <div style="padding:16px;">
       <h3 style="margin:0 0 8px;font-size:16px;">${c.title||'Card Title'}</h3>
       <p style="margin:0;color:#666;font-size:14px;">${c.desc||''}</p>
     </div>
-  </div>`).join('');
+  </div>`;
+      }).join('');
       return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||'60px 20px'};">
   <h2 style="text-align:center;margin:0 0 32px;font-size:2em;">${p.title||'Our Work'}</h2>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto;">${cards}</div>
@@ -2073,6 +2153,150 @@ function escCssUrl(s) {
   return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\n\r]/g, '');
 }
 
+const IMAGE_REF_PREFIX = 'fw-image:';
+
+function imageRef(id) {
+  return `${IMAGE_REF_PREFIX}${id}`;
+}
+
+function isImageRef(value) {
+  return String(value || '').startsWith(IMAGE_REF_PREFIX);
+}
+
+function imageIdFromRef(value) {
+  return String(value || '').slice(IMAGE_REF_PREFIX.length);
+}
+
+function sanitizeAssetFilename(name = 'image') {
+  const clean = String(name || 'image')
+    .replace(/[\\/]/g, '-')
+    .replace(/[^a-zA-Z0-9._-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^\.+/, '')
+    .slice(0, 80);
+  return clean || 'image';
+}
+
+function formatBytes(bytes = 0) {
+  if (!bytes) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let size = bytes;
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit++;
+  }
+  return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
+}
+
+function dataUrlBytes(dataURL = '') {
+  const b64 = String(dataURL).split(',')[1] || '';
+  return Math.floor((b64.length * 3) / 4);
+}
+
+function mimeFromFilename(name = '') {
+  const ext = String(name).split('.').pop().toLowerCase();
+  return {
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    webp: 'image/webp',
+    svg: 'image/svg+xml',
+    avif: 'image/avif',
+    ico: 'image/x-icon'
+  }[ext] || 'application/octet-stream';
+}
+
+function buildImageAssetMap(projectData) {
+  const map = {};
+  const used = new Set();
+  (projectData?.images || []).forEach((img) => {
+    let fname = sanitizeAssetFilename(img.name || `${img.id || 'image'}.jpg`);
+    if (!/\.[a-z0-9]{2,5}$/i.test(fname)) {
+      const typeExt = String(img.type || '').split('/')[1] || 'jpg';
+      fname += `.${typeExt.replace('jpeg', 'jpg').replace('svg+xml', 'svg').replace(/[^a-z0-9]/gi, '')}`;
+    }
+    if (used.has(fname)) {
+      const ext = fname.includes('.') ? '.' + fname.split('.').pop() : '';
+      const base = ext ? fname.slice(0, -ext.length) : fname;
+      fname = `${base}-${String(img.id || uid()).slice(0, 5)}${ext}`;
+    }
+    used.add(fname);
+    if (img.id) map[imageRef(img.id)] = fname;
+    if (img.dataURL) map[img.dataURL] = fname;
+  });
+  return map;
+}
+
+function resolveImageAsset(value, projectData = _projectData, imageMap = null) {
+  const raw = String(value || '');
+  if (!raw) return '';
+  const map = imageMap || projectData?._imageMap || null;
+  if (map && map[raw]) return `images/${map[raw]}`;
+  if (isImageRef(raw)) {
+    const img = (projectData?.images || []).find(item => item.id === imageIdFromRef(raw));
+    if (!img) return '';
+    return img.dataURL || '';
+  }
+  return raw;
+}
+
+function imageRefLabel(value, projectData = _projectData) {
+  if (!isImageRef(value)) return '';
+  const img = (projectData?.images || []).find(item => item.id === imageIdFromRef(value));
+  return img ? `Using library image: ${img.name}` : 'Library image missing. Choose another image.';
+}
+
+function replaceDataUrlsWithImageRefs(value, dataUrlToRef) {
+  if (typeof value === 'string') {
+    if (dataUrlToRef[value]) return dataUrlToRef[value];
+    let next = value;
+    Object.entries(dataUrlToRef).forEach(([dataUrl, ref]) => {
+      if (next.includes(dataUrl)) next = next.split(dataUrl).join(ref);
+    });
+    return next;
+  }
+  if (Array.isArray(value)) return value.map(item => replaceDataUrlsWithImageRefs(item, dataUrlToRef));
+  if (value && typeof value === 'object') {
+    Object.keys(value).forEach(key => {
+      value[key] = replaceDataUrlsWithImageRefs(value[key], dataUrlToRef);
+    });
+  }
+  return value;
+}
+
+function createPortableProjectData(projectData, imageMap) {
+  const portable = JSON.parse(JSON.stringify(projectData));
+  const dataUrlToRef = {};
+  portable.images = (projectData.images || []).map(img => {
+    if (img.dataURL) dataUrlToRef[img.dataURL] = imageRef(img.id);
+    const fname = imageMap[imageRef(img.id)] || imageMap[img.dataURL] || sanitizeAssetFilename(img.name);
+    return {
+      id: img.id,
+      name: img.name || fname,
+      type: img.type || mimeFromFilename(fname),
+      path: `images/${fname}`,
+      size: dataUrlBytes(img.dataURL)
+    };
+  });
+  replaceDataUrlsWithImageRefs(portable.pages, dataUrlToRef);
+  replaceDataUrlsWithImageRefs(portable.templates, dataUrlToRef);
+  replaceDataUrlsWithImageRefs(portable.meta, dataUrlToRef);
+  return portable;
+}
+
+function resolveCompiledImageRefs(html, projectData, imageMap) {
+  if (!imageMap || !Object.keys(imageMap).length) return html;
+  let out = html;
+  Object.entries(imageMap).forEach(([key, filename]) => {
+    if (!key || key.startsWith('data:image/')) return;
+    const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    out = out.replace(new RegExp(escapedKey, 'g'), `images/${filename}`);
+  });
+  return out;
+}
+
 function toYouTubeEmbedUrl(url, privacyMode = true, autoplay = false, showControls = true) {
   const raw = String(url || '').trim();
   if (!raw) return '';
@@ -2121,21 +2345,7 @@ function buildMetaTags(projectData, page) {
 }
 
 function buildSiteThemeCSS(projectData) {
-  const mode = projectData.siteTheme || 'light';
-  if (mode !== 'dark') {
-    return `body.site-theme-light { background: var(--color-page-bg, #ffffff); color: var(--color-text-dark, #111111); color-scheme: light; }`;
-  }
-  return `
-body.site-theme-dark {
-  background: #0f1720 !important;
-  color: #eef4fb !important;
-  color-scheme: dark;
-}
-body.site-theme-dark a { color: #8fc4ff; }
-body.site-theme-dark input,
-body.site-theme-dark textarea,
-body.site-theme-dark select { color-scheme: dark; }
-`;
+  return `body.site-theme-light { background: var(--color-page-bg, #ffffff); color: var(--color-text-dark, #111111); color-scheme: light; }`;
 }
 
 function resolveImageSrcs(html, imageMap) {
@@ -2147,8 +2357,12 @@ function resolveImageSrcs(html, imageMap) {
 
 function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = null) {
   const page = projectData.pages[pageIndex];
-  let blocksHTML = (page.blocks||[]).map(b => renderBlock(b, false, projectData)).join('\n');
-  if (imageMap) blocksHTML = resolveImageSrcs(blocksHTML, imageMap);
+  const renderCtx = imageMap ? Object.assign({}, projectData, { _imageMap: imageMap }) : projectData;
+  let blocksHTML = (page.blocks||[]).map(b => renderBlock(b, false, renderCtx)).join('\n');
+  if (imageMap) {
+    blocksHTML = resolveImageSrcs(blocksHTML, imageMap);
+    blocksHTML = resolveCompiledImageRefs(blocksHTML, projectData, imageMap);
+  }
   const titleOverride = (page.meta||{}).titleOverride;
   const title = titleOverride || (page.name + (projectData.name ? ' \u2014 ' + projectData.name : ''));
   const metaTags = buildMetaTags(projectData, page);
@@ -2217,7 +2431,23 @@ function showSettings() {
   showView('settings');
 }
 function exitEditor() {
-  saveProject();
+  if (_saveState === 'dirty') {
+    openModal('modal-unsaved-exit');
+    return;
+  }
+  saveProject(true);
+  showDashboard();
+}
+
+function saveAndExitEditor() {
+  closeModal('modal-unsaved-exit');
+  saveProject(true);
+  showDashboard();
+}
+
+function continueWithoutSaving() {
+  closeModal('modal-unsaved-exit');
+  setSaveStatus('saved');
   showDashboard();
 }
 
@@ -2407,6 +2637,26 @@ function getZipFolderPrefix(path) {
   return idx >= 0 ? path.slice(0, idx + 1) : '';
 }
 
+function joinZipPath(basePath, relativePath) {
+  const clean = String(relativePath || '').replace(/^\/+/, '');
+  return basePath ? basePath + clean : clean;
+}
+
+async function rehydrateProjectImagesFromZip(projectData, zip, basePath) {
+  const images = projectData.images || [];
+  for (const img of images) {
+    if (img.dataURL) continue;
+    const imgPath = img.path || img.file || img.src;
+    if (!imgPath) continue;
+    const entry = zip.file(joinZipPath(basePath, imgPath)) || zip.file(String(imgPath).replace(/^\/+/, ''));
+    if (!entry) continue;
+    const b64 = await entry.async('base64');
+    const type = img.type || mimeFromFilename(imgPath);
+    img.dataURL = `data:${type};base64,${b64}`;
+    if (!img.name) img.name = String(imgPath).split('/').pop() || img.id || 'image';
+  }
+}
+
 async function importProjectZip(file) {
   toast('Importing site...', 'info');
   const zip = await JSZip.loadAsync(file);
@@ -2447,6 +2697,7 @@ async function importProjectZip(file) {
   const now = Date.now();
   const normalizedData = JSON.parse(JSON.stringify(importedData));
   normalizedData.name = importedName;
+  await rehydrateProjectImagesFromZip(normalizedData, zip, basePath);
   if (!normalizedData.brandName) normalizedData.brandName = normalizedData.name;
   if (!normalizedData.brand) normalizedData.brand = {};
   if (!normalizedData.meta) normalizedData.meta = {};
@@ -2785,6 +3036,7 @@ function openEditor(id) {
   STATE.selectedBlockId = null;
   _projectData = getProjectData(id);
   _resetUndo();
+  setSaveStatus('saved');
 
   document.getElementById('editor-project-name').textContent = _projectData.name;
 
@@ -2795,12 +3047,12 @@ function openEditor(id) {
   renderCanvas();
   renderProps();
   renderTemplatesSection();
-  updateSiteThemeUI();
   showView('editor');
 }
 
-function saveProject() {
+function saveProject(silent = false) {
   if (!STATE.currentProjectId) return;
+  setSaveStatus('saving');
   if (STATE.currentMode === 'code') applyCode();
   saveProjectData(STATE.currentProjectId, _projectData);
   const p = STATE.projects.find(p=>p.id===STATE.currentProjectId);
@@ -2809,25 +3061,8 @@ function saveProject() {
     p.name = _projectData.name;
     saveProjectsMeta();
   }
-  toast('Saved!', 'success');
-}
-
-function updateSiteThemeUI() {
-  const mode = _projectData?.siteTheme || 'light';
-  const desktopBtn = document.getElementById('btn-site-theme-toggle');
-  const mobileBtn = document.getElementById('mob-btn-site-theme');
-  const icon = mode === 'dark' ? '◐' : '○';
-  const text = mode === 'dark' ? 'Site Dark' : 'Site Light';
-  if (desktopBtn) desktopBtn.innerHTML = `<span style="color:var(--green);">${icon}</span> ${text}`;
-  if (mobileBtn) mobileBtn.innerHTML = `<span style="color:var(--green);">${icon}</span> &nbsp;${text}`;
-}
-
-function toggleSiteTheme() {
-  if (!_projectData) return;
-  _projectData.siteTheme = (_projectData.siteTheme || 'light') === 'light' ? 'dark' : 'light';
-  updateSiteThemeUI();
-  renderCanvas();
-  toast(`Site theme set to ${_projectData.siteTheme}`, 'success');
+  setSaveStatus('saved');
+  if (!silent) toast('Saved!', 'success');
 }
 
 // ============================================================
@@ -2952,7 +3187,7 @@ function renderLayoutList() {
 
   list.innerHTML = blocks.map((block, index) => {
     const slug = block.props?.anchor ? `#${block.props.anchor}` : 'No anchor';
-    return `<div class="layout-item${STATE.selectedBlockId === block.id ? ' selected' : ''}" onclick="selectBlock('${block.id}')">
+    return `<div class="layout-item${STATE.selectedBlockId === block.id ? ' selected' : ''}" onclick="selectBlock('${block.id}', true)">
       <div class="layout-item-icon">${getBlockIcon(block.type)}</div>
       <div class="layout-item-info">
         <div class="layout-item-type">${index + 1}. ${block.type}</div>
@@ -3043,7 +3278,23 @@ function renderCanvas() {
     }
     setupCanvasAutoResize();
     updateCanvasIframeHeight();
+    if (STATE.pendingScrollBlockId) {
+      const id = STATE.pendingScrollBlockId;
+      STATE.pendingScrollBlockId = null;
+      setTimeout(() => scrollCanvasToBlock(id), 50);
+    }
   };
+}
+
+function scrollCanvasToBlock(id) {
+  const wrap = document.querySelector('.canvas-wrap');
+  const frame = document.getElementById('canvas-frame');
+  const iframe = document.getElementById('canvas-iframe');
+  const doc = iframe?.contentDocument;
+  const target = doc?.querySelector(`[data-block-id="${id}"]`);
+  if (!wrap || !frame || !target) return;
+  const top = frame.offsetTop + target.offsetTop - 24;
+  wrap.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
 function getCanvasContentHeight() {
@@ -3151,7 +3402,7 @@ window.deselectBlock = function(e) {
   if (isMobile() && STATE.mobileTab === 'props') switchMobileTab('canvas');
 };
 
-window.selectBlock = function(id) {
+window.selectBlock = function(id, scrollToBlock = false) {
   STATE.selectedBlockId = id;
   // Highlight in iframe
   try {
@@ -3163,6 +3414,7 @@ window.selectBlock = function(id) {
   } catch(e) {}
   renderProps();
   renderLayoutList();
+  if (scrollToBlock) scrollCanvasToBlock(id);
   // On mobile, automatically jump to the props panel
   if (isMobile()) switchMobileTab('props');
 };
@@ -3198,6 +3450,7 @@ function addBlock(type) {
   const page = _projectData.pages[STATE.currentPageIndex];
   page.blocks.push(block);
   STATE.selectedBlockId = block.id;
+  STATE.pendingScrollBlockId = block.id;
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -3364,7 +3617,7 @@ function escapeHtmlForTextarea(str = '') {
 }
 
 function getBlockRawHTML(block) {
-  return renderBlock(block, false, _projectData);
+  return renderBlock(block, false, Object.assign({}, _projectData, { _imageMap: buildImageAssetMap(_projectData) }));
 }
 
 function buildContentInsertButtons(blockId, propKey) {
@@ -3474,10 +3727,20 @@ function buildPropsForm(block) {
       html += navColorField('Background Color', 'bgColor');
       html += navColorField('Text Color', 'textColor');
       html += navColorField('Link Color', 'linkColor');
+      html += `<div class="field"><label class="label">Content Alignment</label>
+        <select class="input" onchange="updateNavConfig('${navId}','align',this.value)">
+          <option value="split" ${(nc.align||'split')==='split'?'selected':''}>Brand left, links right</option>
+          <option value="left" ${(nc.align||'split')==='left'?'selected':''}>Left</option>
+          <option value="center" ${(nc.align||'split')==='center'?'selected':''}>Center</option>
+          <option value="right" ${(nc.align||'split')==='right'?'selected':''}>Right</option>
+        </select>
+      </div>`;
       html += `<div class="field"><label class="label">Mobile Layout</label>
         <select class="input" onchange="updateNavConfig('${navId}','mobileLayout',this.value)">
           <option value="hamburger" ${(nc.mobileLayout||'hamburger')==='hamburger'?'selected':''}>Hamburger menu</option>
           <option value="stack" ${(nc.mobileLayout||'hamburger')==='stack'?'selected':''}>Vertical stack</option>
+          <option value="center-stack" ${(nc.mobileLayout||'hamburger')==='center-stack'?'selected':''}>Centered stack</option>
+          <option value="inline" ${(nc.mobileLayout||'hamburger')==='inline'?'selected':''}>Inline wrap</option>
         </select>
       </div>`;
       html += `<div class="field"><label class="label">Mobile Breakpoint (px)</label>
@@ -3508,6 +3771,10 @@ function buildPropsForm(block) {
           <div class="field" style="margin-bottom:0;"><label class="label">URL</label>
             <input class="input" type="text" value="${(lnk.href||'').replace(/"/g,'&quot;')}" oninput="updateNavCustomLink('${navId}','${lnk.id}','href',this.value)">
           </div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding-top:8px;" class="label">
+            <input type="checkbox" ${lnk.asButton?'checked':''} onchange="updateNavCustomLink('${navId}','${lnk.id}','asButton',this.checked)">
+            Style as button
+          </label>
         </div>`;
       });
       html += `<button class="btn btn-secondary btn-sm" style="width:100%;margin-top:4px;" onclick="addNavCustomLink('${navId}')">+ Add Custom Link</button>`;
@@ -3524,7 +3791,8 @@ function buildPropsForm(block) {
         ${['left','center','right'].map(v=>`<option value="${v}" ${(p.align||'center')===v?'selected':''}>${v}</option>`).join('')}
       </select></div>`;
       html += field('Background Color', 'bgColor', 'color');
-      html += field('Background Image URL', 'bgImage');
+      html += field('Background Image URL or Library Reference', 'bgImage');
+      if (imageRefLabel(p.bgImage)) html += `<div class="text-muted text-sm" style="margin-top:-8px;margin-bottom:12px;">${imageRefLabel(p.bgImage)}</div>`;
       html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="openImageLibrary(null,(url)=>{updateProp('${block.id}','bgImage',url);renderProps();})"><span style="color:var(--green);">▧</span> Use Image Library as Background</button></div>`;
       html += `<div class="field"><label class="label">Background Size</label><select class="input" onchange="updateProp('${block.id}','bgSize',this.value)">
         ${['cover','contain','auto','100% auto','auto 100%'].map(v=>`<option value="${v}" ${(p.bgSize||'cover')===v?'selected':''}>${v}</option>`).join('')}
@@ -3554,7 +3822,8 @@ function buildPropsForm(block) {
       html += field('Color', 'color', 'color');
       break;
     case 'image':
-      html += field('Image URL', 'src');
+      html += field('Image URL or Library Reference', 'src');
+      if (imageRefLabel(p.src)) html += `<div class="text-muted text-sm" style="margin-top:-8px;margin-bottom:12px;">${imageRefLabel(p.src)}</div>`;
       html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="openImageLibrary('${block.id}')"><span style="color:var(--green);">▧</span> Browse Image Library</button></div>`;
       html += field('Alt Text', 'alt');
       html += field('Width', 'width');
@@ -3856,6 +4125,7 @@ function updateItem(blockId, key, index, field, value) {
   const page = _projectData.pages[STATE.currentPageIndex];
   const block = page.blocks.find(b=>b.id===blockId);
   if (!block || !block.props[key]) return;
+  pushUndoDebounced();
   block.props[key][index][field] = value;
   renderCanvas();
 }
@@ -3883,6 +4153,7 @@ function ensureNavbar(navbarId) {
       bgColor: '#ffffff',
       textColor: '#333333',
       linkColor: '#333333',
+      align: 'split',
       mobileLayout: 'hamburger',
       mobileBreakpoint: '768',
       pageLinks: 'all',
@@ -3947,7 +4218,7 @@ function addNavCustomLink(navbarId) {
   ensureNavbar(navbarId);
   const nc = _projectData.navbars[navbarId];
   if (!nc.customLinks) nc.customLinks = [];
-  nc.customLinks.push({ id: uid(), label: 'Link', href: '#' });
+  nc.customLinks.push({ id: uid(), label: 'Link', href: '#', asButton: false });
   renderProps();
   renderCanvas();
 }
@@ -3997,6 +4268,13 @@ function renderImageLibraryGrid() {
   const images = _projectData.images || [];
   const grid = document.getElementById('img-lib-grid');
   const empty = document.getElementById('img-lib-empty');
+  const stats = document.getElementById('img-lib-stats');
+  if (stats) {
+    const totalBytes = images.reduce((sum, img) => sum + dataUrlBytes(img.dataURL), 0);
+    stats.textContent = images.length
+      ? `${images.length} image${images.length > 1 ? 's' : ''} stored privately in this project (${formatBytes(totalBytes)} total).`
+      : '';
+  }
   if (images.length === 0) {
     grid.innerHTML = '';
     empty.style.display = 'block';
@@ -4020,17 +4298,19 @@ function useSelectedLibraryImage() {
   if (!STATE.imgLibSelectedId) return;
   const img = (_projectData.images||[]).find(i => i.id === STATE.imgLibSelectedId);
   if (!img) return;
+  const ref = imageRef(img.id);
   if (STATE.imgLibCallback) {
-    STATE.imgLibCallback(img.dataURL);
+    STATE.imgLibCallback(ref);
     STATE.imgLibCallback = null;
   } else if (STATE.imgLibTargetBlockId) {
-    updateProp(STATE.imgLibTargetBlockId, 'src', img.dataURL);
+    updateProp(STATE.imgLibTargetBlockId, 'src', ref);
   }
   closeModal('modal-img-lib');
   renderProps();
 }
 
 function deleteLibraryImage(id) {
+  pushUndo();
   _projectData.images = (_projectData.images||[]).filter(i => i.id !== id);
   if (STATE.imgLibSelectedId === id) STATE.imgLibSelectedId = null;
   renderImageLibraryGrid();
@@ -4040,6 +4320,7 @@ function uploadImages(input) {
   const files = Array.from(input.files);
   if (!files.length) return;
   if (!_projectData.images) _projectData.images = [];
+  pushUndo();
   let done = 0;
   files.forEach(file => {
     const reader = new FileReader();
@@ -4090,6 +4371,7 @@ async function importImageFromUrl() {
     const reader = new FileReader();
     reader.onload = e => {
       if (!_projectData.images) _projectData.images = [];
+      pushUndo();
       _projectData.images.push({ id: uid(), name, dataURL: e.target.result, type: blob.type });
       closeModal('modal-import-url');
       openModal('modal-img-lib');
@@ -4408,7 +4690,7 @@ function refreshCodeEditor() {
   const ta = document.getElementById('code-editor');
 
   if (tab === 'html') {
-    ta.value = compilePageHTML(_projectData, STATE.currentPageIndex, false);
+    ta.value = compilePageHTML(_projectData, STATE.currentPageIndex, false, buildImageAssetMap(_projectData));
   } else if (tab === 'css') {
     ta.value = _projectData.globalCSS || '';
   } else if (tab === 'js') {
@@ -4457,10 +4739,51 @@ function previewProject() {
   window.open(url, '_blank');
 }
 
+function getImageIssues(projectData) {
+  const issues = [];
+  const images = projectData.images || [];
+  const imageIds = new Set(images.map(img => img.id));
+  const totalBytes = images.reduce((sum, img) => sum + dataUrlBytes(img.dataURL), 0);
+  images.forEach(img => {
+    const size = dataUrlBytes(img.dataURL);
+    if (size > 2.5 * 1024 * 1024) issues.push(`Large image: ${img.name} is ${formatBytes(size)}.`);
+  });
+  if (totalBytes > 12 * 1024 * 1024) issues.push(`Image library is ${formatBytes(totalBytes)} total; export/deploy may be slower.`);
+
+  (projectData.pages || []).forEach(page => {
+    (page.blocks || []).forEach(block => {
+      const p = block.props || {};
+      const refs = [
+        ['image', p.src],
+        ['hero background', p.bgImage],
+        ...((p.cards || []).map((card, index) => [`card ${index + 1} image`, card.img]))
+      ];
+      refs.forEach(([label, value]) => {
+        if (isImageRef(value) && !imageIds.has(imageIdFromRef(value))) {
+          issues.push(`${page.name}: missing ${label} from the image library.`);
+        }
+      });
+      if (block.type === 'image' && p.src && !String(p.alt || '').trim()) {
+        issues.push(`${page.name}: image block is missing alt text.`);
+      }
+    });
+  });
+  return issues;
+}
+
+function confirmPreflight(actionLabel) {
+  const issues = getImageIssues(_projectData);
+  if (!issues.length) return true;
+  const shown = issues.slice(0, 8).map(item => `- ${item}`).join('\n');
+  const extra = issues.length > 8 ? `\n- ${issues.length - 8} more issue(s).` : '';
+  return confirm(`Before ${actionLabel}, check these items:\n\n${shown}${extra}\n\nContinue anyway?`);
+}
+
 // ============================================================
 // DOWNLOAD ZIP
 // ============================================================
 async function downloadZip() {
+  if (!confirmPreflight('downloading')) return;
   await downloadProjectZip(STATE.currentProjectId);
 }
 
@@ -4472,21 +4795,14 @@ async function downloadProjectZip(id) {
   const zip = new JSZip();
   const folder = zip.folder(name);
 
-  // Build image map: dataURL -> sanitized filename, and write images/ folder
-  const imageMap = {};
+  // Build image map and write images/ folder. Blocks use short image refs while
+  // editing; exports get normal relative files such as images/photo.jpg.
+  const imageMap = buildImageAssetMap(data);
   const libImages = data.images || [];
   if (libImages.length > 0) {
     const imgFolder = folder.folder('images');
-    const usedNames = new Set();
     libImages.forEach(img => {
-      // Deduplicate filenames
-      let fname = img.name;
-      if (usedNames.has(fname)) {
-        const ext = fname.includes('.') ? '.' + fname.split('.').pop() : '';
-        fname = fname.replace(/(\.[^.]+)?$/, `_${img.id.slice(0,4)}${ext}`);
-      }
-      usedNames.add(fname);
-      imageMap[img.dataURL] = fname;
+      const fname = imageMap[imageRef(img.id)] || imageMap[img.dataURL] || sanitizeAssetFilename(img.name);
       const b64 = img.dataURL.split(',')[1];
       if (b64) imgFolder.file(fname, b64, { base64: true });
     });
@@ -4505,15 +4821,16 @@ async function downloadProjectZip(id) {
 
   folder.file(BUILDER_MANIFEST_FILE, JSON.stringify({
     format: 'functional-websites-project',
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     siteName: data.name || meta?.name || 'website',
-    projectDataFile: BUILDER_PROJECT_FILE
+    projectDataFile: BUILDER_PROJECT_FILE,
+    imageStorage: 'images-folder'
   }, null, 2));
-  folder.file(BUILDER_PROJECT_FILE, JSON.stringify(data, null, 2));
+  folder.file(BUILDER_PROJECT_FILE, JSON.stringify(createPortableProjectData(data, imageMap), null, 2));
 
   // README
-  folder.file('README.md', `# ${data.name}\n\nBuilt with Functional Websites builder.\n\nTo continue editing later:\n1. Keep this ZIP intact\n2. On the builder home page choose "Upload Existing Site"\n3. Upload this ZIP with the included builder manifest\n\nTo host on GitHub Pages:\n1. Create a new GitHub repository\n2. Upload these files\n3. Go to Settings → Pages → select the main branch\n`);
+  folder.file('README.md', `# ${data.name}\n\nBuilt with Functional Websites builder.\n\nTo continue editing later:\n1. Keep this ZIP intact, including the images folder\n2. On the builder home page choose "Upload Existing Site"\n3. Upload this ZIP with the included builder manifest\n\nThe builder project JSON stores image metadata and paths. The image files live in the images folder so the JSON stays small.\n\nTo host on GitHub Pages:\n1. Create a new GitHub repository\n2. Upload these files\n3. Go to Settings → Pages → select the main branch\n`);
 
   const blob = await zip.generateAsync({type: 'blob'});
   const url = URL.createObjectURL(blob);
@@ -4765,6 +5082,7 @@ function selectDeployTarget(t) {
 async function startDeploy() {
   if (!checkProThenDeploy()) return;
   if (!STATE.deployTarget) return;
+  if (!confirmPreflight('deploying')) return;
   const asRelease = STATE.deployTarget === 'github' && document.getElementById('deploy-as-release').checked;
   document.getElementById('deploy-actions').classList.add('hidden');
   document.getElementById('deploy-progress').classList.remove('hidden');
@@ -4847,9 +5165,8 @@ async function deployToGithub(asRelease = false) {
   let zipBlob = null;
   try {
     // Build image map for deploy
-    const imageMap = {};
+    const imageMap = buildImageAssetMap(_projectData);
     const libImages = _projectData.images || [];
-    libImages.forEach(img => { imageMap[img.dataURL] = img.name; });
 
     if (asRelease) {
       // Generate ZIP for release
@@ -4871,8 +5188,9 @@ async function deployToGithub(asRelease = false) {
       libImages.forEach(img => {
         const b64 = img.dataURL.split(',')[1];
         if (b64) {
-          folder.file(`images/${img.name}`, b64, { base64: true });
-          const imgPath = subfolder ? `${subfolder}/images/${img.name}` : `images/${img.name}`;
+          const fname = imageMap[imageRef(img.id)] || imageMap[img.dataURL] || sanitizeAssetFilename(img.name);
+          folder.file(`images/${fname}`, b64, { base64: true });
+          const imgPath = subfolder ? `${subfolder}/images/${fname}` : `images/${fname}`;
           blobs.push({ path: imgPath, content: b64, binary: true });
         }
       });
@@ -4893,7 +5211,8 @@ async function deployToGithub(asRelease = false) {
       libImages.forEach(img => {
         const b64 = img.dataURL.split(',')[1];
         if (b64) {
-          const imgPath = subfolder ? `${subfolder}/images/${img.name}` : `images/${img.name}`;
+          const fname = imageMap[imageRef(img.id)] || imageMap[img.dataURL] || sanitizeAssetFilename(img.name);
+          const imgPath = subfolder ? `${subfolder}/images/${fname}` : `images/${fname}`;
           blobs.push({ path: imgPath, content: b64, binary: true });
         }
       });
@@ -5224,9 +5543,8 @@ async function deployToCloudflare() {
   let files = {};
   try {
     // Build image map for deploy
-    const imageMap = {};
+    const imageMap = buildImageAssetMap(_projectData);
     const libImages = _projectData.images || [];
-    libImages.forEach(img => { imageMap[img.dataURL] = img.name; });
 
     for (const [i, page] of _projectData.pages.entries()) {
       const html = compilePageHTML(_projectData, i, false, imageMap);
@@ -5242,7 +5560,8 @@ async function deployToCloudflare() {
         const byteChars = atob(b64);
         const byteArr = new Uint8Array(byteChars.length);
         for (let i = 0; i < byteChars.length; i++) byteArr[i] = byteChars.charCodeAt(i);
-        files[`/images/${img.name}`] = { content: new Blob([byteArr], { type: img.type }), type: img.type, binary: true };
+        const fname = imageMap[imageRef(img.id)] || imageMap[img.dataURL] || sanitizeAssetFilename(img.name);
+        files[`/images/${fname}`] = { content: new Blob([byteArr], { type: img.type }), type: img.type, binary: true };
       }
     }
     setStepDone(s2, `${Object.keys(files).length} files`);
@@ -5377,6 +5696,22 @@ document.addEventListener('DOMContentLoaded', function init() {
     if (e.key==='Escape') {
       document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden'));
     }
+  });
+
+  document.addEventListener('click', e => {
+    if (!STATE.currentProjectId || !document.body.classList.contains('editor-mode')) return;
+    const link = e.target.closest('a[href]');
+    if (!link || link.hasAttribute('download')) return;
+    const href = link.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+    e.preventDefault();
+    window.open(link.href, '_blank', 'noopener');
+  });
+
+  window.addEventListener('beforeunload', e => {
+    if (_saveState !== 'dirty') return;
+    e.preventDefault();
+    e.returnValue = '';
   });
 
   // Update back button when window resizes (mobile/desktop toggle)
