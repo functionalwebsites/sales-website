@@ -6,12 +6,8 @@ export async function onRequest(context) {
     || url.pathname === '/site-builder/'
     || url.pathname === '/site-builder/index.html';
 
-  if (url.hostname === BUILDER_HOST && (url.pathname === '/' || url.pathname === '/index.html')) {
-    const builderUrl = new URL('/site-builder/index.html', url);
-    return context.env.ASSETS.fetch(new Request(builderUrl, context.request));
-  }
-
-  if (isBuilderEntry) {
+  if ((url.hostname === BUILDER_HOST && (url.pathname === '/' || url.pathname === '/index.html' || isBuilderEntry))
+    || isBuilderEntry) {
     const builderUrl = new URL('/site-builder/index.html', url);
     return context.env.ASSETS.fetch(new Request(builderUrl, context.request));
   }
