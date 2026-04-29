@@ -410,8 +410,8 @@ select.input { appearance: none; }
       </div>
     </a>
       <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+        <button class="btn btn-ghost btn-sm" id="btn-settings" onclick="showSettings()" style="display: none;">⚙ Settings</button>
         <button class="btn btn-primary" id="btn-unlock-pro" onclick="showProTokenModal()" style="display: none;">🔓 Unlock Pro</button>
-        <button class="btn btn-ghost btn-sm" onclick="showSettings()">⚙ Settings</button>
       </div>
     </div>
   </header>
@@ -1523,6 +1523,11 @@ function initProFeatures() {
   const unlockProBtn = document.getElementById('btn-unlock-pro');
   if (unlockProBtn) {
     unlockProBtn.style.display = isPro ? 'none' : 'inline-flex';
+  }
+
+  const settingsBtn = document.getElementById('btn-settings');
+  if (settingsBtn) {
+    settingsBtn.style.display = isPro ? 'inline-flex' : 'none';
   }
 
   const deployDesktopBtn = document.getElementById('btn-deploy-desktop');
