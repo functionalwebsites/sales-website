@@ -48,19 +48,6 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 180ms ease;
-  will-change: transform;
-}
-
-.header[data-header-state="hidden"],
-.header[data-header-state="exiting"] {
-  opacity: 0;
-  transform: translateY(-100%);
-}
-
-.header[data-header-state="visible"] {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .header-wrapper {
@@ -378,17 +365,13 @@ footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .header {
-    transition: none;
-  }
-
   .logo-mark[data-spin="true"] .logo-gear {
     animation: none;
   }
 }`;
 
   const fallbackMarkup = {
-    header: `<header class="header" data-header-state="hidden">
+    header: `<header class="header">
   <div class="header-wrapper">
     <a class="logo-link" href="/" aria-label="Functional Websites home">
       <div class="logo">
@@ -480,25 +463,14 @@ footer {
   }
 
   function bindHeaderInteractions(root) {
-    const header = root.querySelector('.header');
     const nav = root.getElementById('site-nav');
     const button = root.querySelector('.menu-toggle');
-    const logoLink = root.querySelector('.logo-link');
     const logoMark = root.querySelector('.logo-mark');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const breakpointQueries = [
       window.matchMedia('(max-width: 768px)'),
       window.matchMedia('(max-width: 640px)')
     ];
-    const revealHeader = () => {
-      if (!header) {
-        return;
-      }
-
-      requestAnimationFrame(() => {
-        header.dataset.headerState = 'visible';
-      });
-    };
 
     const spinLogoGear = () => {
       if (!logoMark || reduceMotion.matches) {
@@ -516,63 +488,6 @@ footer {
         query.addListener(handler);
       }
     };
-    const getClickedLink = (event) => {
-      const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
-      const linkedNode = path.find((node) => node?.matches?.('a[href]'));
-      return linkedNode || event.target.closest?.('a[href]');
-    };
-    const shouldHandleNavigation = (event, link) => {
-      if (!link || event.defaultPrevented || event.button !== 0) {
-        return false;
-      }
-
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-        return false;
-      }
-
-      if (link.target && link.target !== '_self') {
-        return false;
-      }
-
-      if (link.hasAttribute('download')) {
-        return false;
-      }
-
-      const url = new URL(link.href, window.location.href);
-      if (url.origin !== window.location.origin) {
-        return false;
-      }
-
-      return !(url.pathname === window.location.pathname && url.search === window.location.search && url.hash);
-    };
-    const slideAwayAndNavigate = (link, delay = 0) => {
-      if (!header || reduceMotion.matches) {
-        window.location.href = link.href;
-        return;
-      }
-
-      header.dataset.headerState = 'exiting';
-      window.setTimeout(() => {
-        window.location.href = link.href;
-      }, Math.max(280, delay));
-    };
-    const handleNavigationClick = (event) => {
-      const link = getClickedLink(event);
-      if (!shouldHandleNavigation(event, link)) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const isLogoLink = link === logoLink || logoLink?.contains(link);
-      if (isLogoLink) {
-        spinLogoGear();
-      }
-
-      slideAwayAndNavigate(link, isLogoLink ? 380 : 0);
-    };
-
-    revealHeader();
 
     if (!nav || !button) {
       return;
@@ -590,8 +505,6 @@ footer {
     });
 
     requestAnimationFrame(spinLogoGear);
-    root.addEventListener('click', handleNavigationClick, true);
-    document.addEventListener('click', handleNavigationClick, true);
 
     breakpointQueries.forEach((query) => onMediaQueryChange(query, spinLogoGear));
 
