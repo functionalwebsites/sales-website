@@ -233,7 +233,7 @@ button {
 }
 
 .btn-secondary {
-  background: var(--bg);
+  background: var(--bg2);
   color: var(--text2);
   border: 1px solid var(--border);
 }
