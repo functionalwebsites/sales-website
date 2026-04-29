@@ -146,7 +146,7 @@ select.input { appearance: none; }
 .project-actions { padding: 8px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; }
 .new-project-card { border: 2px dashed var(--border); border-radius: 10px; height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text2); cursor: pointer; transition: all .15s; background: transparent; width: 100%; }
 .new-project-card:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,255,255,0.04); }
-.new-project-icon { font-size: 32px; }
+.new-project-icon { font-size: 32px; color: var(--green); line-height: 1; }
 
 /* ===== EDITOR LAYOUT ===== */
 #view-editor { flex-direction: column; }
@@ -159,7 +159,7 @@ select.input { appearance: none; }
 .panel-title { padding: 10px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .block-btn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; background: transparent; border: none; color: var(--text); text-align: left; border-radius: 0; transition: background .1s; font-size: 13px; }
 .block-btn:hover { background: var(--bg3); }
-.block-btn .block-icon { width: 28px; height: 28px; border-radius: 5px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.block-btn .block-icon { width: 28px; height: 28px; border-radius: 5px; background: var(--bg3); border: 1px solid var(--border); color: var(--green); display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 1; flex-shrink: 0; }
 .blocks-section { margin-bottom: 4px; }
 .blocks-section-label { padding: 6px 12px 2px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text2); }
 .blocks-section-tools { padding: 4px 8px 8px; display: flex; gap: 6px; flex-wrap: wrap; }
@@ -182,7 +182,7 @@ select.input { appearance: none; }
 .layout-item { display: flex; align-items: center; gap: 6px; padding: 7px 8px; border-bottom: 1px solid var(--border); cursor: pointer; }
 .layout-item:hover { background: var(--bg3); }
 .layout-item.selected { background: rgba(255,255,255,.06); border-left: 2px solid var(--accent); }
-.layout-item-icon { font-size: 12px; width: 22px; text-align: center; flex-shrink: 0; opacity: .7; }
+.layout-item-icon { font-size: 12px; width: 22px; text-align: center; color: var(--green); flex-shrink: 0; opacity: .85; }
 .layout-item-info { flex: 1; min-width: 0; }
 .layout-item-type { font-size: 11px; font-weight: 600; text-transform: capitalize; }
 .layout-item-slug { font-size: 10px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -201,8 +201,8 @@ select.input { appearance: none; }
 /* Center - canvas */
 .editor-center { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: #18181b; }
 .editor-toolbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 6px 12px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.device-btn { padding: 4px 8px; border-radius: 5px; background: transparent; border: 1px solid transparent; color: var(--text2); font-size: 16px; }
-.device-btn.active, .device-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--text); }
+.device-btn { padding: 4px 8px; border-radius: 5px; background: transparent; border: 1px solid transparent; color: var(--green); font-size: 16px; }
+.device-btn.active, .device-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--green); }
 .canvas-wrap { flex: 1; min-height: 0; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
 .canvas-frame { background: #fff; border-radius: 4px; box-shadow: var(--shadow); transition: width .2s; min-height: 320px; width: 100%; max-width: 100%; position: relative; }
 .canvas-frame.device-tablet { width: 768px; }
@@ -268,7 +268,7 @@ select.input { appearance: none; }
 .mobile-bottom-nav { display: none; background: var(--bg2); border-top: 1px solid var(--border); height: 56px; flex-shrink: 0; }
 .mob-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: transparent; border: none; color: var(--text2); font-size: 10px; font-weight: 500; padding: 6px 0; cursor: pointer; transition: color .15s; font-family: inherit; }
 .mob-tab.active { color: var(--accent); }
-.mob-tab-icon { font-size: 20px; line-height: 1; }
+.mob-tab-icon { font-size: 20px; line-height: 1; color: var(--green); }
 
 /* ===== MOBILE OVERFLOW MENU ===== */
 .mob-overflow-menu { position: fixed; top: 49px; right: 8px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 600; min-width: 190px; padding: 4px 0; }
@@ -411,7 +411,7 @@ select.input { appearance: none; }
     </a>
       <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
         <button class="btn btn-ghost btn-sm" id="btn-settings" onclick="showSettings()" style="display: none;">⚙ Settings</button>
-        <button class="btn btn-primary" id="btn-unlock-pro" onclick="showProTokenModal()" style="display: none;">🔓 Unlock Pro</button>
+        <button class="btn btn-primary" id="btn-unlock-pro" onclick="showProTokenModal()" style="display: none;"><span style="color:var(--green);">◇</span> Unlock Pro</button>
       </div>
     </div>
   </header>
@@ -476,7 +476,7 @@ select.input { appearance: none; }
         <button class="btn btn-primary btn-sm" onclick="openNewProjectModal()">+ New Website</button>
       </div>
       <div class="flex gap-2" style="margin-top:8px;flex-wrap:wrap;">
-        <button class="btn btn-secondary btn-sm" onclick="openGithubImportModal()">🐙 Import From GitHub</button>
+        <button class="btn btn-secondary btn-sm" onclick="openGithubImportModal()"><span style="color:var(--green);">⌘</span> Import From GitHub</button>
       </div>
     </div>
     <!-- GitHub -->
@@ -560,13 +560,13 @@ select.input { appearance: none; }
       <button class="editor-mode-tab" data-mode="code" onclick="switchEditorMode('code')">Code</button>
     </div>
     <button class="btn btn-secondary btn-sm d-only" onclick="openLibraryModal()">▦ Library</button>
-    <button class="btn btn-secondary btn-sm d-only" id="btn-site-theme-toggle" onclick="toggleSiteTheme()">☀ Site Light</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)">🖼 Images</button>
+    <button class="btn btn-secondary btn-sm d-only" id="btn-site-theme-toggle" onclick="toggleSiteTheme()"><span style="color:var(--green);">○</span> Site Light</button>
+    <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)"><span style="color:var(--green);">▧</span> Images</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="openHelpDocs()">? Help</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()">👁 Preview</button>
+    <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
-    <button class="btn btn-primary btn-sm" onclick="saveProject()">💾 Save</button>
-    <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">🚀 Deploy</button>
+    <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
+    <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
     <!-- Mobile overflow trigger -->
     <button class="btn btn-ghost btn-sm m-only" onclick="toggleMobileOverflow(event)" style="font-size:18px;padding:4px 8px;">⋮</button>
   </div>
@@ -575,13 +575,13 @@ select.input { appearance: none; }
   <div id="mob-overflow-menu" class="mob-overflow-menu hidden">
     <button class="mob-overflow-item" onclick="closeMobileOverflow();undo()" id="mob-btn-undo">↩ &nbsp;Undo</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();redo()" id="mob-btn-redo">↪ &nbsp;Redo</button>
-    <button class="mob-overflow-item divider" onclick="closeMobileOverflow();openImageLibrary(null)">🖼 &nbsp;Images</button>
-    <button class="mob-overflow-item" onclick="closeMobileOverflow();toggleSiteTheme()" id="mob-btn-site-theme">☀ &nbsp;Site Light</button>
+    <button class="mob-overflow-item divider" onclick="closeMobileOverflow();openImageLibrary(null)"><span style="color:var(--green);">▧</span> &nbsp;Images</button>
+    <button class="mob-overflow-item" onclick="closeMobileOverflow();toggleSiteTheme()" id="mob-btn-site-theme"><span style="color:var(--green);">○</span> &nbsp;Site Light</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openLibraryModal()">▦ &nbsp;Custom Library</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openHelpDocs()">? &nbsp;Help / Docs</button>
-    <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()">👁 &nbsp;Preview</button>
+    <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()"><span style="color:var(--green);">◉</span> &nbsp;Preview</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();downloadZip()">⬇ &nbsp;Download ZIP</button>
-    <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">🚀 &nbsp;Deploy</button>
+    <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">▲ &nbsp;Deploy</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();switchEditorMode('code')">＜/＞ &nbsp;Code Editor</button>
   </div>
 
@@ -613,7 +613,7 @@ select.input { appearance: none; }
           <button class="block-btn" onclick="addBlock('hero')"><span class="block-icon">★</span> Hero</button>
           <button class="block-btn" onclick="addBlock('heading')"><span class="block-icon">H</span> Heading</button>
           <button class="block-btn" onclick="addBlock('text')"><span class="block-icon">¶</span> Text</button>
-          <button class="block-btn" onclick="addBlock('image')"><span class="block-icon">🖼</span> Image</button>
+          <button class="block-btn" onclick="addBlock('image')"><span class="block-icon">▧</span> Image</button>
           <button class="block-btn" onclick="addBlock('button')"><span class="block-icon">□</span> Button</button>
           <button class="block-btn" onclick="addBlock('cards')"><span class="block-icon">▦</span> Cards</button>
           <button class="block-btn" onclick="addBlock('features')"><span class="block-icon">✦</span> Features</button>
@@ -633,9 +633,9 @@ select.input { appearance: none; }
     <!-- Center: canvas -->
     <div class="editor-center">
       <div class="editor-toolbar">
-        <button class="device-btn active" data-device="desktop" onclick="setDevice('desktop')" title="Desktop">🖥</button>
-        <button class="device-btn" data-device="tablet" onclick="setDevice('tablet')" title="Tablet">📱</button>
-        <button class="device-btn" data-device="mobile" onclick="setDevice('mobile')" title="Mobile">📲</button>
+        <button class="device-btn active" data-device="desktop" onclick="setDevice('desktop')" title="Desktop">▣</button>
+        <button class="device-btn" data-device="tablet" onclick="setDevice('tablet')" title="Tablet">▯</button>
+        <button class="device-btn" data-device="mobile" onclick="setDevice('mobile')" title="Mobile">▢</button>
         <span class="text-muted text-sm ml-auto" id="page-url-display"></span>
       </div>
       <div class="canvas-wrap">
@@ -673,7 +673,7 @@ select.input { appearance: none; }
   <!-- Mobile bottom navigation -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
     <button class="mob-tab active" data-mob="canvas" onclick="switchMobileTab('canvas')">
-      <span class="mob-tab-icon">🖼</span><span>Canvas</span>
+      <span class="mob-tab-icon">▧</span><span>Canvas</span>
     </button>
     <button class="mob-tab" data-mob="add" onclick="switchMobileTab('add')">
       <span class="mob-tab-icon">＋</span><span>Add</span>
@@ -791,17 +791,17 @@ select.input { appearance: none; }
 <!-- Deploy Modal -->
 <div id="modal-deploy" class="modal-overlay hidden">
   <div class="modal" style="width:560px">
-    <div class="modal-title">🚀 Deploy Website</div>
+    <div class="modal-title"><span style="color:var(--green);">▲</span> Deploy Website</div>
     <div id="deploy-body">
       <div style="margin-bottom:16px;">
         <div style="font-weight:600;margin-bottom:8px;">Choose Deployment Target</div>
         <div style="display:flex;gap:10px;">
           <button class="deploy-target-btn btn btn-secondary" id="btn-deploy-github" onclick="selectDeployTarget('github')" style="flex:1;flex-direction:column;height:80px;gap:4px;">
-            <span style="font-size:24px;">🐙</span>
+            <span style="font-size:24px;color:var(--green);line-height:1;">⌘</span>
             <span>GitHub Pages</span>
           </button>
           <button class="deploy-target-btn btn btn-secondary" id="btn-deploy-cloudflare" onclick="selectDeployTarget('cloudflare')" style="flex:1;flex-direction:column;height:80px;gap:4px;">
-            <span style="font-size:24px;">☁️</span>
+            <span style="font-size:24px;color:var(--green);line-height:1;">☁︎</span>
             <span>Cloudflare Pages</span>
           </button>
         </div>
@@ -826,7 +826,7 @@ select.input { appearance: none; }
           </label>
         </div>
         <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:var(--text2);">
-          💡 To use GitHub Pages: after deployment, go to your repo Settings → Pages → set source to the <code>main</code> branch.
+          <span style="color:var(--green);">◇</span> To use GitHub Pages: after deployment, go to your repo Settings → Pages → set source to the <code>main</code> branch.
         </div>
       </div>
       <div id="deploy-cloudflare-config" class="hidden">
@@ -836,7 +836,7 @@ select.input { appearance: none; }
           <input class="input" id="deploy-cf-project" type="text" placeholder="my-website">
         </div>
         <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px;color:var(--text2);">
-          💡 Uses Cloudflare Pages Direct Upload. Project will be created automatically if it doesn't exist.
+          <span style="color:var(--green);">◇</span> Uses Cloudflare Pages Direct Upload. Project will be created automatically if it doesn't exist.
         </div>
       </div>
       <div id="deploy-progress" class="hidden">
@@ -906,10 +906,10 @@ select.input { appearance: none; }
 <div id="modal-img-lib" class="modal-overlay hidden">
   <div class="modal" style="width:620px;max-height:85vh;display:flex;flex-direction:column;">
     <div class="flex items-center gap-2" style="margin-bottom:14px;flex-shrink:0;">
-      <div class="modal-title" style="margin:0;">🖼 Image Library</div>
+      <div class="modal-title" style="margin:0;"><span style="color:var(--green);">▧</span> Image Library</div>
       <div class="ml-auto flex gap-2">
         <button class="btn btn-secondary btn-sm" onclick="document.getElementById('img-upload-input').click()">⬆ Upload</button>
-        <button class="btn btn-secondary btn-sm" onclick="openImportUrlModal()">🔗 Import URL</button>
+        <button class="btn btn-secondary btn-sm" onclick="openImportUrlModal()"><span style="color:var(--green);">⌁</span> Import URL</button>
       </div>
     </div>
     <input type="file" id="img-upload-input" accept="image/*" multiple style="display:none" onchange="uploadImages(this)">
@@ -1194,7 +1194,7 @@ function activateProToken(token) {
   }
   localStorage.setItem('fw_pro_token', token);
   localStorage.setItem('fw_pro_activated_at', new Date().toISOString());
-  toast('Pro unlocked! 🎉', 'success');
+  toast('Pro unlocked! ✓', 'success');
   location.reload();
   return true;
 }
@@ -1223,7 +1223,7 @@ function showProUpsell(featureName, featureDescription) {
   modal.innerHTML = `
     <div class="modal" style="width: 420px;">
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+        <div style="font-size: 48px; margin-bottom: 16px; color: var(--green); line-height: 1;">◈</div>
         <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Pro Feature</h2>
         <p style="color: var(--text2); font-size: 14px; margin: 0;">${featureDescription}</p>
       </div>
@@ -1534,14 +1534,14 @@ function initProFeatures() {
   if (deployDesktopBtn && !isPro) {
     deployDesktopBtn.style.opacity = '0.7';
     deployDesktopBtn.title = 'Pro feature. ZIP export is still free.';
-    deployDesktopBtn.innerHTML = '🔒 Deploy';
+    deployDesktopBtn.innerHTML = '◈ Deploy';
   }
 
   const deployMobileBtn = document.getElementById('btn-deploy-mobile');
   if (deployMobileBtn && !isPro) {
     deployMobileBtn.style.opacity = '0.7';
     deployMobileBtn.title = 'Pro feature. ZIP export is still free.';
-    deployMobileBtn.innerHTML = '🔒 &nbsp;Deploy';
+    deployMobileBtn.innerHTML = '◈ &nbsp;Deploy';
   }
 
   // Disable pro-only buttons for free users
@@ -1785,9 +1785,9 @@ function mkBlock(type, props = {}) {
       { title: 'Project Three', desc: 'Description of this project.', img: '' },
     ]},
     features: { bgColor: '#ffffff', padding: '60px 20px', title: 'Features', features: [
-      { icon: '⚡', title: 'Fast', desc: 'Lightning fast performance.' },
-      { icon: '🎨', title: 'Beautiful', desc: 'Stunning designs out of the box.' },
-      { icon: '🔒', title: 'Secure', desc: 'Built with security in mind.' },
+      { icon: 'ϟ', title: 'Fast', desc: 'Lightning fast performance.' },
+      { icon: '✦', title: 'Beautiful', desc: 'Stunning designs out of the box.' },
+      { icon: '◈', title: 'Secure', desc: 'Built with security in mind.' },
     ]},
     cta: { bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', padding: '80px 20px', heading: 'Ready to get started?', subheading: 'Join thousands of happy users today.', buttonText: 'Get Started Free', buttonHref: '#', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7' },
     footer: { bgColor: brand.dark || '#1a1a1a', textColor: '#aaaaaa', linkColor: '#cccccc', brand: projectBrandName, tagline: 'Building the web.', copyright: `© ${new Date().getFullYear()} ${projectBrandName}. All rights reserved.` },
@@ -1969,7 +1969,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     case 'cards': {
       const cards = (p.cards||[]).map(c=>`
   <div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-    ${c.img ? `<img src="${c.img}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:180px;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:32px;">🖼</div>`}
+  ${c.img ? `<img src="${c.img}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:180px;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#4ade80;font-size:32px;">▧</div>`}
     <div style="padding:16px;">
       <h3 style="margin:0 0 8px;font-size:16px;">${c.title||'Card Title'}</h3>
       <p style="margin:0;color:#666;font-size:14px;">${c.desc||''}</p>
@@ -2244,7 +2244,7 @@ function renderDashboard() {
 
   const githubCard = document.createElement('button');
   githubCard.className = 'new-project-card';
-  githubCard.innerHTML = '<span class="new-project-icon">🐙</span><span>Import from GitHub</span><span class="text-sm text-muted" style="text-align:center;max-width:190px;">Import a GitHub repository as a new project.</span>';
+  githubCard.innerHTML = '<span class="new-project-icon">⌘</span><span>Import from GitHub</span><span class="text-sm text-muted" style="text-align:center;max-width:190px;">Import a GitHub repository as a new project.</span>';
   githubCard.onclick = openGithubImportModal;
   grid.appendChild(githubCard);
 
@@ -2816,9 +2816,10 @@ function updateSiteThemeUI() {
   const mode = _projectData?.siteTheme || 'light';
   const desktopBtn = document.getElementById('btn-site-theme-toggle');
   const mobileBtn = document.getElementById('mob-btn-site-theme');
-  const label = mode === 'dark' ? '🌙 Site Dark' : '☀ Site Light';
-  if (desktopBtn) desktopBtn.textContent = label;
-  if (mobileBtn) mobileBtn.innerHTML = `${label.replace(' ', ' &nbsp;')}`;
+  const icon = mode === 'dark' ? '◐' : '○';
+  const text = mode === 'dark' ? 'Site Dark' : 'Site Light';
+  if (desktopBtn) desktopBtn.innerHTML = `<span style="color:var(--green);">${icon}</span> ${text}`;
+  if (mobileBtn) mobileBtn.innerHTML = `<span style="color:var(--green);">${icon}</span> &nbsp;${text}`;
 }
 
 function toggleSiteTheme() {
@@ -2838,7 +2839,7 @@ function renderPagesList() {
   (_projectData.pages||[]).forEach((page, i) => {
     const item = document.createElement('div');
     item.className = 'page-item' + (i === STATE.currentPageIndex ? ' active' : '');
-    item.innerHTML = `<span style="font-size:14px;">📄</span><span class="page-item-name">${page.name}</span>`;
+    item.innerHTML = `<span style="font-size:14px;color:var(--green);line-height:1;">▤</span><span class="page-item-name">${page.name}</span>`;
     item.onclick = () => switchPage(i);
     const ren = document.createElement('button');
     ren.className = 'btn-icon page-item-action';
@@ -2920,7 +2921,7 @@ function getBlockIcon(type) {
     hero: '★',
     heading: 'H',
     text: '¶',
-    image: '🖼',
+    image: '▧',
     button: '□',
     section: '▭',
     columns2: '⊞',
@@ -2929,7 +2930,7 @@ function getBlockIcon(type) {
     spacer: '↕',
     cards: '▦',
     features: '✦',
-    cta: '⚡',
+    cta: 'ϟ',
     footer: '▬',
     form: '✉',
     youtubeEmbed: '▶',
@@ -3287,7 +3288,7 @@ function buildSitePropsHTML() {
     html += `</div>
     <details class="props-advanced" style="margin-top:4px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
       <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
-        ⚙ Global CSS &amp; JS
+        ⚙︎ Global CSS &amp; JS
       </summary>
       <div style="padding:12px;">
         <div class="field">
@@ -3524,7 +3525,7 @@ function buildPropsForm(block) {
       </select></div>`;
       html += field('Background Color', 'bgColor', 'color');
       html += field('Background Image URL', 'bgImage');
-      html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="openImageLibrary(null,(url)=>{updateProp('${block.id}','bgImage',url);renderProps();})">🖼 Use Image Library as Background</button></div>`;
+      html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="openImageLibrary(null,(url)=>{updateProp('${block.id}','bgImage',url);renderProps();})"><span style="color:var(--green);">▧</span> Use Image Library as Background</button></div>`;
       html += `<div class="field"><label class="label">Background Size</label><select class="input" onchange="updateProp('${block.id}','bgSize',this.value)">
         ${['cover','contain','auto','100% auto','auto 100%'].map(v=>`<option value="${v}" ${(p.bgSize||'cover')===v?'selected':''}>${v}</option>`).join('')}
       </select></div>`;
@@ -3554,7 +3555,7 @@ function buildPropsForm(block) {
       break;
     case 'image':
       html += field('Image URL', 'src');
-      html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="openImageLibrary('${block.id}')">🖼 Browse Image Library</button></div>`;
+      html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="openImageLibrary('${block.id}')"><span style="color:var(--green);">▧</span> Browse Image Library</button></div>`;
       html += field('Alt Text', 'alt');
       html += field('Width', 'width');
       html += field('Height', 'height');
@@ -3693,7 +3694,7 @@ function buildPropsForm(block) {
           <div class="field"><label class="label">Image</label>
             <div style="display:flex;gap:6px;">
               <input class="input" type="text" value="${(c.img||'').replace(/"/g,'&quot;')}" placeholder="https://… or use library" oninput="updateItem('${block.id}','cards',${i},'img',this.value)" style="flex:1;">
-              <button class="btn btn-secondary btn-sm" onclick="openImageLibrary(null,(url)=>{updateItem('${block.id}','cards',${i},'img',url)})">🖼</button>
+              <button class="btn btn-secondary btn-sm" onclick="openImageLibrary(null,(url)=>{updateItem('${block.id}','cards',${i},'img',url)})"><span style="color:var(--green);">▧</span></button>
             </div>
           </div>
         </div>`;
@@ -3710,7 +3711,7 @@ function buildPropsForm(block) {
             <span style="font-size:11px;font-weight:600;color:var(--text2);">Feature ${i+1}</span>
             <button class="btn btn-danger btn-sm" style="padding:2px 8px;font-size:11px;" onclick="removeItem('${block.id}','features',${i})">× Remove</button>
           </div>
-          <div class="field"><label class="label">Icon (emoji)</label><input class="input" type="text" value="${(f.icon||'').replace(/"/g,'&quot;')}" style="max-width:80px;" oninput="updateItem('${block.id}','features',${i},'icon',this.value)"></div>
+          <div class="field"><label class="label">Icon</label><input class="input" type="text" value="${(f.icon||'').replace(/"/g,'&quot;')}" style="max-width:80px;" oninput="updateItem('${block.id}','features',${i},'icon',this.value)"></div>
           <div class="field"><label class="label">Title</label><input class="input" type="text" value="${(f.title||'').replace(/"/g,'&quot;')}" oninput="updateItem('${block.id}','features',${i},'title',this.value)"></div>
           <div class="field"><label class="label">Description</label><textarea class="input" rows="2" oninput="updateItem('${block.id}','features',${i},'desc',this.value)">${f.desc||''}</textarea></div>
         </div>`;
@@ -3728,7 +3729,7 @@ function buildPropsForm(block) {
 
   html += `<details class="props-advanced" style="margin-top:12px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
     <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
-      ⚙ Advanced
+      ⚙︎ Advanced
     </summary>
     <div style="padding:12px;">
       <div class="field">
@@ -3763,9 +3764,9 @@ function buildPropsForm(block) {
   </details>`;
 
   html += `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
-    <button class="btn btn-secondary btn-sm" onclick="saveBlockAsTemplate()" title="Save this block's configuration as a reusable template">💾 Save Template</button>
+    <button class="btn btn-secondary btn-sm" onclick="saveBlockAsTemplate()" title="Save this block's configuration as a reusable template"><span style="color:var(--green);">▣</span> Save Template</button>
     <button class="btn btn-secondary btn-sm" onclick="saveSelectedBlockToLibrary()" title="Save this block into the global custom block library">⬆ Save To Library</button>
-    <button class="btn btn-danger btn-sm" onclick="window.removeBlock('${block.id}')">🗑 Delete Block</button>
+    <button class="btn btn-danger btn-sm" onclick="window.removeBlock('${block.id}')">⌫ Delete Block</button>
   </div>`;
 
   return html;
@@ -4734,8 +4735,8 @@ function openDeployModal() {
   document.getElementById('deploy-cf-project').value = safeName;
 
   // Show connect warnings if not set up
-  document.getElementById('btn-deploy-github').innerHTML = `<span style="font-size:24px;">🐙</span><span>GitHub Pages</span>${!gh.verified?'<span style="font-size:10px;color:#f87171;">Not connected</span>':'<span style="font-size:10px;color:#4ade80;">Connected</span>'}`;
-  document.getElementById('btn-deploy-cloudflare').innerHTML = `<span style="font-size:24px;">☁️</span><span>Cloudflare Pages</span>${!cf.verified?'<span style="font-size:10px;color:#f87171;">Not connected</span>':'<span style="font-size:10px;color:#4ade80;">Connected</span>'}`;
+  document.getElementById('btn-deploy-github').innerHTML = `<span style="font-size:24px;color:var(--green);line-height:1;">⌘</span><span>GitHub Pages</span>${!gh.verified?'<span style="font-size:10px;color:#f87171;">Not connected</span>':'<span style="font-size:10px;color:#4ade80;">Connected</span>'}`;
+  document.getElementById('btn-deploy-cloudflare').innerHTML = `<span style="font-size:24px;color:var(--green);line-height:1;">☁︎</span><span>Cloudflare Pages</span>${!cf.verified?'<span style="font-size:10px;color:#f87171;">Not connected</span>':'<span style="font-size:10px;color:#4ade80;">Connected</span>'}`;
 
   STATE.deployTarget = null;
   openModal('modal-deploy');
@@ -5019,7 +5020,7 @@ async function deployToGithub(asRelease = false) {
 
   // Done
   const url = asRelease ? `https://github.com/${owner}/${repo}/releases` : `https://${owner}.github.io/${repo}/${subfolder||''}`;
-  const msg = asRelease ? `🎉 Release created! Download the ZIP from the releases page to restore later.\n\nReleases: ${url}` : `🎉 Deployed! Enable GitHub Pages in repo settings to go live.\n\nYour site will be at:\n${url}`;
+  const msg = asRelease ? `✓ Release created! Download the ZIP from the releases page to restore later.\n\nReleases: ${url}` : `✓ Deployed! Enable GitHub Pages in repo settings to go live.\n\nYour site will be at:\n${url}`;
   showDeployDone(true, msg, url);
 }
 
@@ -5283,7 +5284,7 @@ async function deployToCloudflare() {
   } catch(e) { setStepDone(s3, e.message, false); return showDeployDone(false); }
 
   const url = `https://${projectName}.pages.dev`;
-  showDeployDone(true, `🎉 Deployed to Cloudflare Pages!`, url);
+  showDeployDone(true, `✓ Deployed to Cloudflare Pages!`, url);
 }
 
 async function sha1(str) {
@@ -5299,7 +5300,7 @@ function showDeployDone(success, message = '', url = '') {
   result.innerHTML = success
     ? `<div style="color:var(--green);font-weight:600;margin-bottom:8px;">✓ Deployment successful!</div>
        <div style="font-size:13px;color:var(--text2);white-space:pre-wrap;">${message}</div>
-       ${url ? `<a href="${url}" target="_blank" style="display:inline-block;margin-top:12px;color:var(--accent);">🔗 Visit Site →</a>` : ''}`
+       ${url ? `<a href="${url}" target="_blank" style="display:inline-block;margin-top:12px;color:var(--accent);"><span style="color:var(--green);">⌁</span> Visit Site →</a>` : ''}`
     : `<div style="color:var(--red);font-weight:600;">✗ Deployment failed. Check errors above.</div>`;
   steps.appendChild(result);
 
