@@ -407,7 +407,7 @@ footer {
         <a href="/services">Services</a>
       </div>
       <div class="nav-actions">
-        <a href="/site-builder" class="btn btn-primary">Open Builder</a>
+        <a href="https://build.functionalwebsites.com/" class="btn btn-primary">Open Builder</a>
       </div>
     </nav>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
@@ -419,7 +419,7 @@ footer {
   <div class="footer-content">
     <div class="footer-section">
       <h4>Product</h4>
-      <a href="/site-builder">Builder</a>
+      <a href="https://build.functionalwebsites.com/">Builder</a>
       <a href="/marketplace">Marketplace</a>
       <a href="/docs">Docs</a>
     </div>

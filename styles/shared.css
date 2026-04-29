@@ -287,7 +287,7 @@ button {
 .hero {
       /* max-width: 1200px; */
       margin: 0 auto;
-      min-height: 80vh;
+      min-height: 100svh;
       padding: 80px 24px;
       box-sizing: border-box;
       display: flex;
