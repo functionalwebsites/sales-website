@@ -21,13 +21,13 @@
 }
 
 .gear-hero::before {
-  -webkit-mask: url("/minigear-globe.svg") center / contain no-repeat;
-  mask: url("/minigear-globe.svg") center / contain no-repeat;
+  -webkit-mask: url("/img/minigear-globe.svg") center / contain no-repeat;
+  mask: url("/img/minigear-globe.svg") center / contain no-repeat;
 }
 
 .gear-hero::after {
-  -webkit-mask: url("/minigear-gear.svg") center / contain no-repeat;
-  mask: url("/minigear-gear.svg") center / contain no-repeat;
+  -webkit-mask: url("/img/minigear-gear.svg") center / contain no-repeat;
+  mask: url("/img/minigear-gear.svg") center / contain no-repeat;
   animation: heroGearSpin 80s linear infinite;
 }
 
