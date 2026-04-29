@@ -139,9 +139,12 @@
   transition: color 0.2s;
 }
 
-.nav-links a:hover,
-.nav-links a[aria-current="page"] {
+.nav-links a:hover {
   color: var(--text);
+}
+
+.nav-links a[aria-current="page"] {
+  color: var(--green);
 }
 
 .nav-actions {
