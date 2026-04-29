@@ -132,7 +132,7 @@ button {
 
 .nav-links a {
   color: var(--text2);
-  font-size: 14px;
+  font-size: 18px;
   white-space: nowrap;
   transition: color 0.2s;
 }
@@ -146,6 +146,10 @@ button {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.nav-actions a {
+  font-size: 18px;
 }
 
 .menu-toggle {

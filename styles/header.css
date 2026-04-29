@@ -54,7 +54,7 @@ nav {
 
 nav a {
   color: var(--text2);
-  font-size: 14px;
+  font-size: 20px;
   transition: color 0.2s;
 }
 
@@ -62,41 +62,10 @@ nav a:hover {
   color: var(--text);
 }
 
+
 /* Navigation Actions */
 .nav-actions {
   display: flex;
   gap: 12px;
   align-items: center;
-}
-
-/* Buttons (already defined in main style, just documented here) */
-.btn {
-  padding: 8px 16px;
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: var(--green);
-  color: #000;
-}
-
-.btn-primary:hover {
-  background: #3dc76e;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--text2);
-  border: 1px solid var(--border);
-}
-
-.btn-secondary:hover {
-  border-color: var(--text);
-  color: var(--text);
 }
