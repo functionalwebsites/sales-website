@@ -1,11 +1,12 @@
 (function() {
-  const componentPaths = {
-    header: '/components/header.html',
-    footer: '/components/footer.html',
-    styles: '/styles/shared.css'
-  };
-
   const fallbackStyles = `/* ===== SHARED STYLESHEET FOR FUNCTIONAL WEBSITES ===== */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/styles/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
 :host {
   color-scheme: dark;
 }
@@ -29,7 +30,7 @@
     radial-gradient(circle at bottom right, rgba(129, 129, 143, 0.16), transparent 34%),
     linear-gradient(180deg, #161a1a 0%, #101313 100%);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .site-component a {
@@ -44,7 +45,7 @@
 
 .header {
   background: var(--bg2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: none;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -91,8 +92,8 @@
 }
 
 .logo-mark {
-  width: 28px;
-  height: 28px;
+  width: 33px;
+  height: 33px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,7 +135,7 @@
 
 .nav-links a {
   color: var(--text2);
-  font-size: 14px;
+  font-size: 16px;
   white-space: nowrap;
   transition: color 0.2s;
 }
@@ -153,6 +154,10 @@
   align-items: center;
 }
 
+.nav-actions a {
+  font-size: 16px;
+}
+
 .menu-toggle {
   display: none;
   align-items: center;
@@ -160,10 +165,9 @@
   width: 42px;
   height: 42px;
   background: transparent;
-  border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
-  font-size: 18px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
@@ -174,8 +178,8 @@
 
 .menu-toggle-bar {
   display: block;
-  width: 16px;
-  height: 2px;
+  width: 24px;
+  height: 3px;
   border-radius: 999px;
   background: currentColor;
   position: relative;
@@ -186,18 +190,18 @@
   content: "";
   position: absolute;
   left: 0;
-  width: 16px;
-  height: 2px;
+  width: 24px;
+  height: 3px;
   border-radius: 999px;
   background: currentColor;
 }
 
 .menu-toggle-bar::before {
-  top: -5px;
+  top: -8px;
 }
 
 .menu-toggle-bar::after {
-  top: 5px;
+  top: 8px;
 }
 
 .header-nav[data-open="true"] + .menu-toggle .menu-toggle-bar {
@@ -229,6 +233,10 @@
 
 .btn-primary {
   background: var(--green);
+  color: #000;
+}
+
+.site-component .btn-primary {
   color: #000;
 }
 
@@ -388,9 +396,10 @@ footer {
       <div class="nav-links">
         <a href="https://functionalwebsites.com/">Home</a>
         <a href="https://functionalwebsites.com/pricing">Pricing</a>
+        <a href="https://functionalwebsites.com/services">Services</a>
+        <a href="https://functionalwebsites.com/hosting">Hosting</a>
         <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
         <a href="https://docs.functionalwebsites.com/">Docs</a>
-        <a href="https://functionalwebsites.com/services">Services</a>
       </div>
       <div class="nav-actions">
         <a href="https://build.functionalwebsites.com/" class="btn btn-primary">Open Builder</a>
@@ -407,11 +416,12 @@ footer {
       <h4>Product</h4>
       <a href="https://build.functionalwebsites.com/">Builder</a>
       <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
-      <a href="https://docs.functionalwebsites.com/">Docs</a>
     </div>
     <div class="footer-section">
       <h4>Services</h4>
       <a href="https://functionalwebsites.com/services">Custom Sites</a>
+      <a href="https://functionalwebsites.com/services#website-cloning">Website Cloning</a>
+      <a href="https://functionalwebsites.com/hosting">Hosting</a>
       <a href="https://functionalwebsites.com/pricing">Pricing</a>
       <a href="mailto:cooper@functionalwebsites.com">Contact</a>
     </div>
@@ -419,6 +429,7 @@ footer {
       <h4>Resources</h4>
       <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
       <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>
+      <a href="https://docs.functionalwebsites.com/">Docs</a>
     </div>
     <div class="footer-section">
       <h4>Company</h4>
@@ -431,26 +442,18 @@ footer {
 </footer>`
   };
 
-  let sharedStylesPromise;
-
-  async function fetchText(path, fallbackValue) {
-    try {
-      const response = await fetch(path);
-      if (!response.ok) {
-        throw new Error(`Failed to load ${path}: ${response.status}`);
-      }
-      return await response.text();
-    } catch (error) {
-      console.warn(`Component loader fallback for ${path}`, error);
-      return fallbackValue;
+  function renderComponent(placeholder, name, styles, markup) {
+    let root = placeholder.shadowRoot;
+    if (!root) {
+      root = placeholder.attachShadow({ mode: 'open' });
     }
-  }
 
-  function getSharedStyles() {
-    if (!sharedStylesPromise) {
-      sharedStylesPromise = fetchText(componentPaths.styles, fallbackStyles);
+    root.innerHTML = `<style>${styles}</style><div class="site-component">${markup}</div>`;
+
+    if (name === 'header') {
+      markActiveNav(root);
+      bindHeaderInteractions(root);
     }
-    return sharedStylesPromise;
   }
 
   function markActiveNav(root) {
@@ -544,18 +547,7 @@ footer {
       return;
     }
 
-    const [styles, markup] = await Promise.all([
-      getSharedStyles(),
-      fetchText(componentPaths[name], fallbackMarkup[name])
-    ]);
-
-    const root = placeholder.attachShadow({ mode: 'open' });
-    root.innerHTML = `<style>${styles}</style><div class="site-component">${markup}</div>`;
-
-    if (name === 'header') {
-      markActiveNav(root);
-      bindHeaderInteractions(root);
-    }
+    renderComponent(placeholder, name, fallbackStyles, fallbackMarkup[name]);
   }
 
   async function initComponents() {
