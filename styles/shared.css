@@ -70,11 +70,10 @@ button {
 }
 
 #header-placeholder {
-  min-height: 56px;
+  min-height: 0;
   width: 100%;
-  position: fixed;
-  z-index: 9;
-  top: 0px;
+  position: relative;
+  z-index: 100;
 }
 
 .logo-link {
