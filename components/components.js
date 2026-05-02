@@ -389,7 +389,7 @@ footer {
         <a href="/">Home</a>
         <a href="/pricing">Pricing</a>
         <a href="/marketplace">Marketplace</a>
-        <a href="/docs">Docs</a>
+        <a href="https://docs.functionalwebsites.com/">Docs</a>
         <a href="/services">Services</a>
       </div>
       <div class="nav-actions">
@@ -407,7 +407,7 @@ footer {
       <h4>Product</h4>
       <a href="https://build.functionalwebsites.com/">Builder</a>
       <a href="/marketplace">Marketplace</a>
-      <a href="/docs">Docs</a>
+      <a href="https://docs.functionalwebsites.com/">Docs</a>
     </div>
     <div class="footer-section">
       <h4>Services</h4>
@@ -417,7 +417,7 @@ footer {
     </div>
     <div class="footer-section">
       <h4>Resources</h4>
-      <a href="/docs/getting-started">Getting Started</a>
+      <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
       <a href="/pricing#faq">FAQ</a>
     </div>
     <div class="footer-section">
@@ -455,12 +455,22 @@ footer {
 
   function markActiveNav(root) {
     const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+    const hostname = window.location.hostname;
     const links = root.querySelectorAll('.nav-links a');
 
     links.forEach((link) => {
-      const href = (link.getAttribute('href') || '').replace(/\/$/, '') || '/';
-      const isDocsMatch = href === '/docs' && pathname.startsWith('/docs');
-      const isExactMatch = href === pathname;
+      const rawHref = link.getAttribute('href') || '';
+      let hrefUrl;
+      try {
+        hrefUrl = new URL(rawHref, window.location.origin);
+      } catch (e) {
+        hrefUrl = new URL('/', window.location.origin);
+      }
+      const hrefPath = hrefUrl.pathname.replace(/\/$/, '') || '/';
+      const isDocsLink = hrefUrl.hostname === 'docs.functionalwebsites.com' || hrefPath === '/docs';
+      const isDocsPage = hostname === 'docs.functionalwebsites.com' || pathname.startsWith('/docs');
+      const isDocsMatch = isDocsLink && isDocsPage;
+      const isExactMatch = hrefUrl.hostname === hostname && hrefPath === pathname;
       link.toggleAttribute('aria-current', isDocsMatch || isExactMatch);
     });
   }
