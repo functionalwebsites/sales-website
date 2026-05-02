@@ -219,10 +219,14 @@
     }
 
     .hero-card li::before {
-      content: "✓";
-      color: var(--green);
-      font-weight: 800;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
       margin-right: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      vertical-align: middle;
     }
 
     .section {
@@ -357,15 +361,15 @@
         <p>When you open a project, you'll see three main areas:</p>
         <div class="mini-grid">
           <div class="mini-card">
-            <strong>📐 Canvas</strong>
+            <strong>Canvas</strong>
             <p>Center of the screen. Drag blocks here to build your page.</p>
           </div>
           <div class="mini-card">
-            <strong>⚙️ Properties Panel</strong>
+            <strong>Properties Panel</strong>
             <p>Right side. Style and configure the selected block.</p>
           </div>
           <div class="mini-card">
-            <strong>📄 Pages List</strong>
+            <strong>Pages List</strong>
             <p>Left sidebar. Manage all pages in your project.</p>
           </div>
         </div>

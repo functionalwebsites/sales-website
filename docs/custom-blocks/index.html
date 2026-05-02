@@ -219,10 +219,14 @@
     }
 
     .hero-card li::before {
-      content: "✓";
-      color: var(--green);
-      font-weight: 800;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
       margin-right: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      vertical-align: middle;
     }
 
     .section {

@@ -223,10 +223,14 @@
     }
 
     .hero-card li::before {
-      content: "✓";
-      color: var(--green);
-      font-weight: 800;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
       margin-right: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      vertical-align: middle;
     }
 
     .section {
@@ -478,13 +482,13 @@
       <article class="doc-card">
         <h2>Post-Deployment Checklist</h2>
         <ul>
-          <li>☑️ All pages load correctly</li>
-          <li>☑️ Links work (no 404 errors)</li>
-          <li>☑️ Images display</li>
-          <li>☑️ Mobile-responsive</li>
-          <li>☑️ Forms work (if applicable)</li>
-          <li>☑️ HTTPS enabled</li>
-          <li>☑️ Performance tested</li>
+          <li>All pages load correctly</li>
+          <li>Links work (no 404 errors)</li>
+          <li>Images display</li>
+          <li>Mobile-responsive</li>
+          <li>Forms work (if applicable)</li>
+          <li>HTTPS enabled</li>
+          <li>Performance tested</li>
         </ul>
       </article>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Deploy your Functional Websites site to GitHub Pages for free hosting with automatic deployments.">
+  <meta name="description" content="Deploy your Functional Websites site to GitHub Pages manually or directly from the builder with Pro.">
   <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
@@ -13,7 +13,7 @@
   <meta name="msapplication-TileColor" content="#0f0f13">
   <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
   <meta name="theme-color" content="#0f0f13">
-  <title>Deploy to GitHub Pages — Functional Websites</title>
+  <title>GitHub Pages Deployment — Functional Websites</title>
   <link rel="stylesheet" href="/components/hero-gear.css">
   <style>
     :root {
@@ -219,10 +219,14 @@
     }
 
     .hero-card li::before {
-      content: "✓";
-      color: var(--green);
-      font-weight: 800;
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
       margin-right: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      vertical-align: middle;
     }
 
     .section {
@@ -331,62 +335,84 @@
     <section class="hero gear-hero">
       <div class="hero-copy">
         <div class="eyebrow">GitHub Pages Guide</div>
-        <h1>Deploy to GitHub Pages Free</h1>
-        <p>Host your Functional Websites site for free on GitHub Pages. Automatic deployments, custom domains, and HTTPS included.</p>
+        <h1>Deploy with GitHub Pages</h1>
+        <p>Host your exported site on GitHub Pages for free, or use the builder's direct GitHub deployment workflow with Pro.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://github.com/new">Create Repository</a>
+          <a class="btn btn-secondary" href="/site-builder/">Open Builder</a>
           <a class="btn btn-secondary" href="/docs/">Back to Docs</a>
         </div>
       </div>
       <aside class="hero-card">
-        <strong>GitHub Pages benefits</strong>
+        <strong>Two deployment options</strong>
         <ul>
-          <li>Completely free hosting</li>
-          <li>Automatic deployments</li>
-          <li>HTTPS by default</li>
-          <li>Custom domain support</li>
-          <li>Built-in version control</li>
+          <li>Export a ZIP and push files yourself</li>
+          <li>Deploy directly from the builder with Pro</li>
+          <li>Use GitHub Pages for free static hosting</li>
+          <li>Keep your token private and scoped carefully</li>
         </ul>
       </aside>
     </section>
 
     <section class="section">
       <article class="doc-card">
-        <h2>What is GitHub Pages?</h2>
-        <p>GitHub Pages is free static site hosting provided by GitHub. Push your HTML files to a repository, and they're automatically published at <code>username.github.io/repo</code> or your custom domain.</p>
+        <h2>Choose a Workflow</h2>
+        <p>GitHub Pages hosts static files from a GitHub repository. Functional Websites gives you two reasonable ways to get your site there:</p>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong>Option 1: Export and push yourself</strong>
+            <p>Free. Best if you are comfortable using GitHub's web UI or command line and do not want to store a GitHub token in the builder.</p>
+          </div>
+          <div class="mini-card">
+            <strong>Option 2: Direct deploy from builder</strong>
+            <p>Pro feature. Best if you want the builder to create/update repository files for you after you connect GitHub with a token.</p>
+          </div>
+          <div class="mini-card">
+            <strong>Security tradeoff</strong>
+            <p>Direct deploy is faster, but it requires a GitHub token. Treat that token like a password.</p>
+          </div>
+        </div>
       </article>
 
       <article class="doc-card">
-        <h2>Prerequisites</h2>
+        <h2>Before You Start</h2>
         <ul>
-          <li>GitHub account (free at github.com)</li>
-          <li>Git installed on your computer</li>
-          <li>Your site exported from the Site Builder as HTML</li>
+          <li>A GitHub account.</li>
+          <li>A Functional Websites project ready to publish.</li>
+          <li>For manual export: a repository and either Git installed locally or comfort using GitHub's browser upload flow.</li>
+          <li>For direct deploy: Pro unlocked in the builder and a GitHub personal access token.</li>
         </ul>
       </article>
 
       <article class="doc-card">
-        <h2>Step 1: Export Your Site</h2>
-        <ol>
-          <li>Open your project in the Site Builder</li>
-          <li>Click <strong>File > Export</strong></li>
-          <li>Download the ZIP file</li>
-          <li>Extract it to a folder on your computer</li>
-        </ol>
-      </article>
+        <h2>Option 1: Export and Publish Yourself</h2>
+        <p>This path keeps GitHub credentials out of the builder. It is the simplest security model and ZIP export stays free.</p>
 
-      <article class="doc-card">
-        <h2>Step 2: Create a GitHub Repository</h2>
+        <h3>Step 1: Export the Site</h3>
         <ol>
-          <li>Go to <a href="https://github.com/new">github.com/new</a></li>
-          <li>Name your repository (e.g., <code>my-portfolio-site</code>)</li>
-          <li>Set it to <strong>Public</strong></li>
-          <li>Click <strong>Create repository</strong></li>
+          <li>Open your project in the Site Builder.</li>
+          <li>Click <strong>Download ZIP</strong>.</li>
+          <li>Extract the ZIP on your computer.</li>
+          <li>Confirm the extracted folder contains <code>index.html</code> at the root.</li>
         </ol>
-      </article>
 
-      <article class="doc-card">
-        <h2>Step 3: Initialize Git & Push Your Files</h2>
+        <h3>Step 2: Create a Repository</h3>
+        <ol>
+          <li>Go to <a href="https://github.com/new">github.com/new</a>.</li>
+          <li>Name the repository, for example <code>my-website</code>.</li>
+          <li>Choose <strong>Public</strong> unless you have a GitHub plan that supports Pages for private repositories.</li>
+          <li>Create the repository.</li>
+        </ol>
+
+        <h3>Step 3A: Upload in the Browser</h3>
+        <ol>
+          <li>Open your new repository on GitHub.</li>
+          <li>Choose <strong>uploading an existing file</strong> or <strong>Add file > Upload files</strong>.</li>
+          <li>Drag in the exported files and folders, including <code>index.html</code>.</li>
+          <li>Commit the upload to the <code>main</code> branch.</li>
+        </ol>
+
+        <h3>Step 3B: Or Push with Git</h3>
         <p>Open Terminal, navigate to your site folder, and run:</p>
         <div style="background: #0a0d0d; border: 1px solid #2a3333; border-radius: 12px; padding: 16px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 13px;">
 git init<br>
@@ -397,79 +423,123 @@ git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git<br>
 git push -u origin main
         </div>
         <p style="margin-top: 16px;"><strong>Replace:</strong> YOUR-USERNAME with your GitHub username and YOUR-REPO-NAME with your repository name.</p>
-      </article>
 
-      <article class="doc-card">
-        <h2>Step 4: Enable GitHub Pages</h2>
+        <h3>Step 4: Enable GitHub Pages</h3>
         <ol>
-          <li>Go to your repository on GitHub</li>
-          <li>Click <strong>Settings</strong> tab</li>
-          <li>Scroll down to <strong>Pages</strong> section</li>
-          <li>Under "Branch", select <strong>main</strong></li>
-          <li>Click <strong>Save</strong></li>
-          <li>Your site is now live at <code>https://username.github.io/repo-name</code></li>
+          <li>Go to the repository on GitHub.</li>
+          <li>Open <strong>Settings</strong>.</li>
+          <li>Open <strong>Pages</strong> in the sidebar.</li>
+          <li>Set the source to <strong>Deploy from a branch</strong>.</li>
+          <li>Select <strong>main</strong> and the folder where your site files live, usually <strong>/root</strong>.</li>
+          <li>Save. Your site will publish at <code>https://YOUR-USERNAME.github.io/YOUR-REPO-NAME</code>.</li>
         </ol>
       </article>
 
       <article class="doc-card">
-        <h2>Step 5: Connect Your Custom Domain (Optional)</h2>
+        <h2>Option 2: Deploy Directly from the Builder (Pro)</h2>
+        <p>Direct GitHub deployment lets the builder create or update repository files for you. This is faster for repeated updates, but it requires a GitHub personal access token.</p>
+
+        <h3>Step 1: Create a GitHub Token</h3>
         <ol>
-          <li>Buy a domain from a registrar (Namecheap, GoDaddy, etc.)</li>
-          <li>Go to your domain's DNS settings</li>
-          <li>Create a <strong>CNAME</strong> record pointing to <code>username.github.io</code></li>
-          <li>In your repo Settings > Pages, enter your custom domain</li>
-          <li>Wait a few hours for DNS to propagate</li>
-          <li>Your site is now accessible at your custom domain</li>
+          <li>Sign in to GitHub.</li>
+          <li>Open <strong>Settings</strong> from your GitHub profile menu.</li>
+          <li>Open <strong>Developer settings</strong>.</li>
+          <li>Open <strong>Personal access tokens</strong>.</li>
+          <li>Prefer a fine-grained token when possible. Limit it to the repository or organization you plan to deploy to.</li>
+          <li>Grant only the permissions needed to create/update repository contents. If you use classic tokens, avoid broad scopes unless you understand the risk.</li>
+          <li>Set an expiration date. Shorter is safer.</li>
+          <li>Generate the token and copy it once. GitHub will not show it again.</li>
+        </ol>
+
+        <h3>Step 2: Store the Token in the Builder</h3>
+        <ol>
+          <li>Open the Site Builder.</li>
+          <li>Unlock Pro if you have not already.</li>
+          <li>Open <strong>Settings</strong>.</li>
+          <li>Find <strong>GitHub Integration</strong>.</li>
+          <li>Paste your token into <strong>Personal Access Token</strong>.</li>
+          <li>Enter your default GitHub username or organization.</li>
+          <li>Click <strong>Save &amp; Verify</strong>.</li>
+        </ol>
+
+        <h3>Step 3: Deploy</h3>
+        <ol>
+          <li>Open the project you want to publish.</li>
+          <li>Click <strong>Deploy</strong>.</li>
+          <li>Choose GitHub as the target.</li>
+          <li>Enter the repository name, branch, and optional folder.</li>
+          <li>Start the deploy. The builder will prepare the HTML files and upload them to GitHub.</li>
+          <li>After the files are in GitHub, enable GitHub Pages for that branch/folder if you have not already.</li>
         </ol>
       </article>
 
       <article class="doc-card">
-        <h2>Updating Your Site</h2>
-        <p>After making changes in the Site Builder:</p>
+        <h2>Protect Your GitHub Token</h2>
+        <p>A GitHub token can allow code or tools to modify repositories under your account. Treat it like a password.</p>
+        <ul>
+          <li>Do not paste your token into chats, emails, public issues, screenshots, or repository files.</li>
+          <li>Use the least access that works. Repository-specific fine-grained tokens are safer than broad account-wide tokens.</li>
+          <li>Set an expiration date and rotate tokens periodically.</li>
+          <li>Remove tokens you no longer use from GitHub's token settings.</li>
+          <li>If a token is exposed, revoke it immediately and create a new one.</li>
+          <li>Do not use a token from a shared or public computer.</li>
+          <li>Remember that browser storage is not a vault. Direct deploy is convenient, but manual export is safer if you do not want credentials stored in the browser.</li>
+        </ul>
+      </article>
+
+      <article class="doc-card">
+        <h2>Custom Domains</h2>
         <ol>
-          <li>Export your updated site</li>
-          <li>Replace files in your local folder</li>
-          <li>Run these Git commands:</li>
+          <li>Buy or use a domain from your registrar.</li>
+          <li>Open your domain's DNS settings.</li>
+          <li>For a subdomain such as <code>www.example.com</code>, create a <strong>CNAME</strong> record pointing to <code>YOUR-USERNAME.github.io</code>.</li>
+          <li>In GitHub, open repository <strong>Settings > Pages</strong> and enter your custom domain.</li>
+          <li>Wait for DNS and HTTPS certificate provisioning. This can take minutes or, in some cases, several hours.</li>
         </ol>
-        <div style="background: #0a0d0d; border: 1px solid #2a3333; border-radius: 12px; padding: 16px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 13px;">
-git add .<br>
-git commit -m "Update site"<br>
-git push origin main
-        </div>
-        <p style="margin-top: 16px;">Your site automatically deploys within seconds.</p>
+      </article>
+
+      <article class="doc-card">
+        <h2>Updating Your Site Later</h2>
+        <ul>
+          <li><strong>Manual export:</strong> download a fresh ZIP, replace the old files in your repository, and commit/push again.</li>
+          <li><strong>Direct deploy:</strong> open the project in the builder, click <strong>Deploy</strong>, and publish to the same repository/branch.</li>
+          <li>For important launches, preview the site before deploy and keep a known-good ZIP backup.</li>
+        </ul>
       </article>
 
       <article class="doc-card">
         <h2>Troubleshooting</h2>
         <h3>Site Not Showing?</h3>
         <ul>
-          <li>Verify <code>index.html</code> is in the root of your repository</li>
-          <li>Check that Pages is enabled in Settings</li>
-          <li>Refresh the page after a minute or two</li>
+          <li>Verify <code>index.html</code> is in the folder GitHub Pages is publishing.</li>
+          <li>Check that Pages is enabled in repository settings.</li>
+          <li>Wait a minute or two, then refresh.</li>
+          <li>Check the repository's <strong>Actions</strong> or <strong>Pages</strong> status if GitHub reports a build or publish error.</li>
         </ul>
 
         <h3>Broken Links or Images?</h3>
         <ul>
-          <li>Make sure all HTML, CSS, images, and JS files were uploaded</li>
-          <li>Check file paths are relative (not absolute)</li>
-          <li>Use lowercase filenames (GitHub is case-sensitive on some systems)</li>
+          <li>Make sure all exported HTML, CSS, JavaScript, and image files were uploaded.</li>
+          <li>Keep folder names intact, especially the exported <code>images</code> folder.</li>
+          <li>Check for uppercase/lowercase filename mismatches. GitHub hosting is case-sensitive.</li>
         </ul>
 
-        <h3>HTTPS Not Working?</h3>
+        <h3>Token or Deploy Errors?</h3>
         <ul>
-          <li>GitHub Pages always provides free HTTPS</li>
-          <li>If you have a custom domain, wait up to 24 hours for the certificate</li>
-          <li>Clear your browser cache and try again</li>
+          <li>Confirm the token has access to the target repository or organization.</li>
+          <li>Confirm the repository name and owner are spelled correctly.</li>
+          <li>If GitHub returns <strong>Not Found</strong>, the token may not have permission even if the repository exists.</li>
+          <li>If you suspect token exposure, revoke it in GitHub immediately.</li>
         </ul>
       </article>
 
       <article class="doc-card">
         <h2>Best Practices</h2>
         <ul>
-          <li><strong>Commit Often:</strong> Make small commits with clear messages</li>
-          <li><strong>Use .gitignore:</strong> Exclude large files or system files</li>
-          <li><strong>Test Locally:</strong> Use a local server to test before pushing</li>
-          <li><strong>Monitor Performance:</strong> Use PageSpeed Insights to check speed</li>
+          <li><strong>Use clear repository names:</strong> A readable repo name makes the GitHub Pages URL easier to share.</li>
+          <li><strong>Keep exports small:</strong> Compress large images before publishing.</li>
+          <li><strong>Test before publishing:</strong> Use Preview in the builder and check mobile layout.</li>
+          <li><strong>Protect credentials:</strong> Prefer manual export if you do not want to store a token in your browser.</li>
         </ul>
       </article>
     </section>
@@ -478,9 +548,10 @@ git push origin main
       <div class="cta">
         <div class="eyebrow">Next Steps</div>
         <h2>Ready to deploy?</h2>
-        <p>Create a GitHub repository and push your first site live in 5 minutes.</p>
+        <p>Use manual export for the safest credential model, or use Pro direct deploy when speed matters.</p>
         <div class="cta-actions">
-          <a class="btn btn-primary" href="https://github.com/new">Start Now</a>
+          <a class="btn btn-primary" href="https://github.com/new">Create Repository</a>
+          <a class="btn btn-secondary" href="/site-builder/">Open Builder</a>
           <a class="btn btn-secondary" href="/docs/">View All Guides</a>
         </div>
       </div>
