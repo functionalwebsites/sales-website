@@ -1,4 +1,4 @@
-// Site builder export. Loaded by site-builder/index.html in dependency order.
+// Site builder export. Loaded by build/index.html in dependency order.
 function setDevice(d) {
   STATE.currentDevice = d;
   document.querySelectorAll('.device-btn').forEach(b => {

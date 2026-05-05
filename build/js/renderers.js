@@ -1,4 +1,4 @@
-// Site builder renderers. Loaded by site-builder/index.html in dependency order.
+// Site builder renderers. Loaded by build/index.html in dependency order.
 function renderBlock(block, editing = false, ctx = null) {
   const html = _renderBlockInner(block, editing, ctx);
   if (!editing) {

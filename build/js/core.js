@@ -1,4 +1,4 @@
-// Site builder core. Loaded by site-builder/index.html in dependency order.
+// Site builder core. Loaded by build/index.html in dependency order.
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {

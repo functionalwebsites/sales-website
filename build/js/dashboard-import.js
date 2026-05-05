@@ -1,4 +1,4 @@
-// Site builder dashboard-import. Loaded by site-builder/index.html in dependency order.
+// Site builder dashboard-import. Loaded by build/index.html in dependency order.
 function showView(v) {
   document.querySelectorAll('#view-dashboard,#view-editor,#view-settings').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');

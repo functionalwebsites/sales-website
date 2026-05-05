@@ -1,4 +1,4 @@
-// Site builder app. Loaded by site-builder/index.html in dependency order.
+// Site builder app. Loaded by build/index.html in dependency order.
 function openModal(id) {
   document.getElementById(id).classList.remove('hidden');
 }

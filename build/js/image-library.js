@@ -1,4 +1,4 @@
-// Site builder image-library. Loaded by site-builder/index.html in dependency order.
+// Site builder image-library. Loaded by build/index.html in dependency order.
 function openImageLibrary(blockId, callback) {
   STATE.imgLibTargetBlockId = blockId;
   STATE.imgLibCallback = callback || null;

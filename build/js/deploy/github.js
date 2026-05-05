@@ -1,4 +1,4 @@
-// Site builder github. Loaded by site-builder/index.html in dependency order.
+// Site builder github. Loaded by build/index.html in dependency order.
 async function deployToGithub(asRelease = false) {
   const gh = LS.get('github') || {};
   const rawRepoInput = document.getElementById('deploy-gh-repo').value.trim();

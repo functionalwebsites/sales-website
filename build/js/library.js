@@ -1,4 +1,4 @@
-// Site builder library. Loaded by site-builder/index.html in dependency order.
+// Site builder library. Loaded by build/index.html in dependency order.
 function saveBlockAsTemplate() {
   if (!STATE.selectedBlockId) { toast('Select a block first', 'error'); return; }
   const page = _projectData.pages[STATE.currentPageIndex];

@@ -12,8 +12,13 @@ const DOCS_ROUTES = new Set([
 export async function onRequest(context) {
   const url = new URL(context.request.url);
 
+  if (url.pathname === '/site-builder' || url.pathname.startsWith('/site-builder/')) {
+    url.pathname = url.pathname.replace(/^\/site-builder/, '/build');
+    return Response.redirect(url.toString(), 308);
+  }
+
   if (url.hostname === BUILDER_HOST && (url.pathname === '/' || url.pathname === '/index.html')) {
-    const builderUrl = new URL('/site-builder/', url);
+    const builderUrl = new URL('/build/', url);
     return context.env.ASSETS.fetch(new Request(builderUrl, context.request));
   }
 

@@ -1,4 +1,4 @@
-// Site builder props-panel. Loaded by site-builder/index.html in dependency order.
+// Site builder props-panel. Loaded by build/index.html in dependency order.
 function addBlock(type) {
   pushUndo();
   const block = mkBlock(type);

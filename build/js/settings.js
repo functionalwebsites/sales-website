@@ -1,4 +1,4 @@
-// Site builder settings. Loaded by site-builder/index.html in dependency order.
+// Site builder settings. Loaded by build/index.html in dependency order.
 function loadSettingsForm() {
   const gh = LS.get('github') || {};
   const cf = LS.get('cloudflare') || {};

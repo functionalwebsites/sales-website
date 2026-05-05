@@ -1,4 +1,4 @@
-// Site builder editor-canvas. Loaded by site-builder/index.html in dependency order.
+// Site builder editor-canvas. Loaded by build/index.html in dependency order.
 let _projectData = null;
 
 function openEditor(id) {

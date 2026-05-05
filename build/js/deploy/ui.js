@@ -1,4 +1,4 @@
-// Site builder ui. Loaded by site-builder/index.html in dependency order.
+// Site builder ui. Loaded by build/index.html in dependency order.
 function openDeployModal() {
   if (!checkProThenDeploy()) return;
   if (!STATE.currentProjectId) return;

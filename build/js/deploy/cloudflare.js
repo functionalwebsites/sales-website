@@ -1,4 +1,4 @@
-// Site builder cloudflare. Loaded by site-builder/index.html in dependency order.
+// Site builder cloudflare. Loaded by build/index.html in dependency order.
 async function deployToCloudflare() {
   const cf = LS.get('cloudflare') || {};
   const projectName = document.getElementById('deploy-cf-project').value.trim();

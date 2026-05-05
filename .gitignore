@@ -13,7 +13,6 @@ yarn.lock
 .DS_Store
 Thumbs.db
 dist/
-build/
 logs/
 *.log
 npm-debug.log*
