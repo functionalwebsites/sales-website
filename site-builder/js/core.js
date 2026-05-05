@@ -243,6 +243,46 @@ function showProUpsell(featureName, featureDescription) {
   document.body.appendChild(modal);
 }
 
+function showWhyGoProModal() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal" style="width: 500px;">
+      <h2 class="modal-title">Why Go Pro?</h2>
+      <p style="color: var(--text2); line-height: 1.55; margin-bottom: 16px;">
+        Pro is for people who use the builder as a real workflow, not just a quick export tool.
+      </p>
+      <div style="display: grid; gap: 10px; margin-bottom: 18px;">
+        <div style="background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+          <strong>Direct deploys</strong>
+          <p style="color: var(--text2); margin: 4px 0 0; font-size: 13px; line-height: 1.45;">Publish straight to GitHub Pages or Cloudflare Pages without manually moving ZIP files around.</p>
+        </div>
+        <div style="background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+          <strong>Reusable libraries</strong>
+          <p style="color: var(--text2); margin: 4px 0 0; font-size: 13px; line-height: 1.45;">Save custom blocks and full website templates so repeated client or business sites start faster.</p>
+        </div>
+        <div style="background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+          <strong>Keep ownership</strong>
+          <p style="color: var(--text2); margin: 4px 0 0; font-size: 13px; line-height: 1.45;">ZIP export stays free, but Pro removes more of the repetitive publishing and reuse work.</p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove();">Close</button>
+        <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); showProTokenModal();">Unlock Pro</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function dismissProBanner() {
+  sessionStorage.setItem('fw_pro_banner_dismissed', 'true');
+  const banner = document.getElementById('pro-banner');
+  if (banner) banner.dataset.visible = 'false';
+  const unlockProBtn = document.getElementById('btn-unlock-pro');
+  if (unlockProBtn && !isProUnlocked()) unlockProBtn.style.display = 'inline-flex';
+}
+
 // Show modal for entering pro token or promo code
 function showProTokenModal() {
   const modal = document.createElement('div');
@@ -512,11 +552,18 @@ function checkProThenDeploy() {
 // Initialize pro features on load
 function initProFeatures() {
   const isPro = isProUnlocked();
+  const proBannerDismissed = sessionStorage.getItem('fw_pro_banner_dismissed') === 'true';
+  const showBanner = !isPro && !proBannerDismissed;
 
   // Show/hide unlock pro button
   const unlockProBtn = document.getElementById('btn-unlock-pro');
   if (unlockProBtn) {
-    unlockProBtn.style.display = isPro ? 'none' : 'inline-flex';
+    unlockProBtn.style.display = !isPro && !showBanner ? 'inline-flex' : 'none';
+  }
+
+  const proBanner = document.getElementById('pro-banner');
+  if (proBanner) {
+    proBanner.dataset.visible = showBanner ? 'true' : 'false';
   }
 
   const settingsBtn = document.getElementById('btn-settings');
