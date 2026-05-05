@@ -13,6 +13,7 @@ yarn.lock
 .DS_Store
 Thumbs.db
 dist/
+# Keep /build tracked. It is the source folder for build.functionalwebsites.com, not generated output.
 logs/
 *.log
 npm-debug.log*
