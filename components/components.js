@@ -77,8 +77,6 @@
 .nav-links a:focus-visible,
 .nav-actions a:focus-visible,
 .menu-toggle:focus-visible {
-  outline: 2px solid var(--green);
-  outline-offset: 4px;
   border-radius: 12px;
 }
 
@@ -165,15 +163,13 @@
   width: 42px;
   height: 42px;
   background: transparent;
+  border: 0px solid transparent;
   border-radius: 10px;
   color: var(--text);
   font-size: 16px;
   flex-shrink: 0;
-}
-
-.menu-toggle:hover {
-  border-color: var(--accent2);
-  background: var(--bg3);
+  padding: 0;
+  line-height: 1;
 }
 
 .menu-toggle-bar {
@@ -183,17 +179,20 @@
   border-radius: 999px;
   background: currentColor;
   position: relative;
+  flex-shrink: 0;
 }
 
 .menu-toggle-bar::before,
 .menu-toggle-bar::after {
   content: "";
   position: absolute;
-  left: 0;
+  left: 50%;
   width: 24px;
   height: 3px;
   border-radius: 999px;
   background: currentColor;
+  transform: translateX(-50%);
+  transform-origin: center;
 }
 
 .menu-toggle-bar::before {
@@ -210,12 +209,12 @@
 
 .header-nav[data-open="true"] + .menu-toggle .menu-toggle-bar::before {
   top: 0;
-  transform: rotate(45deg);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .header-nav[data-open="true"] + .menu-toggle .menu-toggle-bar::after {
   top: 0;
-  transform: rotate(-45deg);
+  transform: translateX(-50%) rotate(-45deg);
 }
 
 .btn {
@@ -353,28 +352,6 @@ footer {
   }
 }
 
-@media (max-width: 640px) {
-  .header-wrapper {
-    padding: 12px;
-    min-height: 56px;
-  }
-
-  .logo {
-    font-size: 16px;
-  }
-
-  .logo-mark {
-    width: 24px;
-    height: 24px;
-  }
-
-  .menu-toggle {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .logo-mark[data-spin="true"] .logo-gear {
     animation: none;
@@ -484,8 +461,7 @@ footer {
     const logoMark = root.querySelector('.logo-mark');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const breakpointQueries = [
-      window.matchMedia('(max-width: 768px)'),
-      window.matchMedia('(max-width: 640px)')
+      window.matchMedia('(max-width: 768px)')
     ];
 
     const spinLogoGear = () => {

@@ -70,7 +70,7 @@ button {
 }
 
 #header-placeholder {
-  min-height: 80px;
+  min-height: 50px;
   width: 100%;
   position: relative;
   z-index: 100;
@@ -187,7 +187,6 @@ button {
 }
 
 .menu-toggle:hover {
-  border-color: var(--accent2);
   background: var(--bg3);
 }
 
@@ -334,7 +333,7 @@ footer {
 @media (max-width: 768px) {
   .header-wrapper {
     padding: 12px 16px;
-    min-height: 64px;
+    min-height: 80px;
     gap: 8px;
   }
 
@@ -382,23 +381,6 @@ footer {
   .footer-content {
     grid-template-columns: 1fr;
     gap: 16px;
-  }
-}
-
-@media (max-width: 640px) {
-  .header-wrapper {
-    padding: 12px;
-    min-height: 60px;
-  }
-
-  .logo {
-    font-size: 16px;
-  }
-
-  .menu-toggle {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
   }
 }
 

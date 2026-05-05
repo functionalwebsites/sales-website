@@ -1116,6 +1116,7 @@ function _snapshot() {
     meta:      _projectData.meta,
     navbars:   _projectData.navbars,
     siteTheme: _projectData.siteTheme,
+    styleSystem: _projectData.styleSystem,
   });
 }
 
@@ -1127,6 +1128,7 @@ function _restore(snap) {
   _projectData.meta      = s.meta;
   _projectData.navbars   = s.navbars || {};
   _projectData.siteTheme = s.siteTheme || 'light';
+  _projectData.styleSystem = normalizeStyleSystem(s.styleSystem);
 }
 
 function pushUndo() {
@@ -1630,6 +1632,7 @@ function saveProjectData(id, data) {
 function normalizeProjectData(data) {
   if (!data) return createBlankProjectData('Untitled');
   data.siteTheme = 'light';
+  data.styleSystem = normalizeStyleSystem(data.styleSystem);
   if (!Array.isArray(data.images)) data.images = [];
   data.images = data.images.map(img => {
     const next = Object.assign({}, img);
@@ -1732,6 +1735,29 @@ const BRAND_COLORS = [
   { key: 'border',           label: 'Border',                 cssVar: '--color-border',            default: '#e0e0e0' },
 ];
 
+const STYLE_SYSTEM_FIELDS = [
+  { key: 'fontFamily', label: 'Body Font Family', cssVar: '--site-font-family', default: "'Segoe UI', system-ui, sans-serif", type: 'text' },
+  { key: 'bodySize', label: 'Body Text Size', cssVar: '--site-body-size', default: '16px', type: 'text' },
+  { key: 'lineHeight', label: 'Line Height', cssVar: '--site-line-height', default: '1.6', type: 'text' },
+  { key: 'headingFontFamily', label: 'Heading Font Family', cssVar: '--site-heading-font-family', default: 'inherit', type: 'text' },
+  { key: 'headingScale', label: 'Heading Scale', cssVar: '--site-heading-scale', default: '1', type: 'range', min: '0.85', max: '1.25', step: '0.05' },
+  { key: 'sectionPadding', label: 'Section Padding', cssVar: '--site-section-padding', default: '72px 20px', type: 'text' },
+  { key: 'sectionWidth', label: 'Section Width', cssVar: '--site-section-width', default: '1100px', type: 'text' },
+  { key: 'contentGap', label: 'Content Gap', cssVar: '--site-content-gap', default: '24px', type: 'text' },
+  { key: 'buttonRadius', label: 'Button Radius', cssVar: '--site-button-radius', default: '6px', type: 'text' },
+  { key: 'cardRadius', label: 'Card Radius', cssVar: '--site-card-radius', default: '8px', type: 'text' }
+];
+
+function defaultStyleSystem() {
+  const out = {};
+  STYLE_SYSTEM_FIELDS.forEach(field => { out[field.key] = field.default; });
+  return out;
+}
+
+function normalizeStyleSystem(styleSystem = {}) {
+  return Object.assign(defaultStyleSystem(), styleSystem || {});
+}
+
 let _brandContext = null;
 let _projectNameContext = '';
 let _canvasBodyResizeObserver = null;
@@ -1747,7 +1773,8 @@ function createBlankProjectData(name, setup = {}) {
     name,
     brandName,
     siteTheme: 'light',
-    globalCSS: `/* Global styles */\nbody { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--color-page-bg, #ffffff); color: var(--color-text-dark, #111111); }\n* { box-sizing: border-box; }`,
+    styleSystem: normalizeStyleSystem(setup.styleSystem),
+    globalCSS: `/* Global styles */\nbody { margin: 0; font-family: var(--site-font-family, 'Segoe UI', system-ui, sans-serif); font-size: var(--site-body-size, 16px); line-height: var(--site-line-height, 1.6); background: var(--color-page-bg, #ffffff); color: var(--color-text-dark, #111111); }\n* { box-sizing: border-box; }\nh1, h2, h3, h4 { font-family: var(--site-heading-font-family, inherit); }`,
     globalJS: `// Global scripts\n`,
     meta: { description: setup.description || '', keywords: '', author: setup.author || '', favicon: '', ogType: 'website', ogImage: '', twitterCard: 'summary_large_image' },
     brand,
@@ -1817,6 +1844,7 @@ function applyLibraryProjectTemplate(baseData, templateEntry) {
   merged.templates = Array.isArray(incoming.templates) ? incoming.templates : [];
   merged.navbars = incoming.navbars || {};
   merged.siteTheme = incoming.siteTheme || baseData.siteTheme || 'light';
+  merged.styleSystem = normalizeStyleSystem(Object.assign({}, incoming.styleSystem || {}, baseData.styleSystem || {}));
   merged.pages = Array.isArray(incoming.pages) && incoming.pages.length
     ? incoming.pages
     : JSON.parse(JSON.stringify(baseData.pages));
@@ -1835,29 +1863,29 @@ function mkBlock(type, props = {}) {
   const projectBrandName = _projectData?.brandName || _projectNameContext || _projectData?.name || 'My Site';
   const defaults = {
     nav: { navbarId: 'main' },
-    hero: { heading: 'Welcome', subheading: 'Your tagline here.', buttonText: 'Learn More', buttonHref: '#', bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7', minHeight: 'auto', contentWidth: '900px', align: 'center', bgImage: '', bgSize: 'cover', bgPosition: 'center', overlayColor: '#000000', overlayOpacity: '0' },
+    hero: { heading: 'Welcome', subheading: 'Your tagline here.', buttonText: 'Learn More', buttonHref: '#', bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7', minHeight: 'auto', contentWidth: '', padding: '', align: 'center', bgImage: '', bgSize: 'cover', bgPosition: 'center', overlayColor: '#000000', overlayOpacity: '0' },
     heading: { text: 'Section Title', level: 'h2', align: 'left', color: '#111111' },
     text: { content: '<p>Add your text content here. Click to edit.</p>', align: 'left', color: '#333333' },
     image: { src: '', alt: 'Image', width: '100%', height: 'auto', aspectRatio: '', fit: 'contain', align: 'center', rounded: true, caption: '' },
     button: { text: 'Click Here', href: '#', bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', align: 'center', size: 'medium', rounded: true },
-    section: { bgColor: '#ffffff', padding: '60px 20px', maxWidth: '1100px', content: '<h2>Section Title</h2>\n<p>Add your section content here.</p>' },
-    columns2: { bgColor: '#ffffff', padding: '40px 20px', col1: '<p>Column 1 content</p>', col2: '<p>Column 2 content</p>', gap: '24px' },
-    columns3: { bgColor: '#ffffff', padding: '40px 20px', col1: '<p>Column 1</p>', col2: '<p>Column 2</p>', col3: '<p>Column 3</p>', gap: '20px' },
+    section: { bgColor: '#ffffff', padding: '', maxWidth: '', content: '<h2>Section Title</h2>\n<p>Add your section content here.</p>' },
+    columns2: { bgColor: '#ffffff', padding: '', col1: '<p>Column 1 content</p>', col2: '<p>Column 2 content</p>', gap: '' },
+    columns3: { bgColor: '#ffffff', padding: '', col1: '<p>Column 1</p>', col2: '<p>Column 2</p>', col3: '<p>Column 3</p>', gap: '' },
     divider: { color: '#dddddd', thickness: '1px', margin: '20px 0' },
     spacer: { height: '40px' },
-    cards: { bgColor: '#f8f8f8', padding: '60px 20px', title: 'Our Work', cards: [
+    cards: { bgColor: '#f8f8f8', padding: '', title: 'Our Work', cards: [
       { title: 'Project One', desc: 'Description of this project.', img: '' },
       { title: 'Project Two', desc: 'Description of this project.', img: '' },
       { title: 'Project Three', desc: 'Description of this project.', img: '' },
     ]},
-    features: { bgColor: '#ffffff', padding: '60px 20px', title: 'Features', features: [
+    features: { bgColor: '#ffffff', padding: '', title: 'Features', features: [
       { icon: 'ϟ', title: 'Fast', desc: 'Lightning fast performance.' },
       { icon: '✦', title: 'Beautiful', desc: 'Stunning designs out of the box.' },
       { icon: '◈', title: 'Secure', desc: 'Built with security in mind.' },
     ]},
-    cta: { bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', padding: '80px 20px', heading: 'Ready to get started?', subheading: 'Join thousands of happy users today.', buttonText: 'Get Started Free', buttonHref: '#', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7' },
+    cta: { bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', padding: '', heading: 'Ready to get started?', subheading: 'Join thousands of happy users today.', buttonText: 'Get Started Free', buttonHref: '#', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7' },
     footer: { bgColor: brand.dark || '#1a1a1a', textColor: '#aaaaaa', linkColor: '#cccccc', brand: projectBrandName, tagline: 'Building the web.', copyright: `© ${new Date().getFullYear()} ${projectBrandName}. All rights reserved.` },
-    form: { bgColor: '#f8f8f8', padding: '60px 20px', title: 'Contact Us', submitText: 'Send Message', action: '#', btnBg: brand.accent || '#7c6af7', btnColor: '#ffffff' },
+    form: { bgColor: '#f8f8f8', padding: '', title: 'Contact Us', submitText: 'Send Message', action: '#', btnBg: brand.accent || '#7c6af7', btnColor: '#ffffff' },
     youtubeEmbed: { title: 'Featured Video', description: 'Use a YouTube video to explain your offer or show your work.', videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', maxWidth: '960px', aspectRatio: '16 / 9', autoplay: false, showControls: true, privacyMode: true, rounded: true, sectionBg: '#ffffff' },
     testimonialWall: { title: 'What Customers Say', intro: 'Social proof helps visitors trust you faster. Add a few real reviews to show the quality of your work.', bgColor: '#f5f8fc', padding: '80px 20px', maxWidth: '1100px', columns: '3', showStars: true, highlightFirst: false, testimonials: [
       { name: 'Jordan M.', role: 'Homeowner', quote: 'Fast response, fair pricing, and clear communication from start to finish.', rating: '5' },
@@ -1903,6 +1931,13 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     ? `data-block-id="${block.id}" class="block-wrapper"${anchorAttr}`
     : anchorAttr.trim();
   const pd = ctx || _projectData;
+  const siteSectionPadding = 'var(--site-section-padding, 72px 20px)';
+  const siteSectionWidth = 'var(--site-section-width, 1100px)';
+  const siteContentGap = 'var(--site-content-gap, 24px)';
+  const siteButtonRadius = 'var(--site-button-radius, 6px)';
+  const siteCardRadius = 'var(--site-card-radius, 8px)';
+  const siteHeadingFont = 'var(--site-heading-font-family, inherit)';
+  const siteBodySize = 'var(--site-body-size, 16px)';
 
   switch(block.type) {
     case 'nav': {
@@ -1973,21 +2008,21 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const heroBg = heroImage
         ? `linear-gradient(rgba(${hexToRgb(p.overlayColor||'#000000')}, ${heroOverlayOpacity}), rgba(${hexToRgb(p.overlayColor||'#000000')}, ${heroOverlayOpacity})), ${p.bgColor||'#7c6af7'} url('${escCssUrl(heroImage)}') ${p.bgPosition||'center'} / ${p.bgSize||'cover'} no-repeat`
         : (p.bgColor||'#7c6af7');
-      return `<section ${sel} style="background:${heroBg};color:${p.textColor||'#fff'};padding:100px 24px;min-height:${p.minHeight||'auto'};display:flex;align-items:center;justify-content:center;">
-  <div style="width:100%;max-width:${p.contentWidth||'900px'};text-align:${heroAlign};display:flex;flex-direction:column;align-items:${heroFlexAlign};margin:0 auto;position:relative;z-index:1;">
-    <h1 style="font-size:clamp(28px,5vw,56px);font-weight:800;margin:0 0 16px;">${p.heading||'Welcome'}</h1>
+      return `<section ${sel} style="background:${heroBg};color:${p.textColor||'#fff'};padding:${p.padding || 'calc(var(--site-section-padding-y, 72px) + 28px) 24px'};min-height:${p.minHeight||'auto'};display:flex;align-items:center;justify-content:center;">
+  <div style="width:100%;max-width:${p.contentWidth||siteSectionWidth};text-align:${heroAlign};display:flex;flex-direction:column;align-items:${heroFlexAlign};margin:0 auto;position:relative;z-index:1;">
+    <h1 style="font-family:${siteHeadingFont};font-size:calc(clamp(28px,5vw,56px) * var(--site-heading-scale, 1));font-weight:800;margin:0 0 16px;">${p.heading||'Welcome'}</h1>
     <p style="font-size:clamp(14px,2vw,20px);margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
-    ${p.buttonText ? `<a href="${p.buttonHref||'#'}" style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 32px;border-radius:6px;font-weight:600;font-size:16px;text-decoration:none;display:inline-block;">${p.buttonText}</a>` : ''}
+    ${p.buttonText ? `<a href="${p.buttonHref||'#'}" style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 32px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText}</a>` : ''}
   </div>
 </section>`;
     }
     case 'heading': {
       const tag = p.level || 'h2';
       const sizes = { h1:'2.4em', h2:'1.8em', h3:'1.4em', h4:'1.1em' };
-      return `<${tag} ${sel} style="text-align:${p.align||'left'};color:${p.color||'#111'};font-size:${sizes[tag]||'1.8em'};padding:12px 24px;margin:0;">${p.text||'Title'}</${tag}>`;
+      return `<${tag} ${sel} style="font-family:${siteHeadingFont};text-align:${p.align||'left'};color:${p.color||'#111'};font-size:calc(${sizes[tag]||'1.8em'} * var(--site-heading-scale, 1));padding:12px 24px;margin:0;">${p.text||'Title'}</${tag}>`;
     }
     case 'text': {
-      return `<div ${sel} style="padding:8px 24px;color:${p.color||'#333'};text-align:${p.align||'left'};line-height:1.7;">${p.content||''}</div>`;
+      return `<div ${sel} style="padding:8px 24px;color:${p.color||'#333'};text-align:${p.align||'left'};font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);">${p.content||''}</div>`;
     }
     case 'image': {
       const rounded = p.rounded ? 'border-radius:8px;' : '';
@@ -2001,11 +2036,11 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     case 'youtubeEmbed': {
       const embedUrl = toYouTubeEmbedUrl(p.videoUrl, p.privacyMode, p.autoplay, p.showControls);
       const radius = p.rounded ? '20px' : '0';
-      return `<section ${sel} style="padding:72px 20px;background:${p.sectionBg||'#ffffff'};">
+      return `<section ${sel} style="padding:${p.padding || siteSectionPadding};background:${p.sectionBg||'#ffffff'};">
   <div style="max-width:${p.maxWidth||'960px'};margin:0 auto;">
     ${(p.title || p.description) ? `<div style="text-align:center;margin-bottom:22px;">
-      ${p.title ? `<h2 style="margin:0 0 10px;font-size:clamp(28px,4vw,42px);color:#13293d;">${p.title}</h2>` : ''}
-      ${p.description ? `<p style="margin:0 auto;max-width:700px;line-height:1.7;color:#5a6b7d;">${p.description}</p>` : ''}
+      ${p.title ? `<h2 style="font-family:${siteHeadingFont};margin:0 0 10px;font-size:calc(clamp(28px,4vw,42px) * var(--site-heading-scale, 1));color:#13293d;">${p.title}</h2>` : ''}
+      ${p.description ? `<p style="margin:0 auto;max-width:700px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:#5a6b7d;">${p.description}</p>` : ''}
     </div>` : ''}
     <div style="position:relative;width:100%;aspect-ratio:${p.aspectRatio||'16 / 9'};border-radius:${radius};overflow:hidden;box-shadow:0 28px 70px rgba(19,41,61,.18);background:#000;">
       <iframe src="${escAttr(embedUrl)}" title="${escAttr(p.title||'YouTube Video')}" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -2016,27 +2051,27 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     case 'button': {
       const sizes = { small:'10px 20px', medium:'12px 28px', large:'16px 40px' };
       const pad = sizes[p.size||'medium'];
-      const radius = p.rounded ? '6px' : '0';
+      const radius = p.rounded ? siteButtonRadius : '0';
       return `<div ${sel} style="padding:12px 24px;text-align:${p.align||'center'};">
-  <a href="${p.href||'#'}" style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${pad};border-radius:${radius};font-weight:600;text-decoration:none;display:inline-block;">${p.text||'Button'}</a>
+  <a href="${p.href||'#'}" style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${pad};border-radius:${radius};font-weight:600;text-decoration:none;display:inline-block;font-size:${siteBodySize};">${p.text||'Button'}</a>
 </div>`;
     }
     case 'section': {
-      return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||'60px 20px'};">
-  <div style="max-width:${p.maxWidth||'1100px'};margin:0 auto;">${p.content||''}</div>
+      return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
+  <div style="max-width:${p.maxWidth||siteSectionWidth};margin:0 auto;">${p.content||''}</div>
 </section>`;
     }
     case 'columns2': {
-      return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||'40px 20px'};">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:${p.gap||'24px'};max-width:1100px;margin:0 auto;">
+      return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
     <div>${p.col1||'<p>Column 1</p>'}</div>
     <div>${p.col2||'<p>Column 2</p>'}</div>
   </div>
 </div>`;
     }
     case 'columns3': {
-      return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||'40px 20px'};">
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:${p.gap||'20px'};max-width:1100px;margin:0 auto;">
+      return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
     <div>${p.col1||'<p>Col 1</p>'}</div>
     <div>${p.col2||'<p>Col 2</p>'}</div>
     <div>${p.col3||'<p>Col 3</p>'}</div>
@@ -2053,7 +2088,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const cards = (p.cards||[]).map(c=>{
         const cardImage = resolveImageAsset(c.img, pd);
         return `
-  <div style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+  <div style="background:#fff;border-radius:${siteCardRadius};overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
   ${cardImage ? `<img src="${cardImage}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:180px;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#4ade80;font-size:32px;">▧</div>`}
     <div style="padding:16px;">
       <h3 style="margin:0 0 8px;font-size:16px;">${c.title||'Card Title'}</h3>
@@ -2061,9 +2096,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     </div>
   </div>`;
       }).join('');
-      return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||'60px 20px'};">
-  <h2 style="text-align:center;margin:0 0 32px;font-size:2em;">${p.title||'Our Work'}</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto;">${cards}</div>
+      return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||siteSectionPadding};">
+  <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 32px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Our Work'}</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${cards}</div>
 </section>`;
     }
     case 'features': {
@@ -2073,9 +2108,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     <h3 style="margin:0 0 8px;font-size:18px;">${f.title||'Feature'}</h3>
     <p style="margin:0;color:#666;">${f.desc||''}</p>
   </div>`).join('');
-      return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||'60px 20px'};">
-  <h2 style="text-align:center;margin:0 0 40px;font-size:2em;">${p.title||'Features'}</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:1100px;margin:0 auto;">${feats}</div>
+      return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
+  <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 40px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Features'}</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${feats}</div>
 </section>`;
     }
     case 'testimonialWall': {
@@ -2088,28 +2123,28 @@ function _renderBlockInner(block, editing = false, ctx = null) {
         const muted = highlighted ? 'rgba(255,255,255,.64)' : '#6b7d8f';
         const border = highlighted ? '#13293d' : '#dbe6f1';
         const stars = '★★★★★'.slice(0, Math.min(5, Math.max(0, Number(item.rating || 5) || 5)));
-        return `<div style="background:${bg};border:1px solid ${border};border-radius:18px;padding:24px;box-shadow:0 16px 40px rgba(19,41,61,.07);">
+        return `<div style="background:${bg};border:1px solid ${border};border-radius:${siteCardRadius};padding:24px;box-shadow:0 16px 40px rgba(19,41,61,.07);">
   ${p.showStars ? `<div style="font-size:18px;margin-bottom:10px;color:${highlighted ? '#fbbf24' : '#f59e0b'};">${stars || '★★★★★'}</div>` : ''}
-  <p style="margin:0 0 14px;line-height:1.7;color:${text};">"${item.quote||''}"</p>
+  <p style="margin:0 0 14px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:${text};">"${item.quote||''}"</p>
   <strong style="display:block;color:${strong};">${item.name||'Customer Name'}</strong>
   <span style="color:${muted};font-size:13px;">${item.role||''}</span>
 </div>`;
       }).join('');
-      return `<section ${sel} style="padding:${p.padding||'80px 20px'};background:${p.bgColor||'#f5f8fc'};">
-  <div style="max-width:${p.maxWidth||'1100px'};margin:0 auto;">
+      return `<section ${sel} style="padding:${p.padding||siteSectionPadding};background:${p.bgColor||'#f5f8fc'};">
+  <div style="max-width:${p.maxWidth||siteSectionWidth};margin:0 auto;">
     <div style="text-align:center;margin-bottom:28px;">
-      ${p.title ? `<h2 style="margin:0 0 10px;font-size:clamp(28px,4vw,42px);color:#13293d;">${p.title}</h2>` : ''}
-      ${p.intro ? `<p style="margin:0 auto;max-width:720px;line-height:1.7;color:#5a6b7d;">${p.intro}</p>` : ''}
+      ${p.title ? `<h2 style="font-family:${siteHeadingFont};margin:0 0 10px;font-size:calc(clamp(28px,4vw,42px) * var(--site-heading-scale, 1));color:#13293d;">${p.title}</h2>` : ''}
+      ${p.intro ? `<p style="margin:0 auto;max-width:720px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:#5a6b7d;">${p.intro}</p>` : ''}
     </div>
     <div style="display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:18px;">${cards}</div>
   </div>
 </section>`;
     }
     case 'cta': {
-      return `<section ${sel} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${p.padding||'80px 20px'};text-align:center;">
-  <h2 style="font-size:2.2em;margin:0 0 12px;">${p.heading||'Ready to get started?'}</h2>
+      return `<section ${sel} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${p.padding||siteSectionPadding};text-align:center;">
+  <h2 style="font-family:${siteHeadingFont};font-size:calc(2.2em * var(--site-heading-scale, 1));margin:0 0 12px;">${p.heading||'Ready to get started?'}</h2>
   <p style="font-size:1.1em;margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
-  <a href="${p.buttonHref||'#'}" style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 36px;border-radius:6px;font-weight:600;font-size:16px;text-decoration:none;display:inline-block;">${p.buttonText||'Get Started'}</a>
+  <a href="${p.buttonHref||'#'}" style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 36px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText||'Get Started'}</a>
 </section>`;
     }
     case 'footer': {
@@ -2122,14 +2157,14 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 </footer>`;
     }
     case 'form': {
-      return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||'60px 20px'};">
+      return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||siteSectionPadding};">
   <div style="max-width:600px;margin:0 auto;">
-    <h2 style="text-align:center;margin:0 0 32px;font-size:2em;">${p.title||'Contact Us'}</h2>
-    <form action="${p.action||'#'}" style="display:flex;flex-direction:column;gap:16px;">
+    <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 32px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Contact Us'}</h2>
+    <form action="${p.action||'#'}" style="display:flex;flex-direction:column;gap:${siteContentGap};">
       <div><label style="display:block;margin-bottom:4px;font-weight:500;">Name</label><input type="text" placeholder="Your name" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;"></div>
       <div><label style="display:block;margin-bottom:4px;font-weight:500;">Email</label><input type="email" placeholder="your@email.com" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;"></div>
       <div><label style="display:block;margin-bottom:4px;font-weight:500;">Message</label><textarea placeholder="Your message..." rows="5" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;resize:vertical;"></textarea></div>
-      <button type="submit" style="background:${p.btnBg||'#7c6af7'};color:${p.btnColor||'#fff'};padding:12px;border-radius:6px;font-weight:600;font-size:15px;border:none;cursor:pointer;">${p.submitText||'Send Message'}</button>
+      <button type="submit" style="background:${p.btnBg||'#7c6af7'};color:${p.btnColor||'#fff'};padding:12px;border-radius:${siteButtonRadius};font-weight:600;font-size:15px;border:none;cursor:pointer;">${p.submitText||'Send Message'}</button>
     </form>
   </div>
 </section>`;
@@ -2374,6 +2409,7 @@ function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = nul
   const metaTags = buildMetaTags(projectData, page);
 
   const brandCSS = buildBrandCSS(projectData);
+  const styleSystemCSS = buildStyleSystemCSS(projectData);
   const siteThemeCSS = buildSiteThemeCSS(projectData);
 
   if (minimal) {
@@ -2384,7 +2420,7 @@ function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = nul
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title}</title>
 ${metaTags}
-<style>${brandCSS}${siteThemeCSS}${projectData.globalCSS||''}</style>
+<style>${brandCSS}${styleSystemCSS}${siteThemeCSS}${projectData.globalCSS||''}</style>
 </head>
 <body class="site-theme-${projectData.siteTheme || 'light'}">
 ${blocksHTML}
@@ -2401,6 +2437,7 @@ ${blocksHTML}
 ${metaTags}
 <style>
 ${brandCSS}
+${styleSystemCSS}
 ${siteThemeCSS}
 ${projectData.globalCSS||''}
 </style>
@@ -3239,6 +3276,7 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 .block-wrapper:hover .block-controls { display: flex; }
 .block-ctrl-btn { width: 26px; height: 26px; border-radius: 4px; background: #7c6af7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; border: none; }
 ${buildBrandCSS(_projectData)}
+${buildStyleSystemCSS(_projectData)}
 ${buildSiteThemeCSS(_projectData)}
 ${_projectData.globalCSS||''}
 </style>
@@ -3767,7 +3805,27 @@ function buildSitePropsHTML() {
         </div>
       </div>`;
     });
-    html += `</div>
+    html += `</div>`;
+
+    const ss = normalizeStyleSystem(_projectData.styleSystem);
+    html += `<div class="props-section">
+      <div class="props-section-title" style="margin-bottom:6px;">Style System</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Global defaults for typography, spacing, section width, radius, and heading scale. New blocks inherit these defaults when their block-level fields are blank.</div>`;
+    STYLE_SYSTEM_FIELDS.forEach(field => {
+      const value = ss[field.key] || field.default;
+      if (field.type === 'range') {
+        html += `<div class="field">
+          <label class="label">${field.label} <span id="style_val_${field.key}" style="color:var(--text);">${value}</span> <span style="font-size:10px;opacity:.55;">${field.cssVar}</span></label>
+          <input class="input" type="range" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}" oninput="updateStyleSystem('${field.key}',this.value);document.getElementById('style_val_${field.key}').textContent=this.value">
+        </div>`;
+      } else {
+        html += `<div class="field">
+          <label class="label">${field.label} <span style="font-size:10px;opacity:.55;">${field.cssVar}</span></label>
+          <input class="input" type="text" value="${String(value).replace(/"/g,'&quot;')}" oninput="updateStyleSystem('${field.key}',this.value)">
+        </div>`;
+      }
+    });
+    html += `<button class="btn btn-secondary btn-sm" onclick="resetStyleSystem()">Reset Style System</button></div>
     <details class="props-advanced" style="margin-top:4px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
       <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
         ⚙︎ Global CSS &amp; JS
@@ -3800,13 +3858,13 @@ function buildBrandCSS(projectData) {
   return vars ? `:root {\n${vars}\n}` : '';
 }
 
-function buildBrandSwatches(blockId, key) {
-  const b = _projectData.brand || {};
-  const swatches = BRAND_COLORS
-    .filter(c => b[c.key])
-    .map(c => `<div title="${c.label}: ${b[c.key]}" style="width:14px;height:14px;border-radius:3px;background:${b[c.key]};border:1px solid rgba(0,0,0,.2);cursor:pointer;flex-shrink:0;" onclick="setColorProp('${blockId}','${key}','${b[c.key]}','${c.key}')"></div>`)
-    .join('');
-  return swatches ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;">${swatches}</div>` : '';
+function buildStyleSystemCSS(projectData) {
+  const s = normalizeStyleSystem(projectData.styleSystem);
+  const sectionPaddingY = String(s.sectionPadding || '72px 20px').trim().split(/\s+/)[0] || '72px';
+  const vars = STYLE_SYSTEM_FIELDS
+    .map(field => `  ${field.cssVar}: ${s[field.key] || field.default};`)
+    .join('\n');
+  return `:root {\n${vars}\n  --site-section-padding-y: ${sectionPaddingY};\n}`;
 }
 
 function updateBrandColor(key, value) {
@@ -3836,6 +3894,20 @@ function updateSiteMeta(key, value) {
   pushUndoDebounced();
   if (!_projectData.meta) _projectData.meta = {};
   _projectData.meta[key] = value;
+}
+
+function updateStyleSystem(key, value) {
+  pushUndoDebounced();
+  _projectData.styleSystem = normalizeStyleSystem(_projectData.styleSystem);
+  _projectData.styleSystem[key] = value;
+  renderCanvas();
+}
+
+function resetStyleSystem() {
+  pushUndo();
+  _projectData.styleSystem = defaultStyleSystem();
+  renderCanvas();
+  renderProps();
 }
 
 function escapeHtmlForTextarea(str = '') {
@@ -3871,7 +3943,8 @@ function buildPropsForm(block) {
   const p = block.props;
   const type = block.type;
 
-  let html = `<div class="props-section"><div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">${type.charAt(0).toUpperCase()+type.slice(1)}<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="deselectBlock()" title="Back to Page / Site settings">← Page / Site</button></div>`;
+  let html = `<div class="props-section"><div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">${type.charAt(0).toUpperCase()+type.slice(1)}<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="deselectBlock()" title="Back to Page / Site settings">← Page / Site</button></div>
+    <button class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:12px;" onclick="resetBlockStyle('${block.id}')">Reset Block Style</button>`;
 
   const field = (label, key, inputType = 'text', extra = '') => {
     if (inputType === 'color') {
@@ -3879,10 +3952,8 @@ function buildPropsForm(block) {
       const txtId = `cptxt_${key}_${block.id}`;
       const swId  = `cpsw_${key}_${block.id}`;
       const cur   = p[key] || '#ffffff';
-      const brandSwatches = buildBrandSwatches(block.id, key);
       return `<div class="field">
         <label class="label">${label}</label>
-        ${brandSwatches}
         <div class="color-input-wrap">
           <div style="position:relative;flex-shrink:0;">
             <div id="${swId}" class="color-swatch" style="background:${cur}"></div>
@@ -3941,7 +4012,6 @@ function buildPropsForm(block) {
         const swId  = `ncpsw_${key}_${navId}`;
         const cur   = nc[key] || '#ffffff';
         return `<div class="field"><label class="label">${label}</label>
-          ${buildNavBrandSwatches(navId, key)}
           <div class="color-input-wrap">
             <div style="position:relative;flex-shrink:0;">
               <div id="${swId}" class="color-swatch" style="background:${cur}"></div>
@@ -4284,6 +4354,51 @@ function updateProp(blockId, key, value) {
   renderLayoutList();
 }
 
+const BLOCK_STYLE_KEYS = [
+  'bgColor', 'textColor', 'linkColor', 'btnBg', 'btnColor', 'color',
+  'sectionBg', 'padding', 'maxWidth', 'contentWidth', 'gap',
+  'minHeight', 'bgSize', 'bgPosition', 'overlayColor', 'overlayOpacity',
+  'width', 'height', 'aspectRatio', 'fit', 'align', 'rounded', 'size',
+  'columns', 'showStars', 'highlightFirst'
+];
+
+function resetBlockStyle(blockId) {
+  const page = _projectData.pages[STATE.currentPageIndex];
+  const block = page?.blocks.find(b => b.id === blockId);
+  if (!block) return;
+
+  pushUndo();
+  const defaults = mkBlock(block.type).props || {};
+  BLOCK_STYLE_KEYS.forEach(key => {
+    if (Object.prototype.hasOwnProperty.call(defaults, key)) {
+      block.props[key] = defaults[key];
+    } else {
+      delete block.props[key];
+    }
+  });
+
+  if (block.brandLinks) {
+    Object.keys(block.brandLinks).forEach(key => {
+      if (BLOCK_STYLE_KEYS.includes(key)) delete block.brandLinks[key];
+    });
+  }
+
+  if (block.type === 'nav' && block.props.navbarId && _projectData.navbars?.[block.props.navbarId]) {
+    const nav = _projectData.navbars[block.props.navbarId];
+    const brand = _projectData.brand || {};
+    nav.bgColor = brand.navBg || '#ffffff';
+    nav.textColor = brand.textDark || '#333333';
+    nav.linkColor = brand.textDark || '#333333';
+    nav.align = 'split';
+    nav.mobileLayout = 'hamburger';
+    nav.mobileBreakpoint = '768';
+  }
+
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+}
+
 function getContentSnippetHTML(type) {
   const snippetBlock = mkBlock(type);
   return renderBlock(snippetBlock, false, _projectData);
@@ -4308,25 +4423,6 @@ function syncColor(swId, sibId, value) {
   const sib = document.getElementById(sibId);
   if (sw)  sw.style.background = value;
   if (sib) sib.value = value;
-}
-
-// Set a color prop programmatically (from brand swatch click)
-function setColorProp(blockId, key, value, brandKey) {
-  updateProp(blockId, key, value);
-  const swId  = `cpsw_${key}_${blockId}`;
-  const cpId  = `cp_${key}_${blockId}`;
-  const txtId = `cptxt_${key}_${blockId}`;
-  syncColor(swId, cpId, value);
-  syncColor(swId, txtId, value);
-  // Store brand link so this prop auto-updates when brand color changes
-  if (brandKey) {
-    const page = _projectData.pages[STATE.currentPageIndex];
-    const block = page?.blocks.find(b => b.id === blockId);
-    if (block) {
-      if (!block.brandLinks) block.brandLinks = {};
-      block.brandLinks[key] = brandKey;
-    }
-  }
 }
 
 function addItem(blockId, key, defaults) {
@@ -4465,19 +4561,6 @@ function updateNavCustomLink(navbarId, linkId, field, value) {
   ensureNavbar(navbarId);
   const link = (_projectData.navbars[navbarId].customLinks||[]).find(l => l.id === linkId);
   if (link) { link[field] = value; renderCanvas(); }
-}
-
-function buildNavBrandSwatches(navbarId, key) {
-  const b = _projectData.brand || {};
-  const swId  = `ncpsw_${key}_${navbarId}`;
-  const cpId  = `ncp_${key}_${navbarId}`;
-  const txtId = `ncptxt_${key}_${navbarId}`;
-  const swatches = BRAND_COLORS
-    .filter(c => b[c.key])
-    .map(c => `<div title="${c.label}: ${b[c.key]}" style="width:14px;height:14px;border-radius:3px;background:${b[c.key]};border:1px solid rgba(0,0,0,.2);cursor:pointer;flex-shrink:0;"
-      onclick="updateNavConfig('${navbarId}','${key}','${b[c.key]}');syncColor('${swId}','${cpId}','${b[c.key]}');syncColor('${swId}','${txtId}','${b[c.key]}')"></div>`)
-    .join('');
-  return swatches ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;">${swatches}</div>` : '';
 }
 
 // ============================================================
