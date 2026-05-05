@@ -2,6 +2,11 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  min-height: 80svh !important;
+  min-height: 80dvh !important;
+  background:
+    linear-gradient(180deg, transparent 0%, transparent 68%, var(--bg, #0f0f13) 100%),
+    var(--hero-gradient) !important;
 }
 
 .gear-hero::before,
@@ -9,11 +14,11 @@
   content: "";
   position: absolute;
   left: 100%;
-  top: 100%;
-  width: clamp(520px, 72vw, 920px);
+  top: 58%;
+  width: min(clamp(360px, 42vw, 680px), 58dvh);
   aspect-ratio: 1;
-  background: var(--green, #4ade80);
-  opacity: 0.6;
+  background: #050707;
+  opacity: 0.42;
   pointer-events: none;
   z-index: 0;
   transform: translate(-50%, -50%) rotate(0deg);
@@ -39,6 +44,16 @@
 @keyframes heroGearSpin {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .gear-hero::before,
+  .gear-hero::after {
+    left: 100%;
+    top: 62%;
+    width: min(82vw, 48dvh);
+    opacity: 0.32;
   }
 }
 
