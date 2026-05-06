@@ -42,8 +42,12 @@ export async function onRequest(context) {
       return json({ error: 'Valid Pro token required' }, 401);
     }
 
+    if (!context.env.ASSETS) {
+      return json({ error: 'Missing ASSETS binding' }, 500);
+    }
+
     const assetUrl = new URL(item.path, context.request.url);
-    const assetResponse = await context.env.ASSETS.fetch(new Request(assetUrl, context.request));
+    const assetResponse = await context.env.ASSETS.fetch(new Request(assetUrl, { method: 'GET' }));
 
     if (!assetResponse.ok) {
       return json({ error: 'Marketplace file is not available' }, 404);
@@ -59,6 +63,6 @@ export async function onRequest(context) {
     });
   } catch (error) {
     console.error('Marketplace download error:', error);
-    return json({ error: 'Download failed' }, 500);
+    return json({ error: error.message || 'Download failed' }, 500);
   }
 }
