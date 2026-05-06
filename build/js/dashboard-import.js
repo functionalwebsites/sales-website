@@ -222,26 +222,71 @@ function loadImageFromDataURL(dataURL) {
   });
 }
 
-async function renderFaviconPng(dataURL, size) {
+async function renderFaviconPng(dataURL, size, crop = {}) {
   const img = await loadImageFromDataURL(dataURL);
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, size, size);
-  const sourceSize = Math.min(img.naturalWidth || img.width, img.naturalHeight || img.height);
-  const sx = ((img.naturalWidth || img.width) - sourceSize) / 2;
-  const sy = ((img.naturalHeight || img.height) - sourceSize) / 2;
+  const imgWidth = img.naturalWidth || img.width;
+  const imgHeight = img.naturalHeight || img.height;
+  const zoom = Math.min(4, Math.max(1, Number(crop.zoom || 1) || 1));
+  const sourceSize = Math.min(imgWidth, imgHeight) / zoom;
+  const maxShiftX = Math.max(0, (imgWidth - sourceSize) / 2);
+  const maxShiftY = Math.max(0, (imgHeight - sourceSize) / 2);
+  const shiftX = maxShiftX * Math.min(1, Math.max(-1, Number(crop.x || 0) / 100));
+  const shiftY = maxShiftY * Math.min(1, Math.max(-1, Number(crop.y || 0) / 100));
+  const sx = Math.min(imgWidth - sourceSize, Math.max(0, (imgWidth - sourceSize) / 2 + shiftX));
+  const sy = Math.min(imgHeight - sourceSize, Math.max(0, (imgHeight - sourceSize) / 2 + shiftY));
   const padding = Math.max(1, Math.round(size * 0.08));
   ctx.drawImage(img, sx, sy, sourceSize, sourceSize, padding, padding, size - padding * 2, size - padding * 2);
   return canvas.toDataURL('image/png');
 }
 
-async function buildFaviconSetFromLogo(dataURL, brandName) {
-  const icon16 = await renderFaviconPng(dataURL, 16);
-  const icon32 = await renderFaviconPng(dataURL, 32);
-  const apple = await renderFaviconPng(dataURL, 180);
+function dataUrlToUint8Array(dataURL) {
+  const b64 = String(dataURL || '').split(',')[1] || '';
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+function uint8ArrayToBase64(bytes) {
+  let out = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    out += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(out);
+}
+
+function pngDataUrlToIcoDataUrl(pngDataURL) {
+  const png = dataUrlToUint8Array(pngDataURL);
+  const header = new Uint8Array(22 + png.length);
+  const view = new DataView(header.buffer);
+  view.setUint16(0, 0, true);
+  view.setUint16(2, 1, true);
+  view.setUint16(4, 1, true);
+  header[6] = 32;
+  header[7] = 32;
+  header[8] = 0;
+  header[9] = 0;
+  view.setUint16(10, 1, true);
+  view.setUint16(12, 32, true);
+  view.setUint32(14, png.length, true);
+  view.setUint32(18, 22, true);
+  header.set(png, 22);
+  return `data:image/x-icon;base64,${uint8ArrayToBase64(header)}`;
+}
+
+async function buildFaviconSetFromLogo(dataURL, brandName, crop = {}) {
+  const icon16 = await renderFaviconPng(dataURL, 16, crop);
+  const icon32 = await renderFaviconPng(dataURL, 32, crop);
+  const apple = await renderFaviconPng(dataURL, 180, crop);
+  const ico = pngDataUrlToIcoDataUrl(icon32);
   return [
+    { name: 'favicon.ico', type: 'image/x-icon', rel: 'icon', sizes: 'any', dataURL: ico },
     { name: 'favicon-16x16.png', type: 'image/png', rel: 'icon', sizes: '16x16', dataURL: icon16 },
     { name: 'favicon-32x32.png', type: 'image/png', rel: 'icon', sizes: '32x32', dataURL: icon32 },
     { name: 'apple-touch-icon.png', type: 'image/png', rel: 'apple-touch-icon', sizes: '180x180', dataURL: apple },
@@ -278,7 +323,15 @@ async function applyProjectLogoFile(data, file, useAsFavicon) {
   };
   data.images.push(logo);
   const logoRef = imageRef(logo.id);
-  data.logo = { src: logoRef, alt: data.brandName || data.name || 'Logo' };
+  applyProjectLogoRef(data, logoRef, data.brandName || data.name || 'Logo');
+  if (useAsFavicon) {
+    await regenerateProjectFavicons(data);
+  }
+}
+
+function applyProjectLogoRef(data, logoRef, altText = '') {
+  const existingCrop = data.logo?.faviconCrop || { x: 0, y: 0, zoom: 1 };
+  data.logo = { src: logoRef, alt: altText || data.brandName || data.name || 'Logo', faviconCrop: existingCrop };
   if (!data.navbars) data.navbars = {};
   if (!data.navbars.main) {
     data.navbars.main = {
@@ -300,11 +353,23 @@ async function applyProjectLogoFile(data, file, useAsFavicon) {
     nav.logoHeight = nav.logoHeight || '32px';
     nav.showBrandText = nav.showBrandText !== false;
   });
-  if (useAsFavicon) {
-    data.favicons = await buildFaviconSetFromLogo(dataURL, data.brandName || data.name || 'Website');
-    data.meta = data.meta || {};
-    data.meta.favicon = 'favicon-32x32.png';
+}
+
+function logoDataURLForProject(data) {
+  const src = data?.logo?.src || '';
+  if (!src) return '';
+  if (isImageRef(src)) {
+    return (data.images || []).find(item => item.id === imageIdFromRef(src))?.dataURL || '';
   }
+  return /^data:image\//.test(src) ? src : '';
+}
+
+async function regenerateProjectFavicons(data) {
+  const dataURL = logoDataURLForProject(data);
+  if (!dataURL) throw new Error('Choose an uploaded logo first.');
+  data.favicons = await buildFaviconSetFromLogo(dataURL, data.brandName || data.name || 'Website', data.logo?.faviconCrop || {});
+  data.meta = data.meta || {};
+  data.meta.favicon = 'favicon.ico';
 }
 
 function renderNewProjectTemplateOptions() {

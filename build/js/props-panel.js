@@ -153,6 +153,7 @@ function buildSitePropsHTML() {
       </div>
     </div>
 `;
+    html += buildSiteLogoHTML();
     // Brand colors
     const br = _projectData.brand || {};
     html += `<div class="props-section">
@@ -217,6 +218,53 @@ function buildSitePropsHTML() {
   return html;
 }
 
+function buildSiteLogoHTML() {
+  const logo = _projectData.logo || { src: '', alt: _projectData.brandName || _projectData.name || 'Logo', faviconCrop: { x: 0, y: 0, zoom: 1 } };
+  const crop = Object.assign({ x: 0, y: 0, zoom: 1 }, logo.faviconCrop || {});
+  const src = resolveImageAsset(logo.src, _projectData);
+  const favCount = (_projectData.favicons || []).length;
+  const faviconPreview = (_projectData.favicons || []).find(asset => asset.name === 'favicon-32x32.png')?.dataURL || '';
+  return `<div class="props-section">
+    <div class="props-section-title" style="margin-bottom:6px;">Logo &amp; Favicon</div>
+    ${src ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:56px;height:56px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        <img src="${src}" alt="" style="max-width:48px;max-height:48px;object-fit:contain;">
+      </div>
+      <div class="text-muted text-sm">${imageRefLabel(logo.src) || 'Custom logo'}<br>${favCount ? `${favCount} favicon asset${favCount === 1 ? '' : 's'} generated` : 'No generated favicons yet'}</div>
+    </div>` : `<div class="text-muted text-sm" style="margin-bottom:10px;">No project logo set.</div>`}
+    ${faviconPreview ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:40px;height:40px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);display:flex;align-items:center;justify-content:center;">
+        <img src="${faviconPreview}" alt="" style="width:32px;height:32px;image-rendering:auto;">
+      </div>
+      <div class="text-muted text-sm">Current 32px favicon preview</div>
+    </div>` : ''}
+    <div class="field">
+      <label class="label">Upload New Logo</label>
+      <input class="input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif,image/avif,image/x-icon" onchange="uploadProjectLogo(this)">
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="btn btn-secondary btn-sm" onclick="openImageLibrary(null,(url)=>setProjectLogoFromLibrary(url))">Choose From Library</button>
+      <button class="btn btn-secondary btn-sm" onclick="regenerateFaviconsFromProjectLogo()">Regenerate Favicons</button>
+    </div>
+    <div class="field"><label class="label">Logo Alt Text</label>
+      <input class="input" type="text" value="${(logo.alt || '').replace(/"/g,'&quot;')}" oninput="updateProjectLogoAlt(this.value)">
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Favicon crop controls affect generated favicon files only. The nav logo keeps the full image.</div>
+    <div class="field">
+      <label class="label">Favicon Zoom <span id="favicon_zoom_value">${crop.zoom}</span>x</label>
+      <input class="input" type="range" min="1" max="4" step="0.05" value="${crop.zoom}" oninput="updateProjectFaviconCrop('zoom',this.value);document.getElementById('favicon_zoom_value').textContent=this.value">
+    </div>
+    <div class="field">
+      <label class="label">Favicon Horizontal Crop <span id="favicon_x_value">${crop.x}</span></label>
+      <input class="input" type="range" min="-100" max="100" step="1" value="${crop.x}" oninput="updateProjectFaviconCrop('x',this.value);document.getElementById('favicon_x_value').textContent=this.value">
+    </div>
+    <div class="field">
+      <label class="label">Favicon Vertical Crop <span id="favicon_y_value">${crop.y}</span></label>
+      <input class="input" type="range" min="-100" max="100" step="1" value="${crop.y}" oninput="updateProjectFaviconCrop('y',this.value);document.getElementById('favicon_y_value').textContent=this.value">
+    </div>
+  </div>`;
+}
+
 // ============================================================
 // BRAND COLORS
 // ============================================================
@@ -265,6 +313,67 @@ function updateSiteMeta(key, value) {
   pushUndoDebounced();
   if (!_projectData.meta) _projectData.meta = {};
   _projectData.meta[key] = value;
+}
+
+async function uploadProjectLogo(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  try {
+    pushUndo();
+    await applyProjectLogoFile(_projectData, file, true);
+    renderCanvas();
+    renderProps();
+    toast('Logo updated and favicons regenerated.', 'success');
+  } catch (error) {
+    toast(`Logo update failed: ${error.message}`, 'error');
+  }
+}
+
+async function setProjectLogoFromLibrary(ref) {
+  if (!ref) return;
+  try {
+    pushUndo();
+    applyProjectLogoRef(_projectData, ref, _projectData.logo?.alt || _projectData.brandName || _projectData.name || 'Logo');
+    await regenerateProjectFavicons(_projectData);
+    renderCanvas();
+    renderProps();
+    toast('Logo updated and favicons regenerated.', 'success');
+  } catch (error) {
+    renderCanvas();
+    renderProps();
+    toast(`Logo updated, but favicon regeneration failed: ${error.message}`, 'error');
+  }
+}
+
+function updateProjectLogoAlt(value) {
+  pushUndoDebounced();
+  if (!_projectData.logo) _projectData.logo = { src: '', faviconCrop: { x: 0, y: 0, zoom: 1 } };
+  _projectData.logo.alt = value;
+  Object.values(_projectData.navbars || {}).forEach(nav => {
+    if (nav.logoSrc === _projectData.logo.src) nav.logoAlt = value;
+  });
+  renderCanvas();
+}
+
+let _faviconCropTimer = null;
+function updateProjectFaviconCrop(key, value) {
+  if (!_projectData.logo) _projectData.logo = { src: '', alt: _projectData.brandName || _projectData.name || 'Logo' };
+  if (!_projectData.logo.faviconCrop) _projectData.logo.faviconCrop = { x: 0, y: 0, zoom: 1 };
+  _projectData.logo.faviconCrop[key] = key === 'zoom' ? Number(value) : Number(value);
+  pushUndoDebounced();
+  clearTimeout(_faviconCropTimer);
+  _faviconCropTimer = setTimeout(() => regenerateFaviconsFromProjectLogo(true), 500);
+}
+
+async function regenerateFaviconsFromProjectLogo(silent = false) {
+  try {
+    await regenerateProjectFavicons(_projectData);
+    renderProps();
+    if (!silent) toast('Favicons regenerated.', 'success');
+  } catch (error) {
+    if (!silent) toast(`Favicon regeneration failed: ${error.message}`, 'error');
+  }
 }
 
 function updateStyleSystem(key, value) {
@@ -948,9 +1057,9 @@ async function setNavLogoAsFavicon(navbarId) {
   }
   try {
     pushUndo();
-    _projectData.favicons = await buildFaviconSetFromLogo(dataURL, _projectData.brandName || _projectData.name || 'Website');
+    _projectData.favicons = await buildFaviconSetFromLogo(dataURL, _projectData.brandName || _projectData.name || 'Website', _projectData.logo?.faviconCrop || {});
     _projectData.meta = _projectData.meta || {};
-    _projectData.meta.favicon = 'favicon-32x32.png';
+    _projectData.meta.favicon = 'favicon.ico';
     renderProps();
     toast('Favicons generated from logo.', 'success');
   } catch (error) {

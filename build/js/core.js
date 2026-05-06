@@ -60,6 +60,8 @@ function _snapshot() {
     globalJS:  _projectData.globalJS,
     meta:      _projectData.meta,
     navbars:   _projectData.navbars,
+    logo:      _projectData.logo,
+    favicons:  _projectData.favicons,
     siteTheme: _projectData.siteTheme,
     styleSystem: _projectData.styleSystem,
   });
@@ -72,6 +74,8 @@ function _restore(snap) {
   _projectData.globalJS  = s.globalJS;
   _projectData.meta      = s.meta;
   _projectData.navbars   = s.navbars || {};
+  _projectData.logo      = s.logo || { src: '', alt: _projectData.brandName || _projectData.name || 'Logo' };
+  _projectData.favicons  = Array.isArray(s.favicons) ? s.favicons : [];
   _projectData.siteTheme = s.siteTheme || 'light';
   _projectData.styleSystem = normalizeStyleSystem(s.styleSystem);
 }
