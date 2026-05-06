@@ -1,3 +1,6 @@
 name = "sales-website"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "."
+[[kv_namespaces]]
+binding = "TOKENS"
+id = "b4f95aa5ad3745f29be8eda6c7902f14"
