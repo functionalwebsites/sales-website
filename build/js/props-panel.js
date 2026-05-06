@@ -139,6 +139,7 @@ function buildSitePropsHTML() {
       <div class="field"><label class="label">OG Image URL</label><input class="input" type="text" value="${(pm.ogImage||'').replace(/"/g,'&quot;')}" placeholder="https://… or leave blank for site default" oninput="updatePageMeta('ogImage',this.value)"></div>
     </div>`;
   } else {
+    html += buildSiteIdentityHTML();
     html += `<div class="props-section">
       <div class="props-section-title">Site Meta Defaults</div>
       <div class="field"><label class="label">Description</label><textarea class="input" rows="3" oninput="updateSiteMeta('description',this.value)">${sm.description||''}</textarea></div>
@@ -216,6 +217,22 @@ function buildSitePropsHTML() {
   }
 
   return html;
+}
+
+function buildSiteIdentityHTML() {
+  return `<div class="props-section">
+    <div class="props-section-title" style="margin-bottom:6px;">Site Identity</div>
+    <div class="field">
+      <label class="label">Website Name</label>
+      <input class="input" type="text" value="${(_projectData.name || '').replace(/"/g,'&quot;')}" oninput="updateProjectName(this.value)">
+    </div>
+    <div class="field">
+      <label class="label">Brand Name</label>
+      <input class="input" type="text" value="${(_projectData.brandName || _projectData.name || '').replace(/"/g,'&quot;')}" oninput="updateBrandNameSitewide(this.value)">
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="replaceBrandNameInCopy()" style="width:100%;">Replace Old Brand In Page Copy</button>
+    <div class="text-muted text-sm" style="margin-top:8px;">Brand name updates navs, logo alt text, footers, generated copyright, and export metadata. Use copy replacement only when old brand text is still inside editable section copy.</div>
+  </div>`;
 }
 
 function buildSiteLogoHTML() {
@@ -313,6 +330,80 @@ function updateSiteMeta(key, value) {
   pushUndoDebounced();
   if (!_projectData.meta) _projectData.meta = {};
   _projectData.meta[key] = value;
+}
+
+function updateProjectName(value) {
+  pushUndoDebounced();
+  const next = String(value || '').trim();
+  if (!next) return;
+  _projectData.name = next;
+  const p = STATE.projects.find(item => item.id === STATE.currentProjectId);
+  if (p) p.name = next;
+  document.getElementById('editor-project-name').textContent = next;
+}
+
+function replaceTextValue(value, oldName, newName) {
+  if (typeof value !== 'string' || !oldName || oldName === newName) return value;
+  return value.split(oldName).join(newName);
+}
+
+function updateGeneratedBrandReferences(oldName, newName, includeCopy = false) {
+  if (!oldName || oldName === newName) return;
+  Object.values(_projectData.navbars || {}).forEach(nav => {
+    nav.brand = replaceTextValue(nav.brand, oldName, newName) || newName;
+    nav.logoAlt = replaceTextValue(nav.logoAlt, oldName, newName) || nav.logoAlt;
+  });
+  if (_projectData.logo) _projectData.logo.alt = replaceTextValue(_projectData.logo.alt, oldName, newName) || newName;
+  if (_projectData.meta) {
+    ['description', 'author', 'ogImage'].forEach(key => {
+      _projectData.meta[key] = replaceTextValue(_projectData.meta[key], oldName, newName);
+    });
+  }
+  (_projectData.pages || []).forEach(page => {
+    if (page.meta) {
+      ['description', 'titleOverride', 'ogTitle', 'ogDescription'].forEach(key => {
+        page.meta[key] = replaceTextValue(page.meta[key], oldName, newName);
+      });
+    }
+    (page.blocks || []).forEach(block => {
+      const p = block.props || {};
+      if (block.type === 'footer') {
+        p.brand = replaceTextValue(p.brand, oldName, newName) || newName;
+        p.copyright = replaceTextValue(p.copyright, oldName, newName);
+      }
+      if (block.type === 'nav') {
+        p.brand = replaceTextValue(p.brand, oldName, newName);
+      }
+      if (includeCopy) {
+        ['heading', 'subheading', 'content', 'text', 'title', 'intro', 'tagline', 'col1', 'col2', 'col3'].forEach(key => {
+          p[key] = replaceTextValue(p[key], oldName, newName);
+        });
+      }
+    });
+  });
+}
+
+function updateBrandNameSitewide(value) {
+  const next = String(value || '').trim();
+  if (!next) return;
+  const oldName = _projectData.brandName || _projectData.name || '';
+  pushUndoDebounced();
+  _projectData.brandName = next;
+  updateGeneratedBrandReferences(oldName, next, false);
+  renderCanvas();
+}
+
+function replaceBrandNameInCopy() {
+  const oldName = prompt('Replace what brand text?', _projectData.brandName || _projectData.name || '');
+  if (!oldName) return;
+  const newName = prompt('Replace it with?', _projectData.brandName || _projectData.name || '');
+  if (!newName) return;
+  pushUndo();
+  updateGeneratedBrandReferences(oldName, newName, true);
+  _projectData.brandName = newName;
+  renderCanvas();
+  renderProps();
+  toast('Brand text replaced in page copy.', 'success');
 }
 
 async function uploadProjectLogo(input) {
