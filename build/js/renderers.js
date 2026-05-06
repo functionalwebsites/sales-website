@@ -1,22 +1,26 @@
 // Site builder renderers. Loaded by build/index.html in dependency order.
 function renderBlock(block, editing = false, ctx = null) {
   const html = _renderBlockInner(block, editing, ctx);
+  const responsiveCSS = buildBlockResponsiveCSS(block);
+  const outWithResponsiveCSS = responsiveCSS ? `<style>\n${responsiveCSS}\n</style>\n${html}` : html;
   if (!editing) {
     const p = block.props;
-    let out = html;
+    let out = outWithResponsiveCSS;
     if (p.blockCSS) out = `<style>\n${p.blockCSS}\n</style>\n` + out;
     if (p.blockJS)  out += `\n<script>\n${p.blockJS}\n<\/script>`;
     return out;
   }
-  return html;
+  return outWithResponsiveCSS;
 }
 
 function _renderBlockInner(block, editing = false, ctx = null) {
   const p = block.props;
+  const safeType = String(block.type || 'block').replace(/[^a-zA-Z0-9_-]/g, '-');
+  const blockClass = `fw-block fw-${safeType}`;
   const anchorAttr = p.anchor ? ` id="${escAttr(p.anchor)}"` : '';
   const sel = editing
-    ? `data-block-id="${block.id}" class="block-wrapper"${anchorAttr}`
-    : anchorAttr.trim();
+    ? `data-block-id="${block.id}" data-fw-block="${block.id}" class="block-wrapper ${blockClass}"${anchorAttr}`
+    : `data-fw-block="${block.id}" class="${blockClass}"${anchorAttr}`;
   const pd = ctx || _projectData;
   const siteSectionPadding = 'var(--site-section-padding, 72px 20px)';
   const siteSectionWidth = 'var(--site-section-width, 1100px)';
@@ -150,7 +154,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     }
     case 'columns2': {
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
+  <div class="fw-grid fw-grid-2" style="grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
     <div>${p.col1||'<p>Column 1</p>'}</div>
     <div>${p.col2||'<p>Column 2</p>'}</div>
   </div>
@@ -158,7 +162,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     }
     case 'columns3': {
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
+  <div class="fw-grid fw-grid-3" style="grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
     <div>${p.col1||'<p>Col 1</p>'}</div>
     <div>${p.col2||'<p>Col 2</p>'}</div>
     <div>${p.col3||'<p>Col 3</p>'}</div>
@@ -175,9 +179,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const cards = (p.cards||[]).map(c=>{
         const cardImage = resolveImageAsset(c.img, pd);
         return `
-  <div style="background:#fff;border-radius:${siteCardRadius};overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-  ${cardImage ? `<img src="${cardImage}" style="width:100%;height:180px;object-fit:cover;">` : `<div style="height:180px;background:#e8e8e8;display:flex;align-items:center;justify-content:center;color:#4ade80;font-size:32px;">▧</div>`}
-    <div style="padding:16px;">
+  <div class="fw-card" style="border-radius:${siteCardRadius};">
+  ${cardImage ? `<img class="fw-card-image" src="${cardImage}" alt="">` : `<div class="fw-card-image-placeholder">▧</div>`}
+    <div class="fw-card-body">
       <h3 style="margin:0 0 8px;font-size:16px;">${c.title||'Card Title'}</h3>
       <p style="margin:0;color:#666;font-size:14px;">${c.desc||''}</p>
     </div>
@@ -185,19 +189,19 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       }).join('');
       return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||siteSectionPadding};">
   <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 32px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Our Work'}</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${cards}</div>
+  <div class="fw-grid fw-card-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${cards}</div>
 </section>`;
     }
     case 'features': {
       const feats = (p.features||[]).map(f=>`
-  <div style="text-align:center;padding:24px;">
-    <div style="font-size:40px;margin-bottom:16px;">${f.icon||'✦'}</div>
+  <div class="fw-feature">
+    <div class="fw-feature-icon">${f.icon||'✦'}</div>
     <h3 style="margin:0 0 8px;font-size:18px;">${f.title||'Feature'}</h3>
     <p style="margin:0;color:#666;">${f.desc||''}</p>
   </div>`).join('');
       return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
   <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 40px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Features'}</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${feats}</div>
+  <div class="fw-grid fw-feature-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${feats}</div>
 </section>`;
     }
     case 'testimonialWall': {
@@ -210,7 +214,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
         const muted = highlighted ? 'rgba(255,255,255,.64)' : '#6b7d8f';
         const border = highlighted ? '#13293d' : '#dbe6f1';
         const stars = '★★★★★'.slice(0, Math.min(5, Math.max(0, Number(item.rating || 5) || 5)));
-        return `<div style="background:${bg};border:1px solid ${border};border-radius:${siteCardRadius};padding:24px;box-shadow:0 16px 40px rgba(19,41,61,.07);">
+        return `<div class="fw-testimonial" style="background:${bg};border-color:${border};border-radius:${siteCardRadius};">
   ${p.showStars ? `<div style="font-size:18px;margin-bottom:10px;color:${highlighted ? '#fbbf24' : '#f59e0b'};">${stars || '★★★★★'}</div>` : ''}
   <p style="margin:0 0 14px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:${text};">"${item.quote||''}"</p>
   <strong style="display:block;color:${strong};">${item.name||'Customer Name'}</strong>
@@ -223,7 +227,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       ${p.title ? `<h2 style="font-family:${siteHeadingFont};margin:0 0 10px;font-size:calc(clamp(28px,4vw,42px) * var(--site-heading-scale, 1));color:#13293d;">${p.title}</h2>` : ''}
       ${p.intro ? `<p style="margin:0 auto;max-width:720px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:#5a6b7d;">${p.intro}</p>` : ''}
     </div>
-    <div style="display:grid;grid-template-columns:repeat(${cols},minmax(0,1fr));gap:18px;">${cards}</div>
+    <div class="fw-grid fw-testimonial-grid" style="grid-template-columns:repeat(${cols},minmax(0,1fr));gap:18px;">${cards}</div>
   </div>
 </section>`;
     }
@@ -279,6 +283,37 @@ function hexToRgb(hex) {
 
 function escCssUrl(s) {
   return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\n\r]/g, '');
+}
+
+function buildGeneratedComponentCSS() {
+  return `.fw-grid { display: grid; }
+.fw-card { background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.fw-card-image { width: 100%; height: 180px; object-fit: cover; display: block; }
+.fw-card-image-placeholder { height: 180px; background: #e8e8e8; display: flex; align-items: center; justify-content: center; color: #4ade80; font-size: 32px; }
+.fw-card-body { padding: 16px; }
+.fw-feature { text-align: center; padding: 24px; }
+.fw-feature-icon { font-size: 40px; margin-bottom: 16px; }
+.fw-testimonial { border: 1px solid; padding: 24px; box-shadow: 0 16px 40px rgba(19,41,61,.07); }`;
+}
+
+function buildBlockResponsiveCSS(block) {
+  const p = block?.props || {};
+  const rules = [];
+  const rawBreakpoint = Number(p.mobileBreakpoint || 760);
+  const breakpoint = Math.min(1400, Math.max(320, Number.isFinite(rawBreakpoint) ? rawBreakpoint : 760));
+  const selector = `[data-fw-block="${block.id}"]`;
+  if (p.hideOnMobile) rules.push(`${selector}{display:none!important;}`);
+  if (p.mobilePadding) rules.push(`${selector}{padding:${p.mobilePadding}!important;}`);
+  if (p.mobileMinHeight) rules.push(`${selector}{min-height:${p.mobileMinHeight}!important;}`);
+  if (p.mobileTextAlign && p.mobileTextAlign !== 'inherit') {
+    const alignItems = p.mobileTextAlign === 'right' ? 'flex-end' : p.mobileTextAlign === 'center' ? 'center' : 'flex-start';
+    rules.push(`${selector},${selector} h1,${selector} h2,${selector} h3,${selector} h4,${selector} p{text-align:${p.mobileTextAlign}!important;}`);
+    rules.push(`${selector} > div{align-items:${alignItems}!important;}`);
+  }
+  if ((p.mobileGrid || 'stack') === 'stack') rules.push(`${selector} .fw-grid{grid-template-columns:1fr!important;}`);
+  if (p.mobileGrid === 'two') rules.push(`${selector} .fw-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}`);
+  if (!rules.length) return '';
+  return `@media (max-width:${breakpoint}px){${rules.join('')}}`;
 }
 
 const IMAGE_REF_PREFIX = 'fw-image:';
@@ -498,6 +533,7 @@ function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = nul
   const brandCSS = buildBrandCSS(projectData);
   const styleSystemCSS = buildStyleSystemCSS(projectData);
   const siteThemeCSS = buildSiteThemeCSS(projectData);
+  const componentCSS = buildGeneratedComponentCSS();
 
   if (minimal) {
     return `<!DOCTYPE html>
@@ -507,7 +543,7 @@ function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = nul
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title}</title>
 ${metaTags}
-<style>${brandCSS}${styleSystemCSS}${siteThemeCSS}${projectData.globalCSS||''}</style>
+<style>${brandCSS}${styleSystemCSS}${siteThemeCSS}${componentCSS}${projectData.globalCSS||''}</style>
 </head>
 <body class="site-theme-${projectData.siteTheme || 'light'}">
 ${blocksHTML}
@@ -526,6 +562,7 @@ ${metaTags}
 ${brandCSS}
 ${styleSystemCSS}
 ${siteThemeCSS}
+${componentCSS}
 ${projectData.globalCSS||''}
 </style>
 </head>

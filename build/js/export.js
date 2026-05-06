@@ -5,7 +5,13 @@ function setDevice(d) {
     b.classList.toggle('active', b.dataset.device === d);
   });
   const frame = document.getElementById('canvas-frame');
-  frame.className = 'canvas-frame' + (d !== 'desktop' ? ' device-'+d : '');
+  const widths = {
+    desktop: '100%',
+    tablet: '768px',
+    mobile: '390px'
+  };
+  frame.className = 'canvas-frame';
+  frame.style.width = widths[d] || widths.desktop;
 }
 
 function switchEditorMode(mode) {
@@ -115,11 +121,180 @@ function getImageIssues(projectData) {
 }
 
 function confirmPreflight(actionLabel) {
-  const issues = getImageIssues(_projectData);
+  const issues = getDesignHealthIssues(_projectData).filter(issue => issue.level !== 'info').map(issue => issue.message);
   if (!issues.length) return true;
   const shown = issues.slice(0, 8).map(item => `- ${item}`).join('\n');
   const extra = issues.length > 8 ? `\n- ${issues.length - 8} more issue(s).` : '';
   return confirm(`Before ${actionLabel}, check these items:\n\n${shown}${extra}\n\nContinue anyway?`);
+}
+
+function getDesignHealthIssues(projectData) {
+  const issues = [];
+  const pages = projectData.pages || [];
+  if (!pages.length) issues.push({ level: 'error', message: 'Site has no pages.' });
+  if (!String(projectData.meta?.description || '').trim()) issues.push({ level: 'warning', message: 'Site-wide SEO description is empty.' });
+  if (!projectData.navbars || !Object.keys(projectData.navbars).length) issues.push({ level: 'warning', message: 'No reusable navbar settings found.' });
+
+  const hasActionPage = pages.some(page => /contact|reserve|booking|donate|checkout/i.test(page.name || ''));
+  pages.forEach((page, pageIndex) => {
+    const blocks = page.blocks || [];
+    if (!blocks.length) issues.push({ level: 'error', message: `${page.name}: page has no sections.` });
+    if (!String(page.meta?.description || projectData.meta?.description || '').trim()) issues.push({ level: 'warning', message: `${page.name}: missing page or site description.` });
+
+    const h1Like = blocks.filter(block => block.type === 'hero' && String(block.props?.heading || '').trim()).length
+      + blocks.filter(block => block.type === 'heading' && (block.props?.level || 'h2') === 'h1').length;
+    if (h1Like === 0) issues.push({ level: 'warning', message: `${page.name}: no clear H1 or hero heading.` });
+    if (h1Like > 1) issues.push({ level: 'warning', message: `${page.name}: multiple H1-like headings. Keep one primary page heading.` });
+    if (pageIndex === 0 && !blocks.some(block => block.type === 'nav')) issues.push({ level: 'warning', message: 'Home page has no navigation block.' });
+    if (!blocks.some(block => block.type === 'footer')) issues.push({ level: 'info', message: `${page.name}: no footer block.` });
+    if (!blocks.some(block => ['hero', 'button', 'cta', 'form'].includes(block.type))) issues.push({ level: 'warning', message: `${page.name}: no obvious call to action.` });
+
+    blocks.forEach(block => {
+      const p = block.props || {};
+      if (block.type === 'hero' && (!String(p.heading || '').trim() || !String(p.subheading || '').trim())) issues.push({ level: 'warning', message: `${page.name}: hero should have a heading and supporting copy.` });
+      if (block.type === 'button' && (!p.href || p.href === '#')) issues.push({ level: 'warning', message: `${page.name}: button "${p.text || 'Button'}" needs a real link.` });
+      if (block.type === 'cta' && (!p.buttonHref || p.buttonHref === '#')) issues.push({ level: 'warning', message: `${page.name}: CTA button needs a real link.` });
+      if (block.type === 'form' && (!p.action || p.action === '#')) issues.push({ level: 'info', message: `${page.name}: form action is a placeholder. Connect it before launch.` });
+      if (block.type === 'image' && p.src && !String(p.alt || '').trim()) issues.push({ level: 'warning', message: `${page.name}: image block is missing alt text.` });
+      if (['columns2', 'columns3'].includes(block.type)) issues.push({ level: 'info', message: `${page.name}: check column sections in mobile preview.` });
+    });
+  });
+
+  if (!hasActionPage) issues.push({ level: 'info', message: 'Consider adding a Contact, Booking, Donate, or Reservation page.' });
+  getImageIssues(projectData).forEach(message => issues.push({ level: 'warning', message }));
+  return issues;
+}
+
+function renderDesignHealthReport() {
+  const body = document.getElementById('design-health-body');
+  if (!body) return;
+  const issues = getDesignHealthIssues(_projectData);
+  const counts = {
+    error: issues.filter(issue => issue.level === 'error').length,
+    warning: issues.filter(issue => issue.level === 'warning').length,
+    info: issues.filter(issue => issue.level === 'info').length,
+  };
+  if (!issues.length) {
+    body.innerHTML = '<div style="color:var(--green);font-weight:700;margin-bottom:8px;">No issues found.</div><p>Still preview every page and check your links before publishing.</p>';
+    return;
+  }
+  const groups = [
+    ['error', 'Fix Before Launch'],
+    ['warning', 'Review Before Export'],
+    ['info', 'Helpful Improvements']
+  ].map(([level, title]) => {
+    const items = issues.filter(issue => issue.level === level);
+    if (!items.length) return '';
+    const color = level === 'error' ? 'var(--red)' : level === 'warning' ? 'var(--yellow)' : 'var(--text)';
+    return `<div style="margin-bottom:14px;"><strong style="display:block;color:${color};margin-bottom:6px;">${title}</strong><ul style="padding-left:18px;margin:0;">${items.map(issue => `<li>${escapeHtmlForTextarea(issue.message)}</li>`).join('')}</ul></div>`;
+  }).join('');
+  body.innerHTML = `<div style="margin-bottom:12px;color:var(--text);">Found ${counts.error} error(s), ${counts.warning} warning(s), and ${counts.info} suggestion(s).</div>${groups}`;
+}
+
+function openDesignHealthModal() {
+  openModal('modal-design-health');
+  renderDesignHealthReport();
+}
+
+function designerTokensCSS(data) {
+  return [
+    '/* Design tokens generated by Functional Websites. Edit these first. */',
+    buildBrandCSS(data),
+    buildStyleSystemCSS(data),
+    buildSiteThemeCSS(data),
+    ''
+  ].join('\n');
+}
+
+function designerBaseCSS() {
+  return `/* Base reset and accessibility defaults. */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: var(--site-font-family, system-ui, sans-serif); font-size: var(--site-body-size, 16px); line-height: var(--site-line-height, 1.6); background: var(--color-page-bg, #fff); color: var(--color-text-dark, #111); }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--color-accent, #7c6af7); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }`;
+}
+
+function designerComponentsCSS() {
+  return `/* Component helpers for generated sections. Edit these to change repeated export styling. */
+${buildGeneratedComponentCSS()}
+main { min-height: 60vh; }
+section { position: relative; }
+button, input, textarea, select { font: inherit; }
+nav [data-nav-link="true"] { min-height: 40px; }`;
+}
+
+function compileDesignerPageHTML(projectData, pageIndex, imageMap) {
+  const page = projectData.pages[pageIndex];
+  const renderCtx = Object.assign({}, projectData, { _imageMap: imageMap });
+  let blocksHTML = (page.blocks || []).map(b => renderBlock(b, false, renderCtx)).join('\n');
+  blocksHTML = resolveImageSrcs(blocksHTML, imageMap);
+  blocksHTML = resolveCompiledImageRefs(blocksHTML, projectData, imageMap);
+  const titleOverride = (page.meta || {}).titleOverride;
+  const title = titleOverride || (page.name + (projectData.name ? ' — ' + projectData.name : ''));
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+${buildMetaTags(projectData, page)}
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body class="site-theme-${projectData.siteTheme || 'light'}">
+<main>
+${blocksHTML}
+</main>
+<script src="js/main.js"><\/script>
+</body>
+</html>`;
+}
+
+function designerSiteJson(data) {
+  return JSON.stringify({
+    format: 'functional-websites-designer-handoff',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    name: data.name,
+    brandName: data.brandName,
+    meta: data.meta,
+    brand: data.brand,
+    styleSystem: normalizeStyleSystem(data.styleSystem),
+    pages: (data.pages || []).map(page => ({
+      id: page.id,
+      name: page.name,
+      slug: page.slug,
+      meta: page.meta || {},
+      blocks: (page.blocks || []).map(block => ({ id: block.id, type: block.type, props: block.props || {} }))
+    }))
+  }, null, 2);
+}
+
+function designerReadme(data) {
+  return `# ${data.name}
+
+Exported from Functional Websites.
+
+## File Map
+- HTML pages live at the project root.
+- \`css/tokens.css\` contains brand colors and design tokens.
+- \`css/base.css\` contains reset, accessibility, and base element styles.
+- \`css/components.css\` contains reusable generated component helpers.
+- \`css/pages.css\` contains custom site CSS from the builder.
+- \`js/main.js\` contains custom site JavaScript from the builder.
+- \`site.json\` is a designer-readable snapshot of pages, metadata, tokens, and blocks.
+- \`${BUILDER_PROJECT_FILE}\` is for importing back into the builder.
+
+## Designer Notes
+Start edits in \`css/tokens.css\`, then move to \`css/pages.css\`. Most generated block styles are inline so the site remains portable and easy to host anywhere. For a larger handoff, move repeated inline styles into \`css/components.css\`.
+
+## Continue Editing In The Builder
+Keep this ZIP intact. From the builder dashboard, choose "Upload Existing Site" and upload the ZIP.`;
 }
 
 // ============================================================
@@ -151,16 +326,22 @@ async function downloadProjectZip(id) {
     });
   }
 
-  // Each page — resolve data URL image srcs to relative images/ paths
+  // Each page — designer-friendly HTML references external CSS/JS.
   data.pages.forEach((page, i) => {
-    const html = compilePageHTML(data, i, false, imageMap);
+    const html = compileDesignerPageHTML(data, i, imageMap);
     const filename = (page.slug || (i===0?'index':'page'+i)) + '.html';
     folder.file(filename, html);
   });
 
-  // Standalone CSS + JS
-  folder.file('style.css', data.globalCSS || '');
-  folder.file('script.js', data.globalJS || '');
+  const cssFolder = folder.folder('css');
+  cssFolder.file('tokens.css', designerTokensCSS(data));
+  cssFolder.file('base.css', designerBaseCSS());
+  cssFolder.file('components.css', designerComponentsCSS());
+  cssFolder.file('pages.css', data.globalCSS || '');
+
+  const jsFolder = folder.folder('js');
+  jsFolder.file('main.js', data.globalJS || '');
+  folder.file('site.json', designerSiteJson(data));
 
   folder.file(BUILDER_MANIFEST_FILE, JSON.stringify({
     format: 'functional-websites-project',
@@ -172,8 +353,7 @@ async function downloadProjectZip(id) {
   }, null, 2));
   folder.file(BUILDER_PROJECT_FILE, JSON.stringify(createPortableProjectData(data, imageMap), null, 2));
 
-  // README
-  folder.file('README.md', `# ${data.name}\n\nBuilt with Functional Websites builder.\n\nTo continue editing later:\n1. Keep this ZIP intact, including the images folder\n2. On the builder home page choose "Upload Existing Site"\n3. Upload this ZIP with the included builder manifest\n\nThe builder project JSON stores image metadata and paths. The image files live in the images folder so the JSON stays small.\n\nTo host on GitHub Pages:\n1. Create a new GitHub repository\n2. Upload these files\n3. Go to Settings → Pages → select the main branch\n`);
+  folder.file('README.md', designerReadme(data));
 
   const blob = await zip.generateAsync({type: 'blob'});
   const url = URL.createObjectURL(blob);

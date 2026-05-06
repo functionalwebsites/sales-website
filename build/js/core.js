@@ -820,6 +820,154 @@ function applyTemplate(data, template) {
   return data;
 }
 
+const SITE_BRIEF_RECIPES = {
+  'local-service': {
+    cta: 'Request Service',
+    hero: 'Reliable local service without the stress',
+    subheading: 'Clear communication, practical options, and professional work for customers in your service area.',
+    pages: ['Home', 'Services', 'About', 'Contact'],
+    features: ['Fast Response', 'Clear Pricing', 'Professional Work'],
+  },
+  saas: {
+    cta: 'Start Free',
+    hero: 'A simpler way to run your workflow',
+    subheading: 'Launch a clear SaaS landing page with benefits, proof, pricing, and a direct call to action.',
+    pages: ['Home', 'Features', 'Pricing', 'FAQ'],
+    features: ['Save Time', 'Automate Repetitive Work', 'Measure Results'],
+  },
+  portfolio: {
+    cta: 'View Work',
+    hero: 'Selected work with a clear point of view',
+    subheading: 'Show your best projects, explain your process, and make it easy for the right clients to reach out.',
+    pages: ['Home', 'Work', 'About', 'Contact'],
+    features: ['Case Studies', 'Creative Direction', 'Client Results'],
+  },
+  restaurant: {
+    cta: 'Reserve a Table',
+    hero: 'Memorable food, easy reservations, and local flavor',
+    subheading: 'Give visitors the menu, atmosphere, location, and next step they need in seconds.',
+    pages: ['Home', 'Menu', 'Reservations', 'Location'],
+    features: ['Seasonal Menu', 'Private Events', 'Local Ingredients'],
+  },
+  ecommerce: {
+    cta: 'Shop Now',
+    hero: 'Products worth paying attention to',
+    subheading: 'Introduce your product line with clear benefits, social proof, and a confident path to purchase.',
+    pages: ['Home', 'Shop', 'Reviews', 'Contact'],
+    features: ['Quality Materials', 'Easy Ordering', 'Helpful Support'],
+  },
+  nonprofit: {
+    cta: 'Donate',
+    hero: 'Make the mission clear and easy to support',
+    subheading: 'Explain the cause, show the impact, and help supporters take meaningful action.',
+    pages: ['Home', 'Mission', 'Impact', 'Donate'],
+    features: ['Community Impact', 'Transparent Goals', 'Volunteer Support'],
+  },
+  custom: {
+    cta: 'Get Started',
+    hero: 'A clear website for your next idea',
+    subheading: 'Start with a flexible structure, then customize the copy, pages, and design system.',
+    pages: ['Home', 'About', 'Contact'],
+    features: ['Clear Message', 'Flexible Sections', 'Simple Editing'],
+  }
+};
+
+function slugFromPageName(name) {
+  const slug = String(name || 'page').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return slug || 'page';
+}
+
+function tonePrefix(tone) {
+  return {
+    premium: 'Polished, confident, and focused on quality.',
+    friendly: 'Approachable, helpful, and easy to understand.',
+    bold: 'Direct, energetic, and built to stand out.',
+    clear: 'Straightforward, practical, and easy to scan.'
+  }[tone] || 'Straightforward, practical, and easy to scan.';
+}
+
+function applySiteBriefStarter(data, brief = {}) {
+  const recipe = SITE_BRIEF_RECIPES[brief.businessType] || SITE_BRIEF_RECIPES.custom;
+  const cta = brief.primaryCta || recipe.cta;
+  const audience = brief.location ? ` for ${brief.location}` : '';
+  const brandName = data.brandName || data.name || 'Your Brand';
+  const actionPageName = recipe.pages.find(pageName => /contact|reserve|booking|donate|checkout|pricing/i.test(pageName)) || recipe.pages[recipe.pages.length - 1] || 'Contact';
+  const actionHref = `${slugFromPageName(actionPageName)}.html`;
+  const featureItems = recipe.features.map((title, index) => ({
+    icon: ['ϟ', '✦', '◈'][index] || '✦',
+    title,
+    desc: `${tonePrefix(brief.tone)} Replace this with a specific proof point from ${brandName}.`
+  }));
+
+  data.meta.description = data.meta.description || `${brandName}: ${recipe.subheading}`;
+  data.styleSystem = normalizeStyleSystem(Object.assign({}, data.styleSystem, {
+    sectionWidth: '1120px',
+    sectionPadding: '84px 24px',
+    contentGap: '24px',
+    buttonRadius: '8px',
+    cardRadius: '10px'
+  }));
+  data.navbars = {
+    main: {
+      name: 'Main Navigation',
+      brand: brandName,
+      bgColor: data.brand.navBg || '#ffffff',
+      textColor: data.brand.textDark || '#111111',
+      linkColor: data.brand.textDark || '#111111',
+      pageLinks: 'all',
+      customLinks: [{ id: uid(), label: cta, href: actionHref, asButton: true }],
+      mobileLayout: 'hamburger',
+      mobileBreakpoint: 768,
+      align: 'split'
+    }
+  };
+
+  const pages = recipe.pages.map((pageName, index) => {
+    const slug = index === 0 ? 'index' : slugFromPageName(pageName);
+    const blocks = index === 0
+      ? [
+          mkBlock('nav', {}),
+          mkBlock('hero', {
+            heading: `${recipe.hero}${audience}`,
+            subheading: recipe.subheading,
+            buttonText: cta,
+            buttonHref: actionHref,
+            bgColor: data.brand.accent,
+            textColor: '#ffffff',
+            align: 'left',
+            contentWidth: '980px',
+            minHeight: '560px'
+          }),
+          mkBlock('features', { title: 'Why people choose us', features: featureItems }),
+          mkBlock('testimonialWall', { title: 'Proof from real customers', highlightFirst: true }),
+          mkBlock('cta', { heading: `Ready to work with ${brandName}?`, subheading: 'Use this section to make the next step obvious.', buttonText: cta, buttonHref: actionHref }),
+          mkBlock('footer', {})
+        ]
+      : [
+          mkBlock('nav', {}),
+          mkBlock('heading', { text: pageName, level: 'h1', align: 'center', color: data.brand.textDark }),
+          mkBlock('section', {
+            bgColor: data.brand.sectionBg,
+            content: `<h2>${pageName} overview</h2>\n<p>${tonePrefix(brief.tone)} Use this page to explain the details visitors need before they take action.</p>\n<ul>\n  <li>Replace this with a specific benefit.</li>\n  <li>Add proof, pricing, process, or frequently asked questions.</li>\n  <li>End with a clear next step.</li>\n</ul>`
+          }),
+          pageName === 'Contact' || pageName === 'Reservations' || pageName === 'Donate'
+            ? mkBlock('form', { title: cta, submitText: cta })
+            : mkBlock('cta', { heading: `Interested in ${pageName.toLowerCase()}?`, buttonText: cta, buttonHref: actionHref }),
+          mkBlock('footer', {})
+        ];
+    return {
+      id: uid(),
+      name: pageName,
+      slug,
+      blocks,
+      meta: { description: index === 0 ? data.meta.description : `${pageName} information from ${brandName}.` }
+    };
+  });
+
+  data.pages = pages;
+  return data;
+}
+
 function applyLibraryProjectTemplate(baseData, templateEntry) {
   const incoming = JSON.parse(JSON.stringify(templateEntry.projectData || {}));
   const brandName = baseData.brandName || baseData.name;
@@ -852,7 +1000,7 @@ function uid() {
 
 function mkBlock(type, props = {}) {
   const brand = _brandContext || _projectData?.brand || {};
-  const projectBrandName = _projectData?.brandName || _projectNameContext || _projectData?.name || 'My Site';
+  const projectBrandName = _projectNameContext || _projectData?.brandName || _projectData?.name || 'My Site';
   const defaults = {
     nav: { navbarId: 'main' },
     hero: { heading: 'Welcome', subheading: 'Your tagline here.', buttonText: 'Learn More', buttonHref: '#', bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7', minHeight: 'auto', contentWidth: '', padding: '', align: 'center', bgImage: '', bgSize: 'cover', bgPosition: 'center', overlayColor: '#000000', overlayOpacity: '0' },

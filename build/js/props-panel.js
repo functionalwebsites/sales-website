@@ -13,6 +13,89 @@ function addBlock(type) {
   if (isMobile()) switchMobileTab('canvas');
 }
 
+function getPrimaryActionHref() {
+  const pages = _projectData?.pages || [];
+  const actionPage = pages.find(page => /contact|reserve|booking|donate|checkout|pricing/i.test(page.name || ''));
+  if (!actionPage) return '#';
+  return `${actionPage.slug || 'index'}.html`;
+}
+
+function sectionRecipeBlocks(kind) {
+  const brand = _projectData?.brand || {};
+  const actionHref = getPrimaryActionHref();
+  const recipes = {
+    offer: [
+      mkBlock('section', {
+        bgColor: brand.sectionBg || '#f8f8f8',
+        content: '<h2>What you get</h2>\n<p>Use this section to make the offer concrete. Explain the outcome, who it is for, and why it is different.</p>'
+      }),
+      mkBlock('features', {
+        title: 'Built around the result',
+        features: [
+          { icon: 'ϟ', title: 'Clear Outcome', desc: 'State the practical result customers can expect.' },
+          { icon: '✦', title: 'Simple Process', desc: 'Explain how working with you stays easy.' },
+          { icon: '◈', title: 'Reliable Support', desc: 'Show what happens after the first purchase or inquiry.' }
+        ]
+      })
+    ],
+    proof: [
+      mkBlock('testimonialWall', {
+        title: 'What customers notice',
+        intro: 'Replace these with real quotes, reviews, metrics, or case study excerpts.',
+        highlightFirst: true
+      }),
+      mkBlock('cards', {
+        title: 'Recent results',
+        cards: [
+          { title: 'Result One', desc: 'Summarize a concrete win, project, or customer outcome.', img: '' },
+          { title: 'Result Two', desc: 'Add numbers, time saved, revenue, bookings, or quality improvements.', img: '' },
+          { title: 'Result Three', desc: 'Use a specific example that supports the main offer.', img: '' }
+        ]
+      })
+    ],
+    process: [
+      mkBlock('columns3', {
+        bgColor: '#ffffff',
+        col1: '<h3>1. Plan</h3><p>Clarify the goal, audience, and must-have details.</p>',
+        col2: '<h3>2. Build</h3><p>Create the core experience with clear copy and useful sections.</p>',
+        col3: '<h3>3. Launch</h3><p>Review responsive behavior, connect forms, and publish.</p>'
+      }),
+      mkBlock('cta', {
+        heading: 'Ready for the next step?',
+        subheading: 'Point visitors to one clear action after they understand the process.',
+        buttonText: 'Get Started',
+        buttonHref: actionHref
+      })
+    ],
+    contact: [
+      mkBlock('section', {
+        bgColor: brand.sectionBg || '#f8f8f8',
+        content: '<h2>Talk to us</h2>\n<p>Add response times, service area, booking expectations, or anything visitors should know before reaching out.</p>'
+      }),
+      mkBlock('form', {
+        title: 'Send a message',
+        submitText: 'Send Message'
+      })
+    ]
+  };
+  return recipes[kind] || recipes.offer;
+}
+
+function insertSectionRecipe(kind) {
+  pushUndo();
+  const page = _projectData.pages[STATE.currentPageIndex];
+  const blocks = sectionRecipeBlocks(kind);
+  page.blocks.push(...blocks);
+  const firstBlock = blocks[0];
+  STATE.selectedBlockId = firstBlock?.id || null;
+  STATE.pendingScrollBlockId = firstBlock?.id || null;
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+  toast('Section recipe added', 'success');
+  if (isMobile()) switchMobileTab('canvas');
+}
+
 // ============================================================
 // PROPERTIES PANEL
 // ============================================================
@@ -578,6 +661,7 @@ function buildPropsForm(block) {
       html += '<div class="text-muted text-sm">No properties available.</div>';
   }
 
+  html += buildResponsiveControls(block);
   html += '</div>';
 
   // Collapsible Advanced section
@@ -628,6 +712,48 @@ function buildPropsForm(block) {
   return html;
 }
 
+function buildResponsiveControls(block) {
+  const p = block.props || {};
+  const gridTypes = ['columns2', 'columns3', 'cards', 'features', 'testimonialWall'];
+  return `<details class="props-advanced" style="margin-top:12px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
+      Responsive
+    </summary>
+    <div style="padding:12px;">
+      <div class="field">
+        <label class="label">Mobile Breakpoint (px)</label>
+        <input class="input" type="number" min="320" max="1400" step="1" value="${p.mobileBreakpoint || '760'}" oninput="updateProp('${block.id}','mobileBreakpoint',this.value)">
+      </div>
+      <div class="field">
+        <label class="label">Mobile Padding Override</label>
+        <input class="input" type="text" placeholder="e.g. 48px 18px" value="${(p.mobilePadding || '').replace(/"/g,'&quot;')}" oninput="updateProp('${block.id}','mobilePadding',this.value)">
+      </div>
+      <div class="field">
+        <label class="label">Mobile Min Height Override</label>
+        <input class="input" type="text" placeholder="e.g. 420px" value="${(p.mobileMinHeight || '').replace(/"/g,'&quot;')}" oninput="updateProp('${block.id}','mobileMinHeight',this.value)">
+      </div>
+      <div class="field">
+        <label class="label">Mobile Text Align</label>
+        <select class="input" onchange="updateProp('${block.id}','mobileTextAlign',this.value)">
+          ${['inherit','left','center','right'].map(v=>`<option value="${v}" ${(p.mobileTextAlign||'inherit')===v?'selected':''}>${v}</option>`).join('')}
+        </select>
+      </div>
+      ${gridTypes.includes(block.type) ? `<div class="field">
+        <label class="label">Mobile Grid</label>
+        <select class="input" onchange="updateProp('${block.id}','mobileGrid',this.value)">
+          <option value="stack" ${(p.mobileGrid||'stack')==='stack'?'selected':''}>Stack to one column</option>
+          <option value="two" ${p.mobileGrid==='two'?'selected':''}>Use two columns</option>
+          <option value="keep" ${p.mobileGrid==='keep'?'selected':''}>Keep desktop columns</option>
+        </select>
+      </div>` : ''}
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;" class="label">
+        <input type="checkbox" ${p.hideOnMobile?'checked':''} onchange="updateProp('${block.id}','hideOnMobile',this.checked)">
+        Hide on mobile
+      </label>
+    </div>
+  </details>`;
+}
+
 
 
 function updateProp(blockId, key, value) {
@@ -647,7 +773,8 @@ const BLOCK_STYLE_KEYS = [
   'sectionBg', 'padding', 'maxWidth', 'contentWidth', 'gap',
   'minHeight', 'bgSize', 'bgPosition', 'overlayColor', 'overlayOpacity',
   'width', 'height', 'aspectRatio', 'fit', 'align', 'rounded', 'size',
-  'columns', 'showStars', 'highlightFirst'
+  'columns', 'showStars', 'highlightFirst', 'mobileBreakpoint', 'mobilePadding',
+  'mobileMinHeight', 'mobileTextAlign', 'mobileGrid', 'hideOnMobile'
 ];
 
 function resetBlockStyle(blockId) {

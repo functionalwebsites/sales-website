@@ -207,6 +207,7 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 ${buildBrandCSS(_projectData)}
 ${buildStyleSystemCSS(_projectData)}
 ${buildSiteThemeCSS(_projectData)}
+${buildGeneratedComponentCSS()}
 ${_projectData.globalCSS||''}
 </style>
 </head>

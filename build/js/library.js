@@ -78,14 +78,19 @@ function deleteTemplate(templateId) {
 function addTemplateBlock(templateId) {
   const template = (_projectData.templates||[]).find(t => t.id === templateId);
   if (!template) return;
+  pushUndo();
   const page = _projectData.pages[STATE.currentPageIndex];
   const newBlock = JSON.parse(JSON.stringify(template.block));
   newBlock.id = uid();
   page.blocks.push(newBlock);
-  pushUndoDebounced();
+  STATE.selectedBlockId = newBlock.id;
+  STATE.pendingScrollBlockId = newBlock.id;
   renderCanvas();
+  renderLayoutList();
+  renderProps();
   renderTemplatesSection();
   toast(`Added "${template.name}"`, 'success');
+  if (isMobile()) switchMobileTab('canvas');
 }
 
 function addLibraryBlock(libraryBlockId) {
@@ -100,14 +105,17 @@ function addLibraryBlock(libraryBlockId) {
   }
   const page = _projectData.pages[STATE.currentPageIndex];
   const newBlock = JSON.parse(JSON.stringify(entry.block));
+  pushUndo();
   newBlock.id = uid();
   page.blocks.push(newBlock);
   STATE.selectedBlockId = newBlock.id;
-  pushUndoDebounced();
+  STATE.pendingScrollBlockId = newBlock.id;
   renderCanvas();
   renderLayoutList();
   renderProps();
+  closeModal('modal-library');
   toast(`Added "${entry.name}"`, 'success');
+  if (isMobile()) switchMobileTab('canvas');
 }
 
 function renderTemplatesSection() {

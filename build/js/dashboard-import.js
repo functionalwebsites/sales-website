@@ -115,12 +115,16 @@ function openNewProjectModal() {
   document.getElementById('new-project-brand-name').value = '';
   document.getElementById('new-project-author').value = '';
   document.getElementById('new-project-description').value = '';
+  document.getElementById('new-project-business-type').value = 'local-service';
+  document.getElementById('new-project-primary-cta').value = '';
+  document.getElementById('new-project-location').value = '';
+  document.getElementById('new-project-tone').value = 'clear';
   document.getElementById('new-project-accent').value = '#7c6af7';
   document.getElementById('new-project-page-bg').value = '#ffffff';
   document.getElementById('new-project-section-bg').value = '#f8f8f8';
   document.getElementById('new-project-text-dark').value = '#111111';
   renderNewProjectTemplateOptions();
-  document.getElementById('new-project-template').value = 'blank';
+  document.getElementById('new-project-template').value = 'guided';
   openModal('modal-new-project');
   setTimeout(()=>document.getElementById('new-project-name').focus(),100);
 }
@@ -145,6 +149,7 @@ function createProject() {
   const author = document.getElementById('new-project-author').value.trim();
   const description = document.getElementById('new-project-description').value.trim();
   const template = document.getElementById('new-project-template').value;
+  const siteBrief = getNewProjectSiteBrief();
   const id = uid();
   const brandSetup = {
     accent: document.getElementById('new-project-accent').value,
@@ -162,6 +167,12 @@ function createProject() {
       return;
     }
     data = applyLibraryProjectTemplate(data, templateEntry);
+  } else if (template === 'guided') {
+    _brandContext = data.brand;
+    _projectNameContext = data.brandName;
+    data = applySiteBriefStarter(data, siteBrief);
+    _brandContext = null;
+    _projectNameContext = '';
   } else {
     _brandContext = data.brand;
     _projectNameContext = data.brandName;
@@ -184,9 +195,10 @@ function renderNewProjectTemplateOptions() {
   const select = document.getElementById('new-project-template');
   const note = document.getElementById('new-project-template-note');
   const library = getLibraryData();
-  const builtInValue = select.value || 'blank';
+  const builtInValue = select.value || 'guided';
 
   let html = `
+    <option value="guided">Guided Starter</option>
     <option value="blank">Blank</option>
     <option value="landing">Landing Page</option>
     <option value="blog">Blog / Article</option>
@@ -207,6 +219,15 @@ function renderNewProjectTemplateOptions() {
 
   select.innerHTML = html;
   if (select.querySelector(`option[value="${builtInValue}"]`)) select.value = builtInValue;
+}
+
+function getNewProjectSiteBrief() {
+  return {
+    businessType: document.getElementById('new-project-business-type')?.value || 'local-service',
+    primaryCta: document.getElementById('new-project-primary-cta')?.value.trim() || '',
+    location: document.getElementById('new-project-location')?.value.trim() || '',
+    tone: document.getElementById('new-project-tone')?.value || 'clear',
+  };
 }
 
 async function uploadExistingSite(input) {

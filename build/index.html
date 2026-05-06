@@ -214,8 +214,6 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .device-btn.active, .device-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--green); }
 .canvas-wrap { flex: 1; min-height: 0; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
 .canvas-frame { background: #fff; border-radius: 4px; box-shadow: var(--shadow); transition: width .2s; min-height: 320px; width: 100%; max-width: 100%; position: relative; }
-.canvas-frame.device-tablet { width: 768px; }
-.canvas-frame.device-mobile { width: 375px; }
 #canvas-iframe { width: 100%; border: none; display: block; min-height: 320px; }
 
 /* Right panel - properties */
@@ -363,7 +361,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
   .editor-center.mob-hidden { display: none; }
 
   /* Canvas frame always full-width on mobile — no device frame emulation */
-  .canvas-frame, .canvas-frame.device-tablet, .canvas-frame.device-mobile { width: 100% !important; }
+  .canvas-frame { width: 100% !important; }
   .canvas-wrap { padding: 0; }
   .canvas-frame { border-radius: 0; box-shadow: none; }
 
@@ -634,6 +632,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     <button class="btn btn-secondary btn-sm d-only" onclick="openLibraryModal()">▦ Library</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)"><span style="color:var(--green);">▧</span> Images</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="openHelpDocs()">? Help</button>
+    <button class="btn btn-secondary btn-sm d-only" onclick="openDesignHealthModal()">◇ Health</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
     <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
@@ -649,6 +648,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();openImageLibrary(null)"><span style="color:var(--green);">▧</span> &nbsp;Images</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openLibraryModal()">▦ &nbsp;Custom Library</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openHelpDocs()">? &nbsp;Help / Docs</button>
+    <button class="mob-overflow-item" onclick="closeMobileOverflow();openDesignHealthModal()">◇ &nbsp;Design Health</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()"><span style="color:var(--green);">◉</span> &nbsp;Preview</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();downloadZip()">⬇ &nbsp;Download ZIP</button>
     <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">▲ &nbsp;Deploy</button>
@@ -669,6 +669,13 @@ body.command-drag .layout-item:active { cursor: grabbing; }
       </div>
       <!-- Add blocks panel -->
       <div class="left-tab-panel active" id="left-add-panel" style="overflow-y:auto;flex:1;">
+        <div class="blocks-section">
+          <div class="blocks-section-label">Recipes</div>
+          <button class="block-btn" onclick="insertSectionRecipe('offer')"><span class="block-icon">◆</span> Offer Section</button>
+          <button class="block-btn" onclick="insertSectionRecipe('proof')"><span class="block-icon">★</span> Proof Section</button>
+          <button class="block-btn" onclick="insertSectionRecipe('process')"><span class="block-icon">①</span> Process Section</button>
+          <button class="block-btn" onclick="insertSectionRecipe('contact')"><span class="block-icon">✉</span> Contact Section</button>
+        </div>
         <div class="blocks-section">
           <div class="blocks-section-label">Layout</div>
           <button class="block-btn" onclick="addBlock('section')"><span class="block-icon">▭</span> Section</button>
@@ -704,8 +711,8 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     <div class="editor-center">
       <div class="editor-toolbar">
         <button class="device-btn active" data-device="desktop" onclick="setDevice('desktop')" title="Desktop">▣</button>
-        <button class="device-btn" data-device="tablet" onclick="setDevice('tablet')" title="Tablet">▯</button>
-        <button class="device-btn" data-device="mobile" onclick="setDevice('mobile')" title="Mobile">▢</button>
+        <button class="device-btn" data-device="tablet" onclick="setDevice('tablet')" title="Tablet 768px">▯</button>
+        <button class="device-btn" data-device="mobile" onclick="setDevice('mobile')" title="Mobile phone 390px">▢</button>
         <span class="text-muted text-sm ml-auto" id="page-url-display"></span>
       </div>
       <div class="canvas-wrap">
@@ -799,6 +806,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     <div class="field">
       <label class="label">Template</label>
       <select class="input" id="new-project-template">
+        <option value="guided">Guided Starter</option>
         <option value="blank">Blank</option>
         <option value="landing">Landing Page</option>
         <option value="blog">Blog / Article</option>
@@ -809,9 +817,56 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     <div id="new-project-template-note" class="text-muted text-sm" style="margin-top:-4px;margin-bottom:8px;">
       Install custom website templates from the Custom Library to offer premium starter sites.
     </div>
+    <div class="field">
+      <label class="label">Site Brief</label>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+        <div>
+          <label class="label">Business Type</label>
+          <select class="input" id="new-project-business-type">
+            <option value="local-service">Local Service</option>
+            <option value="saas">SaaS / App</option>
+            <option value="portfolio">Portfolio</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="ecommerce">Product / Shop</option>
+            <option value="nonprofit">Nonprofit</option>
+            <option value="custom">Custom / Blank</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Primary CTA</label>
+          <input class="input" id="new-project-primary-cta" type="text" placeholder="Book a Call">
+        </div>
+        <div>
+          <label class="label">Location / Audience</label>
+          <input class="input" id="new-project-location" type="text" placeholder="Austin, TX or founders">
+        </div>
+        <div>
+          <label class="label">Tone</label>
+          <select class="input" id="new-project-tone">
+            <option value="clear">Clear</option>
+            <option value="premium">Premium</option>
+            <option value="friendly">Friendly</option>
+            <option value="bold">Bold</option>
+          </select>
+        </div>
+      </div>
+      <div class="text-muted text-sm" style="margin-top:8px;">Guided starters create page structure, starter copy, CTAs, nav links, and editable sections from this brief.</div>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('modal-new-project')">Cancel</button>
       <button class="btn btn-primary" onclick="createProject()">Create Website</button>
+    </div>
+  </div>
+</div>
+
+<!-- Design Health Modal -->
+<div id="modal-design-health" class="modal-overlay hidden">
+  <div class="modal" style="width:720px;max-height:90vh;">
+    <div class="modal-title">Design Health</div>
+    <div id="design-health-body" class="text-muted text-sm" style="line-height:1.6;margin-bottom:16px;">Run a check to find common issues before export or deploy.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-design-health')">Close</button>
+      <button class="btn btn-primary" onclick="renderDesignHealthReport()">Run Check</button>
     </div>
   </div>
 </div>
