@@ -184,6 +184,8 @@
   height: 42px;
   padding: 0;
   font-size: 0 !important;
+  flex: 0 0 42px;
+  border: var(--line) !important;
 }
 
 .theme-toggle::before {
@@ -193,6 +195,17 @@
 
 :host-context(html[data-theme="dark"]) .theme-toggle::before {
   content: "☀";
+}
+
+.desktop-theme-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 130;
+}
+
+.mobile-theme-toggle {
+  display: none !important;
 }
 
 .menu-toggle {
@@ -419,6 +432,14 @@ footer {
   }
 
   .desktop-builder-action {
+    display: flex;
+  }
+
+  .desktop-builder-action .build-shortcut {
+    display: none;
+  }
+
+  .desktop-theme-toggle {
     display: none;
   }
 
@@ -439,6 +460,18 @@ footer {
     margin-left: auto;
     padding: 8px 14px;
     font-size: 16px;
+  }
+
+  .mobile-theme-toggle {
+    display: inline-flex !important;
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    padding: 0;
   }
 
   footer {
@@ -484,11 +517,11 @@ footer {
       </div>
       <div class="nav-actions desktop-builder-action">
         <a href="https://build.functionalwebsites.com/" class="btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
-        <button class="btn btn-secondary theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
+        <button class="btn btn-secondary theme-toggle desktop-theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
+        <button class="btn btn-secondary theme-toggle mobile-theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
       </div>
     </nav>
     <a href="https://build.functionalwebsites.com/" class="mobile-builder-link btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
-    <button class="btn btn-secondary theme-toggle mobile-theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
       <span class="menu-toggle-bar"></span>
     </button>

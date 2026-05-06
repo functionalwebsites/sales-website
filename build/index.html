@@ -588,6 +588,7 @@ textarea,
   padding: 0 !important;
   font-size: 0 !important;
   line-height: 1;
+  border: var(--line) !important;
 }
 
 .builder-theme-toggle::before {
@@ -649,6 +650,10 @@ body.builder-dark .builder-theme-toggle::before {
   background: var(--paper) !important;
   color: var(--ink) !important;
   border-color: var(--ink) !important;
+}
+
+.btn.builder-theme-toggle {
+  border: var(--line) !important;
 }
 
 .input {
@@ -733,6 +738,8 @@ textarea::placeholder {
   color: var(--ink) !important;
   font-weight: 900;
   text-transform: uppercase;
+  opacity: 0.82;
+  transition: opacity .2s ease, background-color .18s ease, border-color .18s ease !important;
 }
 
 .new-project-card:hover {
@@ -742,6 +749,7 @@ textarea::placeholder {
   color: var(--ink) !important;
   transform: none !important;
   box-shadow: none !important;
+  opacity: 1;
 }
 
 .project-thumb,
