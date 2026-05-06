@@ -225,8 +225,8 @@
 .btn {
   padding: 8px 16px;
   border-radius: var(--radius);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 700;
   transition: all 0.2s;
   border: none;
   cursor: pointer;
