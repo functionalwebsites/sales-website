@@ -428,7 +428,7 @@ footer {
         <a href="https://docs.functionalwebsites.com/">Docs</a>
       </div>
     </nav>
-    <a href="https://build.functionalwebsites.com/" class="mobile-builder-link btn btn-primary">Build</a>
+    <a href="https://build.functionalwebsites.com/" class="mobile-builder-link btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
       <span class="menu-toggle-bar"></span>
     </button>
@@ -466,13 +466,13 @@ footer {
 </footer>`
   };
 
-  function renderComponent(placeholder, name, styles, markup) {
+  function renderComponent(placeholder, name, markup) {
     let root = placeholder.shadowRoot;
     if (!root) {
       root = placeholder.attachShadow({ mode: 'open' });
     }
 
-    root.innerHTML = `<style>${styles}</style><div class="site-component">${markup}</div>`;
+    root.innerHTML = `<link rel="stylesheet" href="/styles/shared.css"><div class="site-component">${markup}</div>`;
 
     if (name === 'header') {
       markActiveNav(root);
@@ -632,7 +632,7 @@ footer {
       return;
     }
 
-    renderComponent(placeholder, name, fallbackStyles, fallbackMarkup[name]);
+    renderComponent(placeholder, name, fallbackMarkup[name]);
   }
 
   async function initComponents() {
@@ -640,6 +640,34 @@ footer {
       loadComponent('header', '#header-placeholder'),
       loadComponent('footer', '#footer-placeholder')
     ]);
+    bindGlobalBuilderShortcut();
+  }
+
+  function bindGlobalBuilderShortcut() {
+    if (window.__fwBuilderShortcutBound) {
+      return;
+    }
+
+    window.__fwBuilderShortcutBound = true;
+    document.addEventListener('keydown', (event) => {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+        return;
+      }
+
+      if (event.key.toLowerCase() !== 'b') {
+        return;
+      }
+
+      const target = event.target;
+      const tagName = target?.tagName?.toLowerCase();
+      const isTyping = target?.isContentEditable || ['input', 'textarea', 'select'].includes(tagName);
+      if (isTyping || window.location.hostname === 'build.functionalwebsites.com') {
+        return;
+      }
+
+      event.preventDefault();
+      window.location.href = 'https://build.functionalwebsites.com/';
+    });
   }
 
   if (document.readyState === 'loading') {

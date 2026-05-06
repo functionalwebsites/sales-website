@@ -71,7 +71,7 @@ button {
 }
 
 #header-placeholder {
-  min-height: 50px;
+  min-height: 64px;
   width: 100%;
   position: relative;
   z-index: 100;
@@ -175,6 +175,39 @@ button {
 
 .mobile-builder-link {
   display: none;
+}
+
+.build-shortcut {
+  position: relative;
+}
+
+.build-shortcut::after {
+  content: "B";
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(3px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.build-shortcut:hover::after,
+.build-shortcut:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .menu-toggle {
@@ -343,7 +376,7 @@ footer {
 @media (max-width: 768px) {
   .header-wrapper {
     padding: 12px 16px;
-    min-height: 80px;
+    min-height: 64px;
     gap: 8px;
     justify-content: space-between;
   }
@@ -377,8 +410,8 @@ footer {
     gap: 16px;
     z-index: 101;
     width: 100%;
-    height: calc(100vh - 87px);
-    height: calc(100dvh - 87px);
+    height: calc(100vh - 71px);
+    height: calc(100dvh - 71px);
     overflow-y: auto;
     overscroll-behavior: contain;
     opacity: 0;
