@@ -8,9 +8,18 @@ const DOCS_ROUTES = new Set([
   'getting-started',
   'github'
 ]);
+const PRO_MARKETPLACE_ASSET_PATHS = new Set([
+  '/build/blocks/testimonial-wall-block.json',
+  '/build/blocks/youtube-embed-block.json',
+  '/build/templates/plumber-website-template.json'
+]);
 
 export async function onRequest(context) {
   const url = new URL(context.request.url);
+
+  if (PRO_MARKETPLACE_ASSET_PATHS.has(url.pathname)) {
+    return new Response('Not found', { status: 404 });
+  }
 
   if (url.pathname === '/robots.txt') {
     const body = robotsForHost(url.hostname);

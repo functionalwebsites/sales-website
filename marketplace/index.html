@@ -196,6 +196,8 @@
       flex: 1;
       text-align: center;
       cursor: pointer;
+      border: 0;
+      font-family: inherit;
     }
 
     .item-btn:hover {
@@ -210,6 +212,91 @@
 
     .item-btn.secondary:hover {
       border-color: var(--text);
+    }
+
+    .item-btn[disabled] {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    .item-btn[disabled]:hover {
+      border-color: var(--border);
+      background: var(--bg3);
+    }
+
+    .marketplace-auth {
+      max-width: 1200px;
+      margin: 0 auto 24px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .marketplace-auth-panel {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .marketplace-auth-copy {
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .marketplace-auth-copy strong {
+      display: block;
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .marketplace-auth-form {
+      display: flex;
+      gap: 8px;
+      min-width: min(100%, 360px);
+    }
+
+    .marketplace-token-input {
+      min-width: 0;
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg3);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .marketplace-token-input:focus {
+      outline: 2px solid rgba(74, 222, 128, 0.35);
+      border-color: var(--green);
+    }
+
+    .marketplace-status {
+      max-width: 1200px;
+      margin: 0 auto 18px;
+      padding: 0 24px;
+      color: var(--text2);
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .marketplace-status.error {
+      color: var(--red);
+    }
+
+    .marketplace-status.success {
+      color: var(--green);
     }
 
     .empty-state {
@@ -283,6 +370,12 @@
       .filters {
         flex-direction: row;
       }
+
+      .marketplace-auth-panel,
+      .marketplace-auth-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
@@ -300,9 +393,23 @@
     <button class="filter-btn active" data-filter="all">All</button>
     <button class="filter-btn" data-filter="block">Blocks</button>
     <button class="filter-btn" data-filter="theme">Themes</button>
-    <button class="filter-btn" data-filter="free">Included with Pro</button>
-    <button class="filter-btn" data-filter="pro">Premium Add-ons</button>
+    <button class="filter-btn" data-filter="free">Free with Pro</button>
+    <button class="filter-btn" data-filter="pro">Unavailable Add-ons</button>
   </div>
+
+  <section class="marketplace-auth" aria-label="Pro token access">
+    <div class="marketplace-auth-panel">
+      <div class="marketplace-auth-copy">
+        <strong id="marketplace-auth-title">Pro token required for downloads</strong>
+        <span id="marketplace-auth-detail">Enter your Pro token once on this domain to download included marketplace items.</span>
+      </div>
+      <form class="marketplace-auth-form" id="marketplace-auth-form">
+        <input class="marketplace-token-input" id="marketplace-token-input" type="password" autocomplete="off" placeholder="Paste Pro token">
+        <button class="item-btn" id="marketplace-token-submit" type="submit">Unlock</button>
+      </form>
+    </div>
+  </section>
+  <div class="marketplace-status" id="marketplace-status" role="status" aria-live="polite"></div>
 
   <!-- MARKETPLACE -->
   <section class="marketplace">
@@ -325,9 +432,19 @@
   <div id="footer-placeholder"></div>
   <script>
     const PRO_TOKEN_KEY = 'fw_pro_token';
-    const isProUnlocked = () => {
+    const PRO_VALIDATED_KEY = 'fw_pro_token_validated';
+    const PRO_DOWNLOAD_URL = '/api/marketplace/download';
+    const PRO_VALIDATE_URL = '/api/validate-token';
+
+    let proValidated = localStorage.getItem(PRO_VALIDATED_KEY) === 'true';
+
+    const getStoredProToken = () => {
       const token = localStorage.getItem(PRO_TOKEN_KEY);
-      return Boolean(token && token.trim().length > 0);
+      return token ? token.trim() : '';
+    };
+
+    const isProUnlocked = () => {
+      return proValidated && getStoredProToken().length > 0;
     };
 
     const marketplaceData = {
@@ -342,7 +459,7 @@
           downloadFilename: 'testimonial-wall-block.json',
           tier: 'free',
           category: 'block',
-          priceLabel: 'Included with Pro'
+          priceLabel: 'Free with Pro'
         },
         {
           id: 'youtube-embed',
@@ -354,27 +471,27 @@
           downloadFilename: 'youtube-embed-block.json',
           tier: 'free',
           category: 'block',
-          priceLabel: 'Included with Pro'
+          priceLabel: 'Free with Pro'
         },
         {
           id: 'pro-carousel',
           type: 'block',
           title: 'Advanced Carousel',
-          description: 'Full-featured image carousel with touch controls, animations, and auto-play. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Full-featured image carousel with touch controls, animations, and auto-play. This paid add-on is unavailable until checkout is connected.',
           icon: '◫',
           tier: 'pro',
           category: 'block',
-          priceLabel: 'Add-on with Pro'
+          priceLabel: 'Unavailable'
         },
         {
           id: 'pro-form',
           type: 'block',
           title: 'Advanced Form Builder',
-          description: 'Create custom forms with validation, file uploads, and email notifications. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Create custom forms with validation, file uploads, and email notifications. This paid add-on is unavailable until checkout is connected.',
           icon: '¶',
           tier: 'pro',
           category: 'block',
-          priceLabel: 'Add-on with Pro'
+          priceLabel: 'Unavailable'
         },
         {
           id: 'plumber-template',
@@ -382,34 +499,100 @@
           title: 'Plumber Pro Template',
           description: 'Complete website template for plumbing and HVAC services. Included with Pro once custom themes are unlocked.',
           icon: '⚒',
+          downloadFilename: 'plumber-website-template.json',
           tier: 'free',
           category: 'theme',
-          priceLabel: 'Included with Pro'
+          priceLabel: 'Free with Pro'
         },
         {
           id: 'pro-saas',
           type: 'theme',
           title: 'SaaS Landing Page',
-          description: 'Modern SaaS template with hero section, pricing, testimonials, and CTA sections. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Modern SaaS template with hero section, pricing, testimonials, and CTA sections. This paid add-on is unavailable until checkout is connected.',
           icon: '▲',
           tier: 'pro',
           category: 'theme',
-          priceLabel: 'Add-on with Pro'
+          priceLabel: 'Unavailable'
         },
         {
           id: 'pro-portfolio',
           type: 'theme',
           title: 'Portfolio Template',
-          description: 'Elegant portfolio site for creatives, designers, and photographers. Requires Pro plus a separate one-time add-on purchase.',
+          description: 'Elegant portfolio site for creatives, designers, and photographers. This paid add-on is unavailable until checkout is connected.',
           icon: '✦',
           tier: 'pro',
           category: 'theme',
-          priceLabel: 'Add-on with Pro'
+          priceLabel: 'Unavailable'
         }
       ]
     };
 
     let currentFilter = 'all';
+
+    function setMarketplaceStatus(message = '', type = '') {
+      const status = document.getElementById('marketplace-status');
+      status.textContent = message;
+      status.className = `marketplace-status ${type}`.trim();
+    }
+
+    function updateAuthPanel() {
+      const form = document.getElementById('marketplace-auth-form');
+      const title = document.getElementById('marketplace-auth-title');
+      const detail = document.getElementById('marketplace-auth-detail');
+
+      if (isProUnlocked()) {
+        title.textContent = 'Pro token active';
+        detail.textContent = 'Included marketplace items are ready to download.';
+        form.style.display = 'none';
+        return;
+      }
+
+      title.textContent = 'Pro token required for downloads';
+      detail.textContent = 'Enter your Pro token once on this domain to download included marketplace items.';
+      form.style.display = 'flex';
+    }
+
+    async function validateProToken(token) {
+      const response = await fetch(PRO_VALIDATE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.valid) {
+        throw new Error(data.error || 'Invalid Pro token');
+      }
+
+      localStorage.setItem(PRO_TOKEN_KEY, token);
+      localStorage.setItem(PRO_VALIDATED_KEY, 'true');
+      proValidated = true;
+      updateAuthPanel();
+      renderMarketplace();
+    }
+
+    async function ensureProUnlocked() {
+      const storedToken = getStoredProToken();
+
+      if (isProUnlocked()) return storedToken;
+
+      if (storedToken) {
+        try {
+          await validateProToken(storedToken);
+          return storedToken;
+        } catch (error) {
+          localStorage.removeItem(PRO_VALIDATED_KEY);
+          proValidated = false;
+        }
+      }
+
+      const enteredToken = prompt('Paste your Pro token to download this included marketplace item:');
+      const token = enteredToken ? enteredToken.trim() : '';
+      if (!token) return '';
+
+      await validateProToken(token);
+      return token;
+    }
 
     function renderMarketplace() {
       const grid = document.getElementById('marketplace-grid');
@@ -438,7 +621,8 @@
         const card = document.createElement('div');
         const isPremium = item.tier === 'pro';
         const isBlock = item.category === 'block';
-        const isDownloadable = !isPremium && isProUnlocked() && !!item.downloadPath;
+        const isDownloadable = !isPremium && isProUnlocked();
+        const buttonLabel = isPremium ? 'Unavailable' : isDownloadable ? 'Download' : 'Unlock to Download';
 
         card.className = 'item-card';
         card.innerHTML = `
@@ -449,8 +633,8 @@
             <p class="item-description">${item.description}</p>
             <div class="item-footer">
               ${isPremium ? `<span class="item-price">${item.priceLabel}</span>` : `<span class="item-free">${item.priceLabel}</span>`}
-              <button class="item-btn ${isPremium || !isDownloadable ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPremium})">
-                ${isPremium ? 'View Add-on' : isDownloadable ? 'Download' : 'Use with Pro'}
+              <button class="item-btn ${isPremium || !isDownloadable ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPremium})" ${isPremium ? 'disabled' : ''}>
+                ${buttonLabel}
               </button>
             </div>
           </div>
@@ -460,14 +644,32 @@
       });
     }
 
-    async function downloadItemAsset(downloadPath, downloadFilename) {
-      const response = await fetch(downloadPath);
-      if (!response.ok) throw new Error(`Could not download file (${response.status})`);
+    async function downloadItemAsset(item) {
+      const token = await ensureProUnlocked();
+      if (!token) return;
+
+      const response = await fetch(PRO_DOWNLOAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId: item.id, token })
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          localStorage.removeItem(PRO_VALIDATED_KEY);
+          proValidated = false;
+          updateAuthPanel();
+          renderMarketplace();
+        }
+        throw new Error(data.error || `Could not download file (${response.status})`);
+      }
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = downloadFilename || 'marketplace-item.json';
+      link.download = item.downloadFilename || 'marketplace-item.json';
       link.rel = 'noopener';
       document.body.appendChild(link);
       link.click();
@@ -480,26 +682,49 @@
       if (!item) return;
 
       if (isPremium) {
-        alert(`This item requires an active Pro plan plus a separate one-time add-on purchase: ${item.title}.`);
-        return;
-      }
-
-      if (!isProUnlocked()) {
-        alert(`This advanced item is included with Pro: ${item.title}.`);
-        return;
-      }
-
-      if (!item.downloadPath) {
-        alert(`No download file is configured for ${item.title}.`);
+        alert(`${item.title} is unavailable until paid add-on checkout is connected.`);
         return;
       }
 
       try {
-        await downloadItemAsset(item.downloadPath, item.downloadFilename);
+        setMarketplaceStatus(`Preparing ${item.title} download...`);
+        await downloadItemAsset(item);
+        setMarketplaceStatus(`${item.title} download started.`, 'success');
       } catch (error) {
-        alert(`Download failed for ${item.title}: ${error.message}`);
+        setMarketplaceStatus(`Download failed for ${item.title}: ${error.message}`, 'error');
       }
     }
+
+    document.getElementById('marketplace-auth-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const input = document.getElementById('marketplace-token-input');
+      const submit = document.getElementById('marketplace-token-submit');
+      const token = input.value.trim();
+
+      if (!token) {
+        setMarketplaceStatus('Enter a Pro token first.', 'error');
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = 'Checking...';
+      setMarketplaceStatus('Checking Pro token...');
+
+      try {
+        await validateProToken(token);
+        input.value = '';
+        setMarketplaceStatus('Pro token verified. Downloads are unlocked.', 'success');
+      } catch (error) {
+        localStorage.removeItem(PRO_VALIDATED_KEY);
+        proValidated = false;
+        setMarketplaceStatus(error.message, 'error');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Unlock';
+        updateAuthPanel();
+      }
+    });
 
     document.querySelectorAll('.filter-btn').forEach((btn) => {
       btn.addEventListener('click', function() {
@@ -510,6 +735,7 @@
       });
     });
 
+    updateAuthPanel();
     renderMarketplace();
   </script>
   <script src="/components/components.js"></script>
