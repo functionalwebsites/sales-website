@@ -20,34 +20,56 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root {
-  --bg: #0f0f13;
-  --bg2: #16161e;
-  --bg3: #1e1e2e;
-  --border: #2a2a3e;
-  --accent: #34343f;
-  --accent2: #81818f;
-  --green: #4ade80;
-  --red: #f87171;
-  --yellow: #facc15;
-  --text: #e2e2f0;
-  --text2: #8888aa;
-  --radius: 8px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --builder-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --ink: #10100d;
+  --paper: #f5efe0;
+  --panel: #ebe2ce;
+  --panel-strong: #dfd2b8;
+  --steel: #29333a;
+  --rust: #b9482e;
+  --denim: #244d67;
+  --gold: #e2ad30;
+  --bg: #f5efe0;
+  --bg2: #ebe2ce;
+  --bg3: #dfd2b8;
+  --border: #10100d;
+  --accent: #244d67;
+  --accent2: #b9482e;
+  --green: #7cff6b;
+  --red: #b9482e;
+  --yellow: #e2ad30;
+  --text: #10100d;
+  --text2: #625d50;
+  --radius: 4px;
+  --line: 3px solid var(--ink);
+  --shadow: 8px 8px 0 var(--ink);
+  --shadow-sm: 4px 4px 0 var(--ink);
 }
 body.builder-light {
-  --bg: #f4f7fb;
+  --bg: #f9f5ea;
   --bg2: #ffffff;
-  --bg3: #edf2f7;
-  --border: #d7e0ea;
-  --accent: #2563eb;
-  --accent2: #4f74c8;
-  --text: #172434;
-  --text2: #5f7087;
-  --shadow: 0 10px 32px rgba(23,36,52,0.08);
+  --bg3: #efe6d3;
+  --border: #10100d;
+  --accent: #244d67;
+  --accent2: #b9482e;
+  --text: #10100d;
+  --text2: #625d50;
+  --shadow: 6px 6px 0 var(--ink);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { padding-top: 0; scroll-padding-top: 0; scrollbar-width: thin; }
-body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; min-height: 100vh; padding-top: 0;}
+body {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(124,255,107,.2), transparent 18rem),
+    radial-gradient(circle at 90% 12%, rgba(185,72,46,.14), transparent 20rem),
+    repeating-linear-gradient(0deg, rgba(16,16,13,.035) 0 1px, transparent 1px 7px),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--builder-mono);
+  font-size: 14px;
+  min-height: 100vh;
+  padding-top: 0;
+}
 body.editor-mode { overflow: hidden; height: 100vh; height: 100dvh; }
 button { cursor: pointer; border: none; outline: none; font-family: inherit; font-size: 13px; }
 input, textarea, select { font-family: inherit; font-size: 13px; outline: none; }
@@ -447,6 +469,294 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     font-size: 12px;
   }
   .pro-banner-link { font-size: 12px; }
+}
+
+/* ===== TRADES MONO BUILDER SKIN ===== */
+.header,
+.settings-header,
+.editor-header,
+.editor-toolbar,
+.mobile-bottom-nav,
+.publish-bar,
+.code-tabs,
+.code-area > .flex,
+#mode-code > .flex {
+  background: var(--bg2) !important;
+  border-color: var(--border) !important;
+}
+
+.header,
+.settings-header,
+.editor-header {
+  border-bottom: var(--line) !important;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.dash-section-title,
+.modal-title,
+.settings-section-title,
+.panel-title,
+.props-section-title,
+.blocks-section-label,
+.left-tab,
+.editor-title,
+.project-name,
+.library-card-title,
+.help-card h3 {
+  font-weight: 900 !important;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.dash-section-title,
+.settings-section-title,
+.modal-title {
+  letter-spacing: -0.06em;
+}
+
+.btn,
+.input,
+select,
+textarea,
+.modal,
+.toast,
+.project-card,
+.new-project-card,
+.settings-section,
+.library-stat,
+.library-card,
+.help-card,
+.deploy-step,
+.img-lib-item,
+.img-lib-note,
+.mob-overflow-menu,
+.code-tab,
+.editor-mode-tab,
+.block-btn .block-icon,
+.page-item,
+.layout-item {
+  border-radius: var(--radius) !important;
+}
+
+.btn {
+  border: var(--line) !important;
+  box-shadow: var(--shadow-sm);
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease !important;
+}
+
+.btn:hover:not(:disabled),
+.device-btn:hover,
+.editor-mode-tab:hover,
+.left-tab:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.btn-primary,
+.btn-green {
+  background: var(--green) !important;
+  color: var(--ink) !important;
+}
+
+.btn-secondary,
+.btn-ghost,
+.btn-icon,
+.editor-mode-tab,
+.code-tab,
+.device-btn {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border: var(--line) !important;
+}
+
+.btn-danger {
+  background: var(--rust) !important;
+  color: var(--paper) !important;
+}
+
+.btn-ghost:hover,
+.btn-secondary:hover,
+.btn-icon:hover,
+.editor-mode-tab.active,
+.code-tab.active,
+.left-tab.active,
+.device-btn.active {
+  background: var(--gold) !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
+
+.input {
+  background: var(--paper) !important;
+  border: var(--line) !important;
+  color: var(--ink) !important;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.input:focus {
+  border-color: var(--ink) !important;
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
+}
+
+.modal-overlay {
+  background: rgba(16, 16, 13, 0.72) !important;
+  backdrop-filter: none !important;
+}
+
+.modal,
+.project-card,
+.settings-section,
+.library-stat,
+.library-card,
+.help-card,
+.toast,
+.mob-overflow-menu,
+.pro-banner {
+  background: var(--panel) !important;
+  border: var(--line) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.project-card:hover,
+.library-card:hover,
+.help-card:hover,
+.settings-section:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0 var(--ink) !important;
+}
+
+.new-project-card {
+  background:
+    linear-gradient(135deg, rgba(124,255,107,.38), rgba(124,255,107,.08)),
+    repeating-linear-gradient(-12deg, transparent 0 13px, rgba(16,16,13,.08) 13px 15px),
+    var(--paper) !important;
+  border: 4px dashed var(--ink) !important;
+  box-shadow: var(--shadow);
+  color: var(--ink) !important;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.new-project-card:hover {
+  background: var(--green) !important;
+  color: var(--ink) !important;
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.project-thumb,
+.editor-left,
+.editor-right,
+.editor-center,
+.editor-toolbar,
+.code-area,
+.code-textarea,
+.canvas-wrap {
+  background: var(--bg3) !important;
+}
+
+.editor-left {
+  border-right: var(--line) !important;
+}
+
+.editor-right {
+  border-left: var(--line) !important;
+}
+
+.left-tabs,
+.props-tabs,
+.panel-title,
+.project-actions,
+.code-tabs,
+.editor-toolbar,
+.mobile-bottom-nav,
+.publish-bar {
+  border-color: var(--border) !important;
+  border-width: 3px !important;
+}
+
+.block-btn,
+.layout-item,
+.page-item,
+.mob-overflow-item {
+  color: var(--ink) !important;
+  font-weight: 800;
+}
+
+.block-btn:hover,
+.layout-item:hover,
+.layout-item.selected,
+.page-item:hover,
+.page-item.active,
+.mob-overflow-item:hover {
+  background: var(--paper) !important;
+}
+
+.block-btn .block-icon,
+.layout-item-icon,
+.mob-tab-icon,
+.new-project-icon,
+.save-status[data-state="saved"],
+.img-lib-stats {
+  color: var(--rust) !important;
+}
+
+.canvas-frame {
+  border: var(--line);
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.code-textarea {
+  color: var(--ink) !important;
+  font-family: var(--builder-mono) !important;
+  font-weight: 700;
+}
+
+.pro-banner {
+  background: var(--green) !important;
+  color: var(--ink) !important;
+}
+
+.pro-banner .btn {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  border-color: var(--ink) !important;
+}
+
+.status-badge,
+.help-kbd {
+  border: var(--line) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-weight: 900;
+}
+
+.status-badge.connected {
+  background: var(--green) !important;
+  color: var(--ink) !important;
+}
+
+.status-badge.disconnected {
+  background: var(--rust) !important;
+  color: var(--paper) !important;
+}
+
+.color-swatch,
+.img-lib-item.selected {
+  border-color: var(--ink) !important;
+  box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+@media (max-width: 767px) {
+  .canvas-frame {
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none !important;
+  }
 }
 </style>
 </head>
