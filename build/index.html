@@ -783,6 +783,15 @@ body.command-drag .layout-item:active { cursor: grabbing; }
       <textarea class="input" id="new-project-description" rows="3" placeholder="Short description used for SEO and social sharing"></textarea>
     </div>
     <div class="field">
+      <label class="label">Logo</label>
+      <input class="input" id="new-project-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif,image/avif,image/x-icon">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:8px;" class="label">
+        <input type="checkbox" id="new-project-logo-favicon" checked>
+        Use logo as favicon
+      </label>
+      <div class="text-muted text-sm" style="margin-top:6px;">Logo is added to the project image library, nav, and exported assets. Favicon export generates PNG icons and a web manifest.</div>
+    </div>
+    <div class="field">
       <label class="label">Starting Brand Colors</label>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
         <div>

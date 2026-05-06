@@ -375,6 +375,24 @@ function buildPropsForm(block) {
       html += `<div class="field"><label class="label">Brand Name</label>
         <input class="input" type="text" value="${(nc.brand||'').replace(/"/g,'&quot;')}" oninput="updateNavConfig('${navId}','brand',this.value)">
       </div>`;
+      html += `<div class="field"><label class="label">Logo URL or Library Reference</label>
+        <div style="display:flex;gap:6px;">
+          <input class="input" type="text" value="${(nc.logoSrc||'').replace(/"/g,'&quot;')}" placeholder="Upload or choose from library" oninput="updateNavConfig('${navId}','logoSrc',this.value)" style="flex:1;">
+          <button class="btn btn-secondary btn-sm" onclick="openImageLibrary(null,(url)=>{updateNavConfig('${navId}','logoSrc',url);renderProps();})"><span style="color:var(--green);">▧</span></button>
+        </div>
+      </div>`;
+      if (imageRefLabel(nc.logoSrc)) html += `<div class="text-muted text-sm" style="margin-top:-8px;margin-bottom:12px;">${imageRefLabel(nc.logoSrc)}</div>`;
+      html += `<div class="field"><label class="label">Logo Alt Text</label>
+        <input class="input" type="text" value="${(nc.logoAlt||'').replace(/"/g,'&quot;')}" oninput="updateNavConfig('${navId}','logoAlt',this.value)">
+      </div>`;
+      html += `<div class="field"><label class="label">Logo Height</label>
+        <input class="input" type="text" value="${(nc.logoHeight||'32px').replace(/"/g,'&quot;')}" placeholder="32px" oninput="updateNavConfig('${navId}','logoHeight',this.value)">
+      </div>`;
+      html += `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0 10px;" class="label">
+        <input type="checkbox" ${nc.showBrandText !== false?'checked':''} onchange="updateNavConfig('${navId}','showBrandText',this.checked)">
+        Show brand text next to logo
+      </label>`;
+      html += `<button class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:12px;" onclick="setNavLogoAsFavicon('${navId}')">Use Logo As Favicon</button>`;
 
       // Color fields wired to updateNavConfig
       const navColorField = (label, key) => {
@@ -890,6 +908,10 @@ function ensureNavbar(navbarId) {
     _projectData.navbars[navbarId] = {
       name: navbarId === 'main' ? 'Default Nav' : navbarId,
       brand: _projectData?.brandName || _projectData?.name || 'My Site',
+      logoSrc: _projectData?.logo?.src || '',
+      logoAlt: _projectData?.logo?.alt || _projectData?.brandName || _projectData?.name || 'Logo',
+      logoHeight: '32px',
+      showBrandText: true,
       bgColor: '#ffffff',
       textColor: '#333333',
       linkColor: '#333333',
@@ -907,6 +929,33 @@ function updateNavConfig(navbarId, key, value) {
   ensureNavbar(navbarId);
   _projectData.navbars[navbarId][key] = value;
   renderCanvas();
+}
+
+async function setNavLogoAsFavicon(navbarId) {
+  ensureNavbar(navbarId);
+  const logoSrc = _projectData.navbars[navbarId].logoSrc;
+  if (!logoSrc) {
+    toast('Choose a nav logo first.', 'error');
+    return;
+  }
+  const img = isImageRef(logoSrc)
+    ? (_projectData.images || []).find(item => item.id === imageIdFromRef(logoSrc))
+    : null;
+  const dataURL = img?.dataURL || logoSrc;
+  if (!/^data:image\//.test(dataURL)) {
+    toast('Use an uploaded library image to generate favicons.', 'error');
+    return;
+  }
+  try {
+    pushUndo();
+    _projectData.favicons = await buildFaviconSetFromLogo(dataURL, _projectData.brandName || _projectData.name || 'Website');
+    _projectData.meta = _projectData.meta || {};
+    _projectData.meta.favicon = 'favicon-32x32.png';
+    renderProps();
+    toast('Favicons generated from logo.', 'success');
+  } catch (error) {
+    toast(`Favicon conversion failed: ${error.message}`, 'error');
+  }
 }
 
 function createNavVariant(blockId) {

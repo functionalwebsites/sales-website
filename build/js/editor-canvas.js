@@ -241,6 +241,22 @@ function getDropPlacement(event, target) {
 }
 
 document.addEventListener('keydown', function(event) {
+  const key = String(event.key || '').toLowerCase();
+  if ((event.metaKey || event.ctrlKey) && key === 's') {
+    event.preventDefault();
+    if (window.parent && typeof window.parent.saveProject === 'function') window.parent.saveProject();
+    return;
+  }
+  if ((event.metaKey || event.ctrlKey) && !event.shiftKey && key === 'z') {
+    event.preventDefault();
+    if (window.parent && typeof window.parent.undo === 'function') window.parent.undo();
+    return;
+  }
+  if ((event.metaKey || event.ctrlKey) && ((event.shiftKey && key === 'z') || key === 'y')) {
+    event.preventDefault();
+    if (window.parent && typeof window.parent.redo === 'function') window.parent.redo();
+    return;
+  }
   if (event.metaKey || event.ctrlKey) setCommandDragActive(true);
 });
 
@@ -617,12 +633,12 @@ window.selectBlock = function(id, scrollToBlock = false) {
 };
 
 window.moveBlock = function(id, dir) {
-  pushUndo();
   const page = _projectData.pages[STATE.currentPageIndex];
   const idx = page.blocks.findIndex(b=>b.id===id);
   if (idx < 0) return;
   const newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= page.blocks.length) return;
+  pushUndo();
   const tmp = page.blocks[idx];
   page.blocks[idx] = page.blocks[newIdx];
   page.blocks[newIdx] = tmp;
@@ -632,9 +648,12 @@ window.moveBlock = function(id, dir) {
 };
 
 window.removeBlock = function(id) {
-  pushUndo();
   const page = _projectData.pages[STATE.currentPageIndex];
+  const beforeLength = page.blocks.length;
+  if (!page.blocks.some(b => b.id === id)) return;
+  pushUndo();
   page.blocks = page.blocks.filter(b=>b.id!==id);
+  if (page.blocks.length === beforeLength) return;
   if (STATE.selectedBlockId === id) STATE.selectedBlockId = null;
   renderCanvas();
   renderLayoutList();

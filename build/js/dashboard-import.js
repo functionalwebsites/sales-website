@@ -115,6 +115,8 @@ function openNewProjectModal() {
   document.getElementById('new-project-brand-name').value = '';
   document.getElementById('new-project-author').value = '';
   document.getElementById('new-project-description').value = '';
+  document.getElementById('new-project-logo').value = '';
+  document.getElementById('new-project-logo-favicon').checked = true;
   document.getElementById('new-project-business-type').value = 'local-service';
   document.getElementById('new-project-primary-cta').value = '';
   document.getElementById('new-project-location').value = '';
@@ -143,13 +145,15 @@ function triggerExistingSiteUpload() {
   input.click();
 }
 
-function createProject() {
+async function createProject() {
   const name = document.getElementById('new-project-name').value.trim() || 'Untitled Site';
   const brandName = document.getElementById('new-project-brand-name').value.trim() || name;
   const author = document.getElementById('new-project-author').value.trim();
   const description = document.getElementById('new-project-description').value.trim();
   const template = document.getElementById('new-project-template').value;
   const siteBrief = getNewProjectSiteBrief();
+  const logoFile = document.getElementById('new-project-logo')?.files?.[0] || null;
+  const useLogoAsFavicon = document.getElementById('new-project-logo-favicon')?.checked !== false;
   const id = uid();
   const brandSetup = {
     accent: document.getElementById('new-project-accent').value,
@@ -181,6 +185,15 @@ function createProject() {
     _projectNameContext = '';
   }
 
+  if (logoFile) {
+    try {
+      await applyProjectLogoFile(data, logoFile, useLogoAsFavicon);
+    } catch (error) {
+      toast(`Logo upload failed: ${error.message}`, 'error');
+      return;
+    }
+  }
+
   const meta = { id, name, created: Date.now(), modified: Date.now() };
   STATE.projects.push(meta);
   saveProjectsMeta();
@@ -189,6 +202,109 @@ function createProject() {
   closeModal('modal-new-project');
   toast('Website created!', 'success');
   openEditor(id);
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => resolve(event.target.result);
+    reader.onerror = () => reject(new Error('Could not read file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageFromDataURL(dataURL) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Could not load image for favicon conversion.'));
+    img.src = dataURL;
+  });
+}
+
+async function renderFaviconPng(dataURL, size) {
+  const img = await loadImageFromDataURL(dataURL);
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+  const sourceSize = Math.min(img.naturalWidth || img.width, img.naturalHeight || img.height);
+  const sx = ((img.naturalWidth || img.width) - sourceSize) / 2;
+  const sy = ((img.naturalHeight || img.height) - sourceSize) / 2;
+  const padding = Math.max(1, Math.round(size * 0.08));
+  ctx.drawImage(img, sx, sy, sourceSize, sourceSize, padding, padding, size - padding * 2, size - padding * 2);
+  return canvas.toDataURL('image/png');
+}
+
+async function buildFaviconSetFromLogo(dataURL, brandName) {
+  const icon16 = await renderFaviconPng(dataURL, 16);
+  const icon32 = await renderFaviconPng(dataURL, 32);
+  const apple = await renderFaviconPng(dataURL, 180);
+  return [
+    { name: 'favicon-16x16.png', type: 'image/png', rel: 'icon', sizes: '16x16', dataURL: icon16 },
+    { name: 'favicon-32x32.png', type: 'image/png', rel: 'icon', sizes: '32x32', dataURL: icon32 },
+    { name: 'apple-touch-icon.png', type: 'image/png', rel: 'apple-touch-icon', sizes: '180x180', dataURL: apple },
+    {
+      name: 'site.webmanifest',
+      type: 'application/manifest+json',
+      rel: 'manifest',
+      content: JSON.stringify({
+        name: brandName,
+        short_name: brandName,
+        icons: [
+          { src: 'favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+          { src: 'apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+        ],
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone'
+      }, null, 2)
+    }
+  ];
+}
+
+async function applyProjectLogoFile(data, file, useAsFavicon) {
+  const dataURL = await readFileAsDataURL(file);
+  if (!String(file.type || '').startsWith('image/') && !/^data:image\//.test(dataURL)) {
+    throw new Error('Choose an image file.');
+  }
+  if (!data.images) data.images = [];
+  const logo = {
+    id: uid(),
+    name: file.name || 'logo.png',
+    dataURL,
+    type: file.type || mimeFromFilename(file.name || 'logo.png')
+  };
+  data.images.push(logo);
+  const logoRef = imageRef(logo.id);
+  data.logo = { src: logoRef, alt: data.brandName || data.name || 'Logo' };
+  if (!data.navbars) data.navbars = {};
+  if (!data.navbars.main) {
+    data.navbars.main = {
+      name: 'Default Nav',
+      brand: data.brandName || data.name || 'My Site',
+      bgColor: data.brand?.navBg || '#ffffff',
+      textColor: data.brand?.textDark || '#333333',
+      linkColor: data.brand?.textDark || '#333333',
+      align: 'split',
+      mobileLayout: 'hamburger',
+      mobileBreakpoint: '768',
+      pageLinks: 'all',
+      customLinks: []
+    };
+  }
+  Object.values(data.navbars).forEach(nav => {
+    nav.logoSrc = logoRef;
+    nav.logoAlt = data.logo.alt;
+    nav.logoHeight = nav.logoHeight || '32px';
+    nav.showBrandText = nav.showBrandText !== false;
+  });
+  if (useAsFavicon) {
+    data.favicons = await buildFaviconSetFromLogo(dataURL, data.brandName || data.name || 'Website');
+    data.meta = data.meta || {};
+    data.meta.favicon = 'favicon-32x32.png';
+  }
 }
 
 function renderNewProjectTemplateOptions() {
@@ -266,6 +382,24 @@ async function rehydrateProjectImagesFromZip(projectData, zip, basePath) {
   }
 }
 
+async function rehydrateProjectFaviconsFromZip(projectData, zip, basePath) {
+  const favicons = projectData.favicons || [];
+  for (const asset of favicons) {
+    if (asset.dataURL || asset.content) continue;
+    const assetPath = asset.path || asset.name;
+    if (!assetPath) continue;
+    const entry = zip.file(joinZipPath(basePath, assetPath)) || zip.file(String(assetPath).replace(/^\/+/, ''));
+    if (!entry) continue;
+    if (asset.type === 'application/manifest+json' || asset.rel === 'manifest') {
+      asset.content = await entry.async('string');
+    } else {
+      const b64 = await entry.async('base64');
+      const type = asset.type || mimeFromFilename(assetPath);
+      asset.dataURL = `data:${type};base64,${b64}`;
+    }
+  }
+}
+
 async function importProjectZip(file) {
   toast('Importing site...', 'info');
   const zip = await JSZip.loadAsync(file);
@@ -307,10 +441,13 @@ async function importProjectZip(file) {
   const normalizedData = JSON.parse(JSON.stringify(importedData));
   normalizedData.name = importedName;
   await rehydrateProjectImagesFromZip(normalizedData, zip, basePath);
+  await rehydrateProjectFaviconsFromZip(normalizedData, zip, basePath);
   if (!normalizedData.brandName) normalizedData.brandName = normalizedData.name;
   if (!normalizedData.brand) normalizedData.brand = {};
   if (!normalizedData.meta) normalizedData.meta = {};
   if (!normalizedData.images) normalizedData.images = [];
+  if (!normalizedData.favicons) normalizedData.favicons = [];
+  if (!normalizedData.logo) normalizedData.logo = { src: '', alt: normalizedData.brandName || normalizedData.name || 'Logo' };
   if (!normalizedData.templates) normalizedData.templates = [];
   if (!normalizedData.navbars) normalizedData.navbars = {};
 

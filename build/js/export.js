@@ -228,7 +228,8 @@ nav [data-nav-link="true"] { min-height: 40px; }`;
 
 function compileDesignerPageHTML(projectData, pageIndex, imageMap) {
   const page = projectData.pages[pageIndex];
-  const renderCtx = Object.assign({}, projectData, { _imageMap: imageMap });
+  const faviconMap = buildFaviconAssetMap(projectData);
+  const renderCtx = Object.assign({}, projectData, { _imageMap: imageMap, _faviconMap: faviconMap });
   let blocksHTML = (page.blocks || []).map(b => renderBlock(b, false, renderCtx)).join('\n');
   blocksHTML = resolveImageSrcs(blocksHTML, imageMap);
   blocksHTML = resolveCompiledImageRefs(blocksHTML, projectData, imageMap);
@@ -240,7 +241,7 @@ function compileDesignerPageHTML(projectData, pageIndex, imageMap) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title}</title>
-${buildMetaTags(projectData, page)}
+${buildMetaTags(renderCtx, page)}
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
@@ -264,6 +265,8 @@ function designerSiteJson(data) {
     brandName: data.brandName,
     meta: data.meta,
     brand: data.brand,
+    logo: data.logo,
+    favicons: (data.favicons || []).map(asset => ({ name: asset.name, rel: asset.rel, sizes: asset.sizes, type: asset.type })),
     styleSystem: normalizeStyleSystem(data.styleSystem),
     pages: (data.pages || []).map(page => ({
       id: page.id,
@@ -316,6 +319,7 @@ async function downloadProjectZip(id) {
   // Build image map and write images/ folder. Blocks use short image refs while
   // editing; exports get normal relative files such as images/photo.jpg.
   const imageMap = buildImageAssetMap(data);
+  const faviconMap = buildFaviconAssetMap(data);
   const libImages = data.images || [];
   if (libImages.length > 0) {
     const imgFolder = folder.folder('images');
@@ -325,6 +329,17 @@ async function downloadProjectZip(id) {
       if (b64) imgFolder.file(fname, b64, { base64: true });
     });
   }
+
+  (data.favicons || []).forEach(asset => {
+    const filename = faviconMap[asset.name] || asset.name;
+    if (!filename) return;
+    if (asset.content) {
+      folder.file(filename, asset.content);
+      return;
+    }
+    const b64 = String(asset.dataURL || '').split(',')[1];
+    if (b64) folder.file(filename, b64, { base64: true });
+  });
 
   // Each page — designer-friendly HTML references external CSS/JS.
   data.pages.forEach((page, i) => {

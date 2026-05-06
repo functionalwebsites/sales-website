@@ -50,15 +50,16 @@ document.addEventListener('DOMContentLoaded', function init() {
 
   // Keyboard shortcuts
   document.addEventListener('keydown', e => {
-    if ((e.ctrlKey||e.metaKey) && e.key==='s') {
+    const key = String(e.key || '').toLowerCase();
+    if ((e.ctrlKey||e.metaKey) && key === 's') {
       e.preventDefault();
       if (STATE.currentProjectId) saveProject();
     }
-    if ((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key==='z') {
+    if ((e.ctrlKey||e.metaKey) && !e.shiftKey && key === 'z') {
       e.preventDefault();
       if (STATE.currentProjectId) undo();
     }
-    if ((e.ctrlKey||e.metaKey) && (e.shiftKey && e.key==='z' || e.key==='y')) {
+    if ((e.ctrlKey||e.metaKey) && ((e.shiftKey && key === 'z') || key === 'y')) {
       e.preventDefault();
       if (STATE.currentProjectId) redo();
     }

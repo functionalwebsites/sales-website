@@ -636,6 +636,8 @@ function normalizeProjectData(data) {
     }
     return next;
   });
+  if (!data.logo) data.logo = { src: '', alt: data.brandName || data.name || 'Logo' };
+  if (!Array.isArray(data.favicons)) data.favicons = [];
   if (!Array.isArray(data.templates)) data.templates = [];
   if (!data.navbars) data.navbars = {};
   return data;
@@ -770,6 +772,8 @@ function createBlankProjectData(name, setup = {}) {
     globalJS: `// Global scripts\n`,
     meta: { description: setup.description || '', keywords: '', author: setup.author || '', favicon: '', ogType: 'website', ogImage: '', twitterCard: 'summary_large_image' },
     brand,
+    logo: { src: '', alt: brandName },
+    favicons: [],
     images: [],
     templates: [],
     navbars: {},
@@ -911,6 +915,10 @@ function applySiteBriefStarter(data, brief = {}) {
     main: {
       name: 'Main Navigation',
       brand: brandName,
+      logoSrc: data.logo?.src || '',
+      logoAlt: data.logo?.alt || brandName,
+      logoHeight: '32px',
+      showBrandText: true,
       bgColor: data.brand.navBg || '#ffffff',
       textColor: data.brand.textDark || '#111111',
       linkColor: data.brand.textDark || '#111111',

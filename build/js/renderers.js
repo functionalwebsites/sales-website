@@ -70,6 +70,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       }).join('');
       const mobileAlignItems = align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start';
       const mobileJustify = align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start';
+      const logoSrc = resolveImageAsset(nc.logoSrc, pd);
+      const logoHtml = logoSrc ? `<img src="${escAttr(logoSrc)}" alt="${escAttr(nc.logoAlt || nc.brand || 'Logo')}" style="height:${nc.logoHeight || '32px'};width:auto;display:block;object-fit:contain;">` : '';
+      const brandTextHtml = nc.showBrandText === false ? '' : `<span>${nc.brand||'My Site'}</span>`;
       const stackCss = mobileLayout === 'stack'
         ? `@media (max-width:${breakpoint}px){#${navId}{flex-direction:column;align-items:${mobileAlignItems};gap:12px;text-align:${textAlign};}#${navId} .nav-links{display:flex !important;flex-direction:column;align-items:${mobileAlignItems};gap:12px;width:100%;padding-top:8px;}#${navId} .nav-toggle{display:none !important;}}`
         : mobileLayout === 'center-stack'
@@ -79,14 +82,14 @@ function _renderBlockInner(block, editing = false, ctx = null) {
             : `@media (max-width:${breakpoint}px){#${navId}{z-index:30;}#${navId} .nav-toggle{display:inline-flex !important;}#${navId} .nav-links{display:none !important;position:absolute;z-index:9999;top:calc(100% + 10px);left:24px;right:24px;background:${nc.bgColor||'#fff'};border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.18);padding:14px;flex-direction:column;align-items:${mobileAlignItems};gap:12px;text-align:${textAlign};}#${navId}[data-open=\"true\"] .nav-links{display:flex !important;}}`;
       return `<nav ${sel} id="${navId}" data-open="false" style="background:${nc.bgColor||'#fff'};padding:14px 24px;display:flex;align-items:center;justify-content:${justify};text-align:${textAlign};gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);position:relative;z-index:20;">
   <style>
-    #${navId} .nav-brand{font-weight:700;font-size:18px;color:${nc.textColor||'#333'};}
+    #${navId} .nav-brand{font-weight:700;font-size:18px;color:${nc.textColor||'#333'};display:inline-flex;align-items:center;gap:10px;text-decoration:none;}
     #${navId} .nav-links{display:flex;align-items:center;justify-content:${mobileJustify};gap:0;flex-wrap:wrap;}
     #${navId} .nav-links a{padding:0 12px;}
     #${navId} .nav-links a[style*="inline-flex"]{padding:10px 16px;}
     #${navId} .nav-toggle{display:none;align-items:center;justify-content:center;background:transparent;border:1px solid rgba(0,0,0,.12);border-radius:8px;color:${nc.textColor||'#333'};padding:8px 10px;font-size:18px;line-height:1;}
     ${stackCss}
   </style>
-  <div class="nav-brand">${nc.brand||'My Site'}</div>
+  <div class="nav-brand">${logoHtml}${brandTextHtml}</div>
   <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="${menuId}" onclick="event.stopPropagation();const nav=this.closest('nav');const open=nav.getAttribute('data-open')==='true';nav.setAttribute('data-open',open?'false':'true');this.setAttribute('aria-expanded',open?'false':'true');">☰</button>
   <div class="nav-links" id="${menuId}">${linkHtml}</div>
 </nav>`;
@@ -392,6 +395,14 @@ function buildImageAssetMap(projectData) {
   return map;
 }
 
+function buildFaviconAssetMap(projectData) {
+  const map = {};
+  (projectData?.favicons || []).forEach(asset => {
+    if (asset.name) map[asset.name] = asset.name;
+  });
+  return map;
+}
+
 function resolveImageAsset(value, projectData = _projectData, imageMap = null) {
   const raw = String(value || '');
   if (!raw) return '';
@@ -443,6 +454,14 @@ function createPortableProjectData(projectData, imageMap) {
       size: dataUrlBytes(img.dataURL)
     };
   });
+  portable.favicons = (projectData.favicons || []).map(asset => ({
+    name: asset.name,
+    type: asset.type,
+    rel: asset.rel,
+    sizes: asset.sizes,
+    path: asset.name,
+    content: asset.content || undefined
+  }));
   replaceDataUrlsWithImageRefs(portable.pages, dataUrlToRef);
   replaceDataUrlsWithImageRefs(portable.templates, dataUrlToRef);
   replaceDataUrlsWithImageRefs(portable.meta, dataUrlToRef);
@@ -458,6 +477,14 @@ function resolveCompiledImageRefs(html, projectData, imageMap) {
     out = out.replace(new RegExp(escapedKey, 'g'), `images/${filename}`);
   });
   return out;
+}
+
+function resolveFaviconHref(asset, projectData) {
+  if (!asset) return '';
+  if (projectData?._faviconMap && projectData._faviconMap[asset.name]) return projectData._faviconMap[asset.name];
+  if (asset.content) return `data:${asset.type || 'application/manifest+json'},${encodeURIComponent(asset.content)}`;
+  if (asset.dataURL) return asset.dataURL;
+  return asset.href || asset.name || '';
 }
 
 function toYouTubeEmbedUrl(url, privacyMode = true, autoplay = false, showControls = true) {
@@ -495,7 +522,19 @@ function buildMetaTags(projectData, page) {
   if (desc) tags.push(`<meta name="description" content="${escAttr(desc)}">`);
   if (sm.keywords) tags.push(`<meta name="keywords" content="${escAttr(sm.keywords)}">`);
   if (sm.author) tags.push(`<meta name="author" content="${escAttr(sm.author)}">`);
-  if (sm.favicon) tags.push(`<link rel="icon" href="${escAttr(sm.favicon)}">`);
+  const favicons = Array.isArray(projectData.favicons) ? projectData.favicons : [];
+  if (favicons.length) {
+    favicons.forEach(asset => {
+      const href = resolveFaviconHref(asset, projectData);
+      if (!href) return;
+      const sizes = asset.sizes ? ` sizes="${escAttr(asset.sizes)}"` : '';
+      const type = asset.type && asset.rel !== 'manifest' ? ` type="${escAttr(asset.type)}"` : '';
+      tags.push(`<link rel="${escAttr(asset.rel || 'icon')}"${sizes}${type} href="${escAttr(href)}">`);
+    });
+  } else if (sm.favicon) {
+    const href = resolveImageAsset(sm.favicon, projectData);
+    tags.push(`<link rel="icon" href="${escAttr(href || sm.favicon)}">`);
+  }
   const ogTitle = pm.ogTitle || pm.titleOverride || (page.name + (projectData.name ? ' \u2014 ' + projectData.name : ''));
   const ogDesc = pm.ogDescription || desc;
   const ogImg = pm.ogImage || sm.ogImage;
