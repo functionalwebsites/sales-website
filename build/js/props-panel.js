@@ -350,10 +350,20 @@ function replaceTextValue(value, oldName, newName) {
 function updateGeneratedBrandReferences(oldName, newName, includeCopy = false) {
   if (!oldName || oldName === newName) return;
   Object.values(_projectData.navbars || {}).forEach(nav => {
-    nav.brand = replaceTextValue(nav.brand, oldName, newName) || newName;
-    nav.logoAlt = replaceTextValue(nav.logoAlt, oldName, newName) || nav.logoAlt;
+    nav.brand = includeCopy ? (replaceTextValue(nav.brand, oldName, newName) || newName) : newName;
+    if (!nav.logoAlt || nav.logoAlt === oldName || !includeCopy) {
+      nav.logoAlt = newName;
+    } else {
+      nav.logoAlt = replaceTextValue(nav.logoAlt, oldName, newName);
+    }
   });
-  if (_projectData.logo) _projectData.logo.alt = replaceTextValue(_projectData.logo.alt, oldName, newName) || newName;
+  if (_projectData.logo) {
+    if (!_projectData.logo.alt || _projectData.logo.alt === oldName || !includeCopy) {
+      _projectData.logo.alt = newName;
+    } else {
+      _projectData.logo.alt = replaceTextValue(_projectData.logo.alt, oldName, newName) || newName;
+    }
+  }
   if (_projectData.meta) {
     ['description', 'author', 'ogImage'].forEach(key => {
       _projectData.meta[key] = replaceTextValue(_projectData.meta[key], oldName, newName);
@@ -368,11 +378,14 @@ function updateGeneratedBrandReferences(oldName, newName, includeCopy = false) {
     (page.blocks || []).forEach(block => {
       const p = block.props || {};
       if (block.type === 'footer') {
-        p.brand = replaceTextValue(p.brand, oldName, newName) || newName;
+        p.brand = includeCopy ? (replaceTextValue(p.brand, oldName, newName) || newName) : newName;
         p.copyright = replaceTextValue(p.copyright, oldName, newName);
+        if (!p.copyright || !String(p.copyright).includes(newName)) {
+          p.copyright = `© ${new Date().getFullYear()} ${newName}. All rights reserved.`;
+        }
       }
       if (block.type === 'nav') {
-        p.brand = replaceTextValue(p.brand, oldName, newName);
+        p.brand = includeCopy ? replaceTextValue(p.brand, oldName, newName) : newName;
       }
       if (includeCopy) {
         ['heading', 'subheading', 'content', 'text', 'title', 'intro', 'tagline', 'col1', 'col2', 'col3'].forEach(key => {
