@@ -7,17 +7,62 @@
 }
 
 :root {
-      --bg: #0f1111;
-      --bg2: #151919;
-      --bg3: #1d2323;
-      --panel: #121616;
-      --border: #2a3333;
-      --text: #ebf2ef;
-      --text2: #a1b0ab;
-      --green: #4ade80;
-      --green-dark: #123021;
-      --radius: 18px;
-      --shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+      --fw-black: #10100d;
+      --fw-ink: #10100d;
+      --fw-paper: #f5efe0;
+      --fw-panel: #ebe2ce;
+      --fw-panel-strong: #dfd2b8;
+      --fw-muted: #625d50;
+      --fw-rust: #b9482e;
+      --fw-green: #7cff6b;
+      --fw-border-width: 3px;
+      --fw-radius: 4px;
+      --fw-shadow-color: #10100d;
+      --fw-shadow: 8px 8px 0 #10100d;
+      --fw-shadow-sm: 4px 4px 0 #10100d;
+      --fw-button-transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+      --fw-card-transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+      --fw-texture:
+        radial-gradient(circle at 11% 14%, rgba(36, 77, 103, 0.16), transparent 19rem),
+        radial-gradient(circle at 88% 10%, rgba(185, 72, 46, 0.18), transparent 20rem),
+        repeating-linear-gradient(0deg, rgba(16, 16, 13, 0.035) 0 1px, transparent 1px 7px),
+        linear-gradient(180deg, #d8cfba 0%, #eee5d2 42%, #d2c6ad 100%);
+      --bg: var(--fw-paper, #f5efe0) !important;
+      --bg2: var(--fw-panel, #ebe2ce) !important;
+      --bg3: var(--fw-panel-strong, #dfd2b8) !important;
+      --panel: var(--fw-panel, #ebe2ce) !important;
+      --border: var(--fw-ink, #10100d) !important;
+      --text: var(--fw-ink, #10100d) !important;
+      --text2: var(--fw-muted, #625d50) !important;
+      --green: var(--fw-green, #7cff6b) !important;
+      --green-dark: var(--fw-denim, #244d67) !important;
+      --radius: var(--fw-radius, 4px) !important;
+      --shadow: var(--fw-shadow, 8px 8px 0 #10100d) !important;
+    }
+
+:root[data-theme="dark"] {
+      --bg: #151717 !important;
+      --bg2: #20231f !important;
+      --bg3: #2b2e27 !important;
+      --panel: #20231f !important;
+      --border: #f3ecd9 !important;
+      --text: #f3ecd9 !important;
+      --text2: #d1c7b2 !important;
+      --green: #7cff6b !important;
+      --green-dark: #87b8cf !important;
+      --shadow: 8px 8px 0 #050505 !important;
+      --fw-ink: #f3ecd9;
+      --fw-paper: #151717;
+      --fw-panel: #20231f;
+      --fw-panel-strong: #2b2e27;
+      --fw-muted: #d1c7b2;
+      --fw-rust: #ff8a66;
+      --fw-shadow-color: #050505;
+      --fw-texture:
+        radial-gradient(circle at 11% 14%, rgba(135, 184, 207, 0.12), transparent 19rem),
+        radial-gradient(circle at 88% 10%, rgba(185, 72, 46, 0.16), transparent 20rem),
+        repeating-linear-gradient(0deg, rgba(245, 239, 224, 0.035) 0 1px, transparent 1px 7px),
+        linear-gradient(180deg, #171914 0%, #101211 100%);
     }
 
     * {
@@ -28,9 +73,7 @@
     }
     #header-placeholder { min-height: 60px; width: 100%; position: relative; z-index: 100; background: var(--bg); }
     body {
-      background:
-        radial-gradient(circle at top left, rgba(74, 222, 128, 0.14), transparent 28%),
-        linear-gradient(180deg, #101414 0%, #0c0f0f 100%);
+      background: var(--fw-texture, var(--bg));
       color: var(--text);
       line-height: 1.6;
     }
@@ -72,7 +115,7 @@
     }
 
     .logo-link:hover .logo {
-      color: var(--green);
+      color: var(--text);
     }
 
     .logo-mark {
@@ -84,7 +127,7 @@
       flex-shrink: 0;
     }
 
-    .logo-mark svg { width: 100%; height: 100%; fill: var(--green); }
+    .logo-mark svg { width: 100%; height: 100%; fill: var(--text); }
 
     .logo {
       font-size: 20px;
@@ -323,3 +366,88 @@
         border-radius: 20px;
       }
     }
+
+/* Final docs skin overrides. These intentionally beat older per-page docs CSS. */
+body {
+  background: var(--fw-texture, var(--bg)) !important;
+  color: var(--fw-ink, var(--text)) !important;
+}
+
+.hero-copy,
+.hero-card,
+.doc-card,
+.mini-card,
+.cta {
+  background: var(--fw-panel, var(--panel)) !important;
+  border: var(--fw-border-width, 3px) solid var(--fw-ink, var(--border)) !important;
+  border-radius: var(--fw-radius, 4px) !important;
+  box-shadow: none !important;
+}
+
+.doc-card:hover,
+.mini-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.eyebrow {
+  background: var(--fw-panel-strong, var(--bg3)) !important;
+  color: var(--fw-rust, var(--text)) !important;
+  border: var(--fw-border-width, 3px) solid var(--fw-ink, var(--border)) !important;
+  border-radius: var(--fw-radius, 4px) !important;
+}
+
+.hero-card li::before {
+  border-radius: 0 !important;
+  background: var(--fw-rust, var(--text)) !important;
+}
+
+.btn {
+  border: 1px solid var(--fw-ink, var(--border)) !important;
+  border-radius: var(--fw-radius, 4px) !important;
+  box-shadow: var(--fw-shadow-sm, 4px 4px 0 #10100d) !important;
+  transition: var(--fw-button-transition, transform 0.22s ease, box-shadow 0.22s ease, background-color 0.18s ease, border-color 0.18s ease) !important;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 var(--fw-shadow-color, #10100d) !important;
+}
+
+.btn-primary,
+.copy-btn {
+  background: var(--fw-green, var(--green)) !important;
+  color: var(--fw-black, #10100d) !important;
+  border-width: var(--fw-border-width, 3px) !important;
+}
+
+.btn-secondary {
+  background: var(--fw-paper, var(--bg)) !important;
+  color: var(--fw-ink, var(--text)) !important;
+  border-width: 1px !important;
+}
+
+pre,
+code {
+  background: var(--fw-paper, var(--bg)) !important;
+  color: var(--fw-ink, var(--text)) !important;
+  border-color: var(--fw-ink, var(--border)) !important;
+}
+
+:root[data-theme="dark"] footer,
+:root[data-theme="dark"] footer a,
+:root[data-theme="dark"] .footer-bottom {
+  color: var(--fw-muted, #d1c7b2) !important;
+}
+
+pre code {
+  background: transparent !important;
+}
+
+.snippet,
+.snippet-head {
+  background: var(--fw-paper, var(--bg)) !important;
+  color: var(--fw-ink, var(--text)) !important;
+  border-color: var(--fw-ink, var(--border)) !important;
+}

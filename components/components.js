@@ -16,21 +16,38 @@
 }
 
 .site-component {
-  --bg: #0f0f13;
-  --bg2: #16161e;
-  --bg3: #1e1e2e;
-  --border: #2a2a3e;
-  --accent2: #81818f;
-  --green: #4ade80;
-  --text: #e2e2f0;
-  --text2: #8888aa;
-  --radius: 8px;
+  --bg: #f5efe0;
+  --bg2: #ebe2ce;
+  --bg3: #dfd2b8;
+  --border: #10100d;
+  --accent2: #244d67;
+  --green: #7cff6b;
+  --text: #10100d;
+  --text2: #625d50;
+  --radius: 4px;
+  --shadow-color: #10100d;
+  --line: 3px solid var(--border);
+  --shadow-sm: 4px 4px 0 var(--shadow-color);
+  --button-motion: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   --hero-gradient:
     radial-gradient(circle at top left, rgba(74, 222, 128, 0.16), transparent 30%),
     radial-gradient(circle at bottom right, rgba(129, 129, 143, 0.16), transparent 34%),
     linear-gradient(180deg, #161a1a 0%, #101313 100%);
   color: var(--text);
   font-family: 'JetBrains Mono', monospace;
+}
+
+:host-context(html[data-theme="dark"]) .site-component {
+  --bg: #151717;
+  --bg2: #20231f;
+  --bg3: #2b2e27;
+  --border: #f3ecd9;
+  --green: #7cff6b;
+  --text: #f3ecd9;
+  --text2: #d1c7b2;
+  --shadow-color: #050505;
+  --line: 3px solid var(--border);
+  --shadow-sm: 4px 4px 0 var(--shadow-color);
 }
 
 .site-component a {
@@ -71,7 +88,7 @@
 }
 
 .logo-link:hover .logo {
-  color: var(--green);
+  color: var(--text);
 }
 
 .logo-link:focus-visible,
@@ -102,7 +119,7 @@
 .logo-mark svg {
   width: 100%;
   height: 100%;
-  fill: var(--green);
+  fill: var(--text);
 }
 
 .logo-gear {
@@ -161,20 +178,44 @@
   display: none;
 }
 
+.theme-toggle {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 0 !important;
+}
+
+.theme-toggle::before {
+  content: "☾";
+  font-size: 18px;
+}
+
+:host-context(html[data-theme="dark"]) .theme-toggle::before {
+  content: "☀";
+}
+
 .menu-toggle {
   display: none;
   align-items: center;
   justify-content: center;
   width: 42px;
   height: 42px;
-  background: transparent;
-  border: 0px solid transparent;
-  border-radius: 10px;
+  background: var(--bg);
+  border: var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
   color: var(--text);
   font-size: 16px;
   flex-shrink: 0;
   padding: 0;
   line-height: 1;
+  transition: var(--button-motion);
+}
+
+.menu-toggle:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
 }
 
 .menu-toggle-bar {
@@ -226,18 +267,21 @@
   padding: 8px 16px;
   border-radius: var(--radius);
   font-size: 16px;
-  font-weight: 700;
-  transition: all 0.2s;
-  border: none;
+  font-weight: 900;
+  transition: var(--button-motion);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-transform: uppercase;
 }
 
 .btn-primary {
   background: var(--green);
   color: #000;
+  border: var(--line);
 }
 
 .site-component .btn-primary {
@@ -245,19 +289,23 @@
 }
 
 .btn-primary:hover {
-  background: #3dc76e;
-  transform: translateY(-2px);
+  background: #a7ff9d;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--text2);
+  background: var(--bg);
+  color: var(--text);
   border: 1px solid var(--border);
 }
 
 .btn-secondary:hover {
-  border-color: var(--text);
+  background: #e2ad30;
+  border-color: var(--border);
   color: var(--text);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
 }
 
 footer {
@@ -301,6 +349,16 @@ footer {
   text-align: center;
   color: var(--text2);
   font-size: 13px;
+}
+
+.site-component[data-theme="dark"] footer,
+.site-component[data-theme="dark"] .footer-section a,
+.site-component[data-theme="dark"] .footer-bottom {
+  color: var(--text2);
+}
+
+.site-component[data-theme="dark"] .footer-section h4 {
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -424,8 +482,13 @@ footer {
         <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
         <a href="https://docs.functionalwebsites.com/">Docs</a>
       </div>
+      <div class="nav-actions desktop-builder-action">
+        <a href="https://build.functionalwebsites.com/" class="btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
+        <button class="btn btn-secondary theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
+      </div>
     </nav>
     <a href="https://build.functionalwebsites.com/" class="mobile-builder-link btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
+    <button class="btn btn-secondary theme-toggle mobile-theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
       <span class="menu-toggle-bar"></span>
     </button>
@@ -469,7 +532,7 @@ footer {
       root = placeholder.attachShadow({ mode: 'open' });
     }
 
-    root.innerHTML = `<link rel="stylesheet" href="/styles/shared.css"><div class="site-component">${markup}</div>`;
+    root.innerHTML = `<style>${fallbackStyles}</style><link rel="stylesheet" href="/styles/shared.css"><div class="site-component" data-theme="${getSiteTheme()}">${markup}</div>`;
 
     if (name === 'header') {
       markActiveNav(root);
@@ -499,10 +562,42 @@ footer {
     });
   }
 
+  function getSiteTheme() {
+    try {
+      return localStorage.getItem('fw_site_theme') || 'light';
+    } catch (e) {
+      return 'light';
+    }
+  }
+
+  function applySiteTheme(theme) {
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = nextTheme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', nextTheme === 'dark' ? '#101211' : '#f5efe0');
+    document.querySelectorAll('#header-placeholder, #footer-placeholder').forEach((placeholder) => {
+      const root = placeholder.shadowRoot;
+      root?.querySelector('.site-component')?.setAttribute('data-theme', nextTheme);
+      root?.querySelectorAll('.theme-toggle').forEach((button) => {
+        button.setAttribute('aria-pressed', nextTheme === 'dark' ? 'true' : 'false');
+        button.title = nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        button.textContent = nextTheme === 'dark' ? 'Light' : 'Dark';
+      });
+    });
+  }
+
+  function setSiteTheme(theme) {
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    try {
+      localStorage.setItem('fw_site_theme', nextTheme);
+    } catch (e) {}
+    applySiteTheme(nextTheme);
+  }
+
   function bindHeaderInteractions(root) {
     const nav = root.getElementById('site-nav');
     const button = root.querySelector('.menu-toggle');
     const logoMark = root.querySelector('.logo-mark');
+    const themeButtons = root.querySelectorAll('.theme-toggle');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const breakpointQueries = [
       window.matchMedia('(max-width: 768px)')
@@ -589,6 +684,11 @@ footer {
     };
 
     button.addEventListener('click', () => toggleMenu());
+    themeButtons.forEach((themeButton) => {
+      themeButton.addEventListener('click', () => {
+        setSiteTheme(getSiteTheme() === 'dark' ? 'light' : 'dark');
+      });
+    });
     nav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => toggleMenu(false));
     });
@@ -597,6 +697,7 @@ footer {
     });
 
     requestAnimationFrame(spinLogoGear);
+    applySiteTheme(getSiteTheme());
 
     breakpointQueries.forEach((query) => onMediaQueryChange(query, spinLogoGear));
 
@@ -633,6 +734,7 @@ footer {
   }
 
   async function initComponents() {
+    applySiteTheme(getSiteTheme());
     await Promise.all([
       loadComponent('header', '#header-placeholder'),
       loadComponent('footer', '#footer-placeholder')

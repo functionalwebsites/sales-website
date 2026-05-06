@@ -21,6 +21,8 @@
 <style>
 :root {
   --builder-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --black: #10100d;
+  --shadow-color: #10100d;
   --ink: #10100d;
   --paper: #f5efe0;
   --panel: #ebe2ce;
@@ -42,8 +44,10 @@
   --text2: #625d50;
   --radius: 4px;
   --line: 3px solid var(--ink);
-  --shadow: 8px 8px 0 var(--ink);
-  --shadow-sm: 4px 4px 0 var(--ink);
+  --shadow: 8px 8px 0 var(--shadow-color);
+  --shadow-sm: 4px 4px 0 var(--shadow-color);
+  --button-motion: transform .22s ease, box-shadow .22s ease, background-color .18s ease, border-color .18s ease, color .18s ease;
+  --card-motion: transform .3s ease, box-shadow .3s ease, background-color .3s ease, border-color .3s ease;
 }
 body.builder-light {
   --bg: #f9f5ea;
@@ -54,13 +58,36 @@ body.builder-light {
   --accent2: #b9482e;
   --text: #10100d;
   --text2: #625d50;
-  --shadow: 6px 6px 0 var(--ink);
+  --shadow: 6px 6px 0 var(--shadow-color);
+}
+body.builder-dark {
+  --shadow-color: #050505;
+  --ink: #f3ecd9;
+  --paper: #151717;
+  --panel: #20231f;
+  --panel-strong: #2b2e27;
+  --steel: #98b1bd;
+  --rust: #ff8a66;
+  --denim: #87b8cf;
+  --gold: #f0bc3f;
+  --bg: #151717;
+  --bg2: #20231f;
+  --bg3: #2b2e27;
+  --border: #f3ecd9;
+  --accent: #87b8cf;
+  --accent2: #ff8a66;
+  --red: #ff8a66;
+  --yellow: #f0bc3f;
+  --text: #f3ecd9;
+  --text2: #d1c7b2;
+  --shadow: 8px 8px 0 #050505;
+  --shadow-sm: 4px 4px 0 #050505;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { padding-top: 0; scroll-padding-top: 0; scrollbar-width: thin; }
 body {
   background:
-    radial-gradient(circle at 12% 10%, rgba(124,255,107,.2), transparent 18rem),
+    radial-gradient(circle at 12% 10%, rgba(36,77,103,.16), transparent 18rem),
     radial-gradient(circle at 90% 12%, rgba(185,72,46,.14), transparent 20rem),
     repeating-linear-gradient(0deg, rgba(16,16,13,.035) 0 1px, transparent 1px 7px),
     var(--bg);
@@ -69,6 +96,13 @@ body {
   font-size: 14px;
   min-height: 100vh;
   padding-top: 0;
+}
+body.builder-dark {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(135,184,207,.12), transparent 18rem),
+    radial-gradient(circle at 90% 12%, rgba(185,72,46,.16), transparent 20rem),
+    repeating-linear-gradient(0deg, rgba(245,239,224,.035) 0 1px, transparent 1px 7px),
+    var(--bg);
 }
 body.editor-mode { overflow: hidden; height: 100vh; height: 100dvh; }
 button { cursor: pointer; border: none; outline: none; font-family: inherit; font-size: 13px; }
@@ -169,7 +203,8 @@ select.input { appearance: none; }
 .project-info { padding: 12px; }
 .project-name { font-weight: 600; margin-bottom: 4px; }
 .project-meta { color: var(--text2); font-size: 12px; }
-.project-actions { padding: 8px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; }
+.project-actions { padding: 8px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; flex-wrap: wrap; align-items: stretch; }
+.project-actions .btn { flex: 1 1 72px; min-width: 0; }
 .new-project-card { border: 2px dashed var(--border); border-radius: 10px; height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text2); cursor: pointer; transition: all .15s; background: transparent; width: 100%; }
 .new-project-card:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,255,255,0.04); }
 .new-project-icon { font-size: 32px; color: var(--green); line-height: 1; }
@@ -489,7 +524,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .settings-header,
 .editor-header {
   border-bottom: var(--line) !important;
-  box-shadow: 0 4px 0 var(--ink);
+  box-shadow: 0 4px 0 var(--shadow-color);
 }
 
 .dash-section-title,
@@ -539,25 +574,44 @@ textarea,
 }
 
 .btn {
-  border: var(--line) !important;
+  border: 1px solid var(--ink) !important;
   box-shadow: var(--shadow-sm);
   font-weight: 900 !important;
   text-transform: uppercase;
-  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease !important;
+  transition: var(--button-motion) !important;
+}
+
+.builder-theme-toggle {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 !important;
+  font-size: 0 !important;
+  line-height: 1;
+}
+
+.builder-theme-toggle::before {
+  content: "☾";
+  font-size: 18px;
+}
+
+body.builder-dark .builder-theme-toggle::before {
+  content: "☀";
 }
 
 .btn:hover:not(:disabled),
 .device-btn:hover,
 .editor-mode-tab:hover,
 .left-tab:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--ink);
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 var(--shadow-color) !important;
 }
 
 .btn-primary,
 .btn-green {
   background: var(--green) !important;
-  color: var(--ink) !important;
+  color: var(--black) !important;
+  border: var(--line) !important;
 }
 
 .btn-secondary,
@@ -568,12 +622,15 @@ textarea,
 .device-btn {
   background: var(--paper) !important;
   color: var(--ink) !important;
-  border: var(--line) !important;
+  border: 1px solid var(--ink) !important;
+  box-shadow: var(--shadow-sm);
+  transition: var(--button-motion) !important;
 }
 
 .btn-danger {
   background: var(--rust) !important;
   color: var(--paper) !important;
+  border: var(--line) !important;
 }
 
 .btn-ghost:hover,
@@ -588,16 +645,36 @@ textarea,
   border-color: var(--ink) !important;
 }
 
+.builder-theme-toggle:hover {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
+
 .input {
   background: var(--paper) !important;
   border: var(--line) !important;
   color: var(--ink) !important;
-  box-shadow: 3px 3px 0 var(--ink);
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.18),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+body.builder-dark .input {
+  box-shadow:
+    inset 4px 4px 0 rgba(0, 0, 0, 0.42),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.input::placeholder,
+textarea::placeholder {
+  color: var(--text2) !important;
+  opacity: 1;
 }
 
 .input:focus {
   border-color: var(--ink) !important;
-  outline: 3px solid var(--green);
+  outline: 3px solid var(--rust);
   outline-offset: 2px;
 }
 
@@ -620,31 +697,51 @@ textarea,
   box-shadow: var(--shadow) !important;
 }
 
+.project-actions {
+  flex-wrap: wrap !important;
+}
+
+.project-actions .btn {
+  flex: 1 1 76px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
 .project-card:hover,
-.library-card:hover,
+.library-card:hover {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 4px 4px 0 var(--shadow-color) !important;
+}
+
+.project-card,
+.library-card {
+  transition: var(--card-motion) !important;
+}
+
 .help-card:hover,
 .settings-section:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 4px 4px 0 var(--ink) !important;
+  transform: none !important;
+  box-shadow: var(--shadow) !important;
 }
 
 .new-project-card {
   background:
-    linear-gradient(135deg, rgba(124,255,107,.38), rgba(124,255,107,.08)),
     repeating-linear-gradient(-12deg, transparent 0 13px, rgba(16,16,13,.08) 13px 15px),
-    var(--paper) !important;
+    var(--panel) !important;
   border: 4px dashed var(--ink) !important;
-  box-shadow: var(--shadow);
+  box-shadow: none !important;
   color: var(--ink) !important;
   font-weight: 900;
   text-transform: uppercase;
 }
 
 .new-project-card:hover {
-  background: var(--green) !important;
+  background:
+    repeating-linear-gradient(-12deg, transparent 0 13px, rgba(16,16,13,.08) 13px 15px),
+    var(--panel) !important;
   color: var(--ink) !important;
-  transform: translate(2px, 2px);
-  box-shadow: 4px 4px 0 var(--ink);
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .project-thumb,
@@ -704,6 +801,19 @@ textarea,
   color: var(--rust) !important;
 }
 
+.btn-primary span,
+.btn-green span,
+.pro-banner span {
+  color: var(--black) !important;
+}
+
+.btn-secondary span[style*="--green"],
+.btn-ghost span[style*="--green"],
+.mob-overflow-item span[style*="--green"],
+.modal-title span[style*="--green"] {
+  color: var(--rust) !important;
+}
+
 .canvas-frame {
   border: var(--line);
   border-radius: var(--radius) !important;
@@ -718,7 +828,7 @@ textarea,
 
 .pro-banner {
   background: var(--green) !important;
-  color: var(--ink) !important;
+  color: var(--black) !important;
 }
 
 .pro-banner .btn {
@@ -731,7 +841,7 @@ textarea,
 .help-kbd {
   border: var(--line) !important;
   border-radius: var(--radius) !important;
-  box-shadow: 2px 2px 0 var(--ink);
+  box-shadow: 2px 2px 0 var(--shadow-color);
   font-weight: 900;
 }
 
@@ -748,7 +858,7 @@ textarea,
 .color-swatch,
 .img-lib-item.selected {
   border-color: var(--ink) !important;
-  box-shadow: 3px 3px 0 var(--ink) !important;
+  box-shadow: 3px 3px 0 var(--shadow-color) !important;
 }
 
 @media (max-width: 767px) {
@@ -778,6 +888,7 @@ textarea,
       </div>
     </a>
       <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+        <button class="btn btn-secondary btn-sm builder-theme-toggle" id="btn-builder-theme-toggle" onclick="toggleBuilderTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">Dark</button>
         <button class="btn btn-ghost btn-sm" id="btn-settings" onclick="showSettings()" style="display: none;">⚙ Settings</button>
         <button class="btn btn-primary" id="btn-unlock-pro" onclick="showProTokenModal()" style="display: none;"><span style="color:var(--green);">◇</span> Unlock Pro</button>
       </div>
@@ -945,6 +1056,7 @@ textarea,
     <button class="btn btn-secondary btn-sm d-only" onclick="openDesignHealthModal()">◇ Health</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
+    <button class="btn btn-secondary btn-sm d-only builder-theme-toggle" onclick="toggleBuilderTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">Dark</button>
     <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
     <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
     <!-- Mobile overflow trigger -->
@@ -961,6 +1073,7 @@ textarea,
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openDesignHealthModal()">◇ &nbsp;Design Health</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()"><span style="color:var(--green);">◉</span> &nbsp;Preview</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();downloadZip()">⬇ &nbsp;Download ZIP</button>
+    <button class="mob-overflow-item" onclick="closeMobileOverflow();toggleBuilderTheme()">◐ &nbsp;Toggle Theme</button>
     <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">▲ &nbsp;Deploy</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();switchEditorMode('code')">＜/＞ &nbsp;Code Editor</button>
   </div>
