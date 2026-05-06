@@ -32,7 +32,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    #header-placeholder { min-height: 80px; width: 100%; position: relative; z-index: 100; background: var(--bg2); }
+    #header-placeholder { min-height: 60px; width: 100%; position: relative; z-index: 100; background: var(--bg); }
     body {
       background:
         radial-gradient(circle at top right, rgba(121, 184, 255, 0.16), transparent 30%),
@@ -52,7 +52,7 @@
       top: 0;
       z-index: 20;
       backdrop-filter: blur(14px);
-      background: rgba(13, 16, 20, 0.82);
+      background: var(--bg);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
@@ -64,12 +64,12 @@
     }
 
     .header-inner {
-      min-height: 76px;
+      min-height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 16px 0;
+      padding: 0;
     }
 
     .logo-link {
@@ -307,7 +307,7 @@
 
     @media (max-width: 640px) {
       .header-inner {
-        padding: 14px 0;
+        padding: 0;
         align-items: flex-start;
         flex-direction: column;
       }

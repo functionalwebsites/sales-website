@@ -44,7 +44,7 @@
 }
 
 .header {
-  background: var(--bg2);
+  background: var(--bg);
   border-bottom: none;
   position: sticky;
   top: 0;
@@ -54,14 +54,14 @@
 .header-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 12px 24px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   line-height: 1;
-  min-height: 80px;
+  min-height: 60px;
 }
 
 .logo-link {
@@ -306,7 +306,7 @@ footer {
 @media (max-width: 768px) {
   .header-wrapper {
     padding: 12px 16px;
-    min-height: 64px;
+    min-height: 60px;
     gap: 8px;
     justify-content: space-between;
   }
@@ -317,9 +317,6 @@ footer {
     transform: translateX(-50%);
   }
 
-  .logo-text {
-    display: none;
-  }
 
   .logo-mark {
     width: 36px;
@@ -331,7 +328,7 @@ footer {
     position: absolute;
     top: calc(100% + 7px);
     left: 0;
-    background: var(--bg2);
+    background: var(--bg);
     border-radius: 12px;
     box-shadow: 0 16px 50px rgba(0, 0, 0, 0.24);
     padding: 14px;
@@ -339,8 +336,8 @@ footer {
     gap: 16px;
     z-index: 101;
     width: 100%;
-    height: calc(100vh - 71px);
-    height: calc(100dvh - 71px);
+    height: calc(100vh - 67px);
+    height: calc(100dvh - 67px);
     overflow-y: auto;
     overscroll-behavior: contain;
     opacity: 0;

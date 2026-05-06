@@ -26,7 +26,7 @@
       padding: 0;
       font-family: 'JetBrains Mono', monospace;
     }
-    #header-placeholder { min-height: 80px; width: 100%; position: relative; z-index: 100; background: var(--bg2); }
+    #header-placeholder { min-height: 60px; width: 100%; position: relative; z-index: 100; background: var(--bg); }
     body {
       background:
         radial-gradient(circle at top left, rgba(74, 222, 128, 0.14), transparent 28%),
@@ -44,7 +44,7 @@
       top: 0;
       z-index: 20;
       backdrop-filter: blur(14px);
-      background: rgba(15, 17, 17, 0.8);
+      background: var(--bg);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
@@ -55,12 +55,12 @@
     }
 
     .header-inner {
-      min-height: 76px;
+      min-height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 16px 0;
+      padding: 0;
     }
 
     .logo-link {
@@ -310,7 +310,7 @@
 
     @media (max-width: 640px) {
       .header-inner {
-        padding: 14px 0;
+        padding: 0;
         align-items: flex-start;
         flex-direction: column;
       }

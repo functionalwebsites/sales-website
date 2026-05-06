@@ -131,8 +131,8 @@ select.input { appearance: none; }
   flex-shrink: 0;
 }
 
-/* .header { background: var(--bg2); border-bottom: 1px solid var(--border); position: relative; z-index: 100; }
-.header-wrapper { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; line-height: 1; min-height: 80px; }
+/* .header { background: var(--bg); border-bottom: 1px solid var(--border); position: relative; z-index: 100; }
+.header-wrapper { max-width: 1200px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; line-height: 1; min-height: 60px; }
 .logo { font-size: 20px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
 .logo:hover { color: var(--green); }
 .logo-mark { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -154,7 +154,7 @@ select.input { appearance: none; }
 
 /* ===== EDITOR LAYOUT ===== */
 #view-editor { flex-direction: column; }
-.editor-header { background: var(--bg2); border-bottom: 1px solid var(--border); height: 48px; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+.editor-header { background: var(--bg); border-bottom: 1px solid var(--border); height: 60px; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
 .editor-title { font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .editor-layout { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
@@ -244,7 +244,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .editor-mode-tab.active { background: var(--bg3); border-color: var(--border); color: var(--text); }
 
 /* Settings page */
-.settings-header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 16px; }
+.settings-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 0 24px; height: 60px; display: flex; align-items: center; gap: 16px; }
 .settings-body { padding: 32px 24px; flex: 1; min-height: 0; overflow-y: auto; max-width: 700px; margin: 0 auto; width: 100%; }
 .settings-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
 .settings-section-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
@@ -304,7 +304,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
   }
 
   /* Dashboard */
-  .dash-header { padding: 0 12px; height: 56px; }
+  .dash-header { padding: 0 12px; height: 60px; }
   .dash-logo { font-size: 15px; }
   .dash-body { padding: 16px 12px; }
   .projects-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -327,7 +327,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     width: 100vw;
   }
   .editor-header {
-    height: calc(48px + env(safe-area-inset-top, 0px));
+    height: calc(60px + env(safe-area-inset-top, 0px));
     padding: env(safe-area-inset-top, 0px) 8px 0;
     gap: 5px;
     z-index: 500;
@@ -432,7 +432,6 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .pro-banner-close:hover,
 .pro-banner-link:hover { background: rgba(6, 19, 10, 0.1); }
 @media (max-width: 767px) {
-  #view-dashboard .logo-text { display: none; }
   #btn-unlock-pro { display: none !important; }
   .pro-banner {
     width: calc(100% - 24px);
