@@ -160,9 +160,14 @@ function applyBuilderTheme(theme) {
   document.documentElement.dataset.theme = nextTheme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', nextTheme === 'dark' ? '#101211' : '#f5efe0');
   document.querySelectorAll('.builder-theme-toggle').forEach((toggleBtn) => {
+    if (!toggleBtn.querySelector('.toggle-ball')) {
+      toggleBtn.innerHTML = '<span class="toggle-icon toggle-icon-moon" aria-hidden="true">☾</span><span class="toggle-icon toggle-icon-sun" aria-hidden="true">☀</span><span class="toggle-ball" aria-hidden="true"></span>';
+    }
     toggleBtn.setAttribute('aria-pressed', nextTheme === 'dark' ? 'true' : 'false');
+    toggleBtn.dataset.themeState = nextTheme;
+    toggleBtn.classList.toggle('is-dark', nextTheme === 'dark');
+    toggleBtn.setAttribute('aria-label', nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
     toggleBtn.title = nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    toggleBtn.textContent = nextTheme === 'dark' ? 'Light' : 'Dark';
   });
 }
 

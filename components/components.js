@@ -179,22 +179,61 @@
 }
 
 .theme-toggle {
-  width: 42px;
-  min-width: 42px;
+  width: 76px;
+  min-width: 76px;
   height: 42px;
   padding: 0;
   font-size: 0 !important;
-  flex: 0 0 42px;
+  flex: 0 0 76px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
   border: var(--line) !important;
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
 }
 
 .theme-toggle::before {
   content: "☾";
-  font-size: 18px;
+  position: absolute;
+  top: 11px;
+  left: 13px;
+  display: block;
+  padding: 0;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 42px 0 0 currentColor;
 }
 
-:host-context(html[data-theme="dark"]) .theme-toggle::before {
-  content: "☀";
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 26px;
+  height: 26px;
+  background: var(--green);
+  border: var(--line);
+  box-shadow: none;
+  transition: transform 0.22s ease;
+}
+
+.site-component[data-theme="dark"] .theme-toggle,
+:host-context(html[data-theme="dark"]) .theme-toggle {
+  background: var(--bg);
+  box-shadow:
+    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.site-component[data-theme="dark"] .theme-toggle::after,
+:host-context(html[data-theme="dark"]) .theme-toggle::after,
+.theme-toggle.is-dark::after,
+.theme-toggle[aria-pressed="true"]::after,
+.theme-toggle[data-theme-state="dark"]::after {
+  transform: translateX(35px);
 }
 
 .desktop-theme-toggle {
@@ -229,6 +268,23 @@
 .menu-toggle:hover {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--shadow-color);
+}
+
+.theme-toggle:hover {
+  transform: none !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  border: var(--line) !important;
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+.site-component[data-theme="dark"] .theme-toggle:hover,
+:host-context(html[data-theme="dark"]) .theme-toggle:hover {
+  box-shadow:
+    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 .menu-toggle-bar {
@@ -319,6 +375,60 @@
   color: var(--text);
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--shadow-color);
+}
+
+.theme-toggle.btn-secondary:hover {
+  transform: none !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  border: var(--line) !important;
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+.theme-toggle::before,
+.theme-toggle::after {
+  content: none !important;
+}
+
+.theme-toggle .toggle-icon {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.theme-toggle .toggle-icon-moon {
+  left: 13px;
+}
+
+.theme-toggle .toggle-icon-sun {
+  right: 11px;
+}
+
+.theme-toggle .toggle-ball {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  background: var(--green);
+  border: var(--line);
+  box-shadow: none;
+  transition: transform 0.22s ease;
+  pointer-events: none;
+}
+
+.theme-toggle.is-dark .toggle-ball,
+.theme-toggle[aria-pressed="true"] .toggle-ball,
+.theme-toggle[data-theme-state="dark"] .toggle-ball {
+  transform: translateX(35px);
 }
 
 footer {
@@ -464,8 +574,8 @@ footer {
 
   .mobile-theme-toggle {
     display: inline-flex !important;
-    width: 42px;
-    min-width: 42px;
+    width: 76px;
+    min-width: 76px;
     height: 42px;
     position: absolute;
     top: 14px;
@@ -611,9 +721,14 @@ footer {
       const root = placeholder.shadowRoot;
       root?.querySelector('.site-component')?.setAttribute('data-theme', nextTheme);
       root?.querySelectorAll('.theme-toggle').forEach((button) => {
+        if (!button.querySelector('.toggle-ball')) {
+          button.innerHTML = '<span class="toggle-icon toggle-icon-moon" aria-hidden="true">☾</span><span class="toggle-icon toggle-icon-sun" aria-hidden="true">☀</span><span class="toggle-ball" aria-hidden="true"></span>';
+        }
         button.setAttribute('aria-pressed', nextTheme === 'dark' ? 'true' : 'false');
+        button.dataset.themeState = nextTheme;
+        button.classList.toggle('is-dark', nextTheme === 'dark');
+        button.setAttribute('aria-label', nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
         button.title = nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-        button.textContent = nextTheme === 'dark' ? 'Light' : 'Dark';
       });
     });
   }

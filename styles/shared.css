@@ -307,27 +307,64 @@ button {
 }
 
 .theme-toggle {
-  width: 42px;
-  min-width: 42px;
+  width: 76px;
+  min-width: 76px;
   height: 42px;
   padding: 0;
-  flex: 0 0 auto;
+  flex: 0 0 76px;
   font-size: 0 !important;
   line-height: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--fw-paper) !important;
   border: var(--fw-border-width) solid var(--fw-ink) !important;
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
 }
 
 .theme-toggle::before {
   content: "☾";
-  font-size: 18px;
+  position: absolute;
+  top: 11px;
+  left: 13px;
+  display: block;
+  padding: 0;
+  color: var(--fw-ink);
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 42px 0 0 currentColor;
 }
 
-:root[data-theme="dark"] .theme-toggle::before {
-  content: "☀";
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 26px;
+  height: 26px;
+  background: var(--fw-green);
+  border: var(--fw-border-width) solid var(--fw-ink);
+  box-shadow: none;
+  transition: transform 0.22s ease;
 }
 
-:host-context(html[data-theme="dark"]) .theme-toggle::before {
-  content: "☀";
+:root[data-theme="dark"] .theme-toggle,
+:host-context(html[data-theme="dark"]) .theme-toggle,
+.site-component[data-theme="dark"] .theme-toggle {
+  background: var(--fw-paper) !important;
+  box-shadow:
+    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+:root[data-theme="dark"] .theme-toggle::after,
+:host-context(html[data-theme="dark"]) .theme-toggle::after,
+.site-component[data-theme="dark"] .theme-toggle::after,
+.theme-toggle.is-dark::after,
+.theme-toggle[aria-pressed="true"]::after,
+.theme-toggle[data-theme-state="dark"]::after {
+  transform: translateX(35px);
 }
 
 .mobile-theme-toggle {
@@ -484,9 +521,21 @@ button {
 }
 
 .theme-toggle:hover {
-  background: var(--fw-paper);
-  color: var(--fw-ink);
+  transform: none !important;
+  background: var(--fw-paper) !important;
+  color: var(--fw-ink) !important;
   border-color: var(--fw-ink);
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+:root[data-theme="dark"] .theme-toggle:hover,
+:host-context(html[data-theme="dark"]) .theme-toggle:hover,
+.site-component[data-theme="dark"] .theme-toggle:hover {
+  box-shadow:
+    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 .btn-large {
@@ -844,6 +893,68 @@ footer {
   box-shadow: 2px 2px 0 var(--fw-shadow-color) !important;
 }
 
+.theme-toggle:hover:not(:disabled),
+.theme-toggle.btn-secondary:hover:not(:disabled) {
+  transform: none !important;
+  background: var(--fw-paper) !important;
+  color: var(--fw-ink) !important;
+  border: var(--fw-border-width) solid var(--fw-ink) !important;
+  box-shadow:
+    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+:root[data-theme="dark"] .theme-toggle:hover:not(:disabled),
+.site-component[data-theme="dark"] .theme-toggle:hover:not(:disabled) {
+  box-shadow:
+    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-toggle::before,
+.theme-toggle::after {
+  content: none !important;
+}
+
+.theme-toggle .toggle-icon {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  color: var(--fw-ink);
+  font-size: 16px;
+  line-height: 1;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.theme-toggle .toggle-icon-moon {
+  left: 13px;
+}
+
+.theme-toggle .toggle-icon-sun {
+  right: 11px;
+}
+
+.theme-toggle .toggle-ball {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  background: var(--fw-green);
+  border: var(--fw-border-width) solid var(--fw-ink);
+  box-shadow: none;
+  transition: transform 0.22s ease;
+  pointer-events: none;
+}
+
+.theme-toggle.is-dark .toggle-ball,
+.theme-toggle[aria-pressed="true"] .toggle-ball,
+.theme-toggle[data-theme-state="dark"] .toggle-ball {
+  transform: translateX(35px);
+}
+
 .guide-card a,
 .doc-card .btn-primary,
 .hero-actions .btn-primary,
@@ -1087,8 +1198,8 @@ pre code {
 
   .mobile-theme-toggle {
     display: inline-flex !important;
-    width: 42px;
-    min-width: 42px;
+    width: 76px;
+    min-width: 76px;
     height: 42px;
     position: absolute;
     top: 14px;
