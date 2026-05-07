@@ -61,11 +61,25 @@
 }
 
 .header {
-  background: var(--bg);
-  border-bottom: none;
-  position: sticky;
+  background: transparent;
+  border-bottom: 0;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 100;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--bg);
+  border-bottom: var(--line);
+  box-shadow: 0 4px 0 var(--shadow-color);
+  pointer-events: none;
 }
 
 .header-wrapper {
@@ -79,6 +93,11 @@
   gap: 16px;
   line-height: 1;
   min-height: 60px;
+}
+
+.header-wrapper > :not(.header-nav) {
+  position: relative;
+  z-index: 3;
 }
 
 .logo-link {
@@ -237,10 +256,7 @@
 }
 
 .desktop-theme-toggle {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 130;
+  position: static;
 }
 
 .mobile-theme-toggle {
@@ -322,12 +338,26 @@
   background: transparent;
 }
 
+.menu-toggle[aria-expanded="true"] .menu-toggle-bar {
+  background: transparent;
+}
+
 .header-nav[data-open="true"] ~ .menu-toggle .menu-toggle-bar::before {
   top: 0;
   transform: translateX(-50%) rotate(45deg);
 }
 
+.menu-toggle[aria-expanded="true"] .menu-toggle-bar::before {
+  top: 0;
+  transform: translateX(-50%) rotate(45deg);
+}
+
 .header-nav[data-open="true"] ~ .menu-toggle .menu-toggle-bar::after {
+  top: 0;
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.menu-toggle[aria-expanded="true"] .menu-toggle-bar::after {
   top: 0;
   transform: translateX(-50%) rotate(-45deg);
 }
@@ -578,7 +608,6 @@ footer {
     min-width: 76px;
     height: 42px;
     position: absolute;
-    top: 14px;
     right: 14px;
     z-index: 2;
     padding: 0;
@@ -602,6 +631,159 @@ footer {
 
   .logo-mark[data-spin="true"] .logo-gear {
     animation: none;
+  }
+}
+
+/* Always-collapsed public nav experiment. */
+.header-wrapper {
+  height: 64px;
+  min-height: 64px;
+  padding: 0 16px;
+  justify-content: space-between;
+}
+
+.menu-toggle {
+  display: flex !important;
+  order: 1;
+}
+
+.logo-link {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.header-nav {
+  display: flex !important;
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 67px);
+  height: calc(100dvh - 67px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  border: var(--line);
+  border-radius: var(--radius);
+  box-shadow: 8px 8px 0 var(--shadow-color);
+  padding: 14px;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-100%);
+  transition: transform 0.24s ease, opacity 0.18s ease;
+}
+
+.header-nav[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.nav-links,
+.nav-actions {
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.nav-links a {
+  padding: 8px 0;
+}
+
+.desktop-builder-action {
+  display: flex !important;
+}
+
+.desktop-builder-action .build-shortcut,
+.desktop-theme-toggle {
+  display: none !important;
+}
+
+.mobile-builder-link {
+  display: inline-flex !important;
+  order: 2;
+  align-items: center;
+  min-height: 36px;
+  margin-left: auto;
+  padding: 8px 14px;
+  font-size: 16px;
+}
+
+.topbar-theme-toggle {
+  display: none !important;
+  order: 3;
+  margin-left: 8px;
+}
+
+.mobile-theme-toggle {
+  display: inline-flex !important;
+  width: 76px;
+  min-width: 76px;
+  height: 42px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  margin-left: 0;
+  padding: 0;
+}
+
+@media (min-width: 769px) {
+  .header-nav {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100vw;
+    height: 64px;
+    min-height: 64px;
+    margin-left: 0;
+    padding: 0 24px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transform: translateY(-76px);
+  }
+
+  .header-nav[data-open="true"] {
+    transform: translateY(var(--nav-scroll-offset, 0px));
+  }
+
+  .nav-links {
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .nav-actions {
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-links a {
+    padding: 0;
+  }
+
+  .mobile-theme-toggle {
+    position: absolute;
+    top: 11px;
+    right: 24px;
+    margin-left: 0;
+    margin-top: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .mobile-theme-toggle .toggle-icon,
+  .mobile-theme-toggle .toggle-ball {
+    position: absolute;
   }
 }`;
 
@@ -772,9 +954,24 @@ footer {
       return;
     }
 
-    let lockedScrollY = 0;
+    let navOpenScrollY = window.scrollY || window.pageYOffset || 0;
     let previousBodyStyles = null;
     let previousHtmlStyles = null;
+
+    const syncNavScrollOffset = () => {
+      if (window.innerWidth <= 768 || nav.dataset.open !== 'true') {
+        nav.style.setProperty('--nav-scroll-offset', '0px');
+        return;
+      }
+
+      const currentScrollY = window.scrollY || window.pageYOffset || 0;
+      const scrollOffset = Math.min(0, navOpenScrollY - currentScrollY);
+      nav.style.setProperty('--nav-scroll-offset', `${scrollOffset}px`);
+
+      if (Math.abs(scrollOffset) >= nav.offsetHeight + 6) {
+        toggleMenu(false);
+      }
+    };
 
     const setPageScrollLocked = (locked) => {
       if (locked) {
@@ -782,14 +979,9 @@ footer {
           return;
         }
 
-        lockedScrollY = window.scrollY || window.pageYOffset || 0;
         previousBodyStyles = {
-          position: document.body.style.position,
-          top: document.body.style.top,
-          left: document.body.style.left,
-          right: document.body.style.right,
-          width: document.body.style.width,
           overflow: document.body.style.overflow,
+          overscrollBehavior: document.body.style.overscrollBehavior,
         };
         previousHtmlStyles = {
           overflow: document.documentElement.style.overflow,
@@ -798,12 +990,8 @@ footer {
 
         document.documentElement.style.overflow = 'hidden';
         document.documentElement.style.overscrollBehavior = 'none';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${lockedScrollY}px`;
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-        document.body.style.width = '100%';
         document.body.style.overflow = 'hidden';
+        document.body.style.overscrollBehavior = 'none';
         return;
       }
 
@@ -811,17 +999,12 @@ footer {
         return;
       }
 
-      document.body.style.position = previousBodyStyles.position;
-      document.body.style.top = previousBodyStyles.top;
-      document.body.style.left = previousBodyStyles.left;
-      document.body.style.right = previousBodyStyles.right;
-      document.body.style.width = previousBodyStyles.width;
       document.body.style.overflow = previousBodyStyles.overflow;
+      document.body.style.overscrollBehavior = previousBodyStyles.overscrollBehavior;
       document.documentElement.style.overflow = previousHtmlStyles.overflow;
       document.documentElement.style.overscrollBehavior = previousHtmlStyles.overscrollBehavior;
       previousBodyStyles = null;
       previousHtmlStyles = null;
-      window.scrollTo(0, lockedScrollY);
     };
 
     const toggleMenu = (forceOpen) => {
@@ -829,9 +1012,19 @@ footer {
       nav.dataset.open = nextState ? 'true' : 'false';
       button.setAttribute('aria-expanded', nextState ? 'true' : 'false');
       setPageScrollLocked(nextState && window.innerWidth <= 768);
+
+      if (nextState) {
+        navOpenScrollY = window.scrollY || window.pageYOffset || 0;
+      }
+
+      syncNavScrollOffset();
     };
 
-    button.addEventListener('click', () => toggleMenu());
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleMenu();
+    });
     themeButtons.forEach((themeButton) => {
       themeButton.addEventListener('click', () => {
         setSiteTheme(getSiteTheme() === 'dark' ? 'light' : 'dark');
@@ -850,20 +1043,16 @@ footer {
     breakpointQueries.forEach((query) => onMediaQueryChange(query, spinLogoGear));
 
     root.addEventListener('click', (event) => {
-      if (window.innerWidth > 768) {
-        return;
-      }
-
       if (!nav.contains(event.target) && !button.contains(event.target)) {
         toggleMenu(false);
       }
     });
 
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 768) {
-        toggleMenu(false);
-      }
+      toggleMenu(false);
     });
+
+    window.addEventListener('scroll', syncNavScrollOffset, { passive: true });
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
