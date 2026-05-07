@@ -161,6 +161,11 @@ button {
   border: none;
 }
 
+::selection {
+  background: var(--fw-rust);
+  color: #ffffff;
+}
+
 .header {
   background: transparent;
   border-bottom: 0;
@@ -208,8 +213,8 @@ button {
   min-height: 64px;
   width: 100%;
   position: relative;
-  z-index: 100;
-  background: var(--bg);
+  z-index: auto;
+  background: transparent;
 }
 
 .logo-link {
@@ -1153,8 +1158,8 @@ pre code {
   }
 
   .logo-mark {
-    width: 36px;
-    height: 36px;
+    width: 54px;
+    height: 54px;
   }
 
   .header-nav {
@@ -1398,10 +1403,11 @@ pre code {
 
 @media (min-width: 769px) {
   .site-component .header-nav {
+    --header-nav-inset: max(16px, calc((100vw - 1200px) / 2 + 16px));
     position: fixed;
-    top: 70px;
-    left: 0;
-    width: 100vw;
+    top: 72px;
+    left: var(--header-nav-inset);
+    width: calc(100vw - (var(--header-nav-inset) * 2));
     height: 64px;
     min-height: 64px;
     margin-left: 0;
@@ -1414,7 +1420,7 @@ pre code {
   }
 
   .site-component .header-nav[data-open="true"] {
-    transform: translateY(var(--nav-scroll-offset, 0px));
+    transform: translateY(0);
   }
 
   .site-component .nav-links {

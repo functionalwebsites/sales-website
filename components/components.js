@@ -60,6 +60,11 @@
   cursor: pointer;
 }
 
+.site-component ::selection {
+  background: var(--fw-rust);
+  color: #ffffff;
+}
+
 .header {
   background: transparent;
   border-bottom: 0;
@@ -530,8 +535,8 @@ footer {
 
 
   .logo-mark {
-    width: 36px;
-    height: 36px;
+    width: 54px;
+    height: 54px;
   }
 
   .header-nav {
@@ -735,10 +740,11 @@ footer {
 
 @media (min-width: 769px) {
   .header-nav {
+    --header-nav-inset: max(16px, calc((100vw - 1200px) / 2 + 16px));
     position: fixed;
-    top: 70px;
-    left: 0;
-    width: 100vw;
+    top: 72px;
+    left: var(--header-nav-inset);
+    width: calc(100vw - (var(--header-nav-inset) * 2));
     height: 64px;
     min-height: 64px;
     margin-left: 0;
@@ -751,7 +757,7 @@ footer {
   }
 
   .header-nav[data-open="true"] {
-    transform: translateY(var(--nav-scroll-offset, 0px));
+    transform: translateY(0);
   }
 
   .nav-links {
@@ -954,24 +960,8 @@ footer {
       return;
     }
 
-    let navOpenScrollY = window.scrollY || window.pageYOffset || 0;
     let previousBodyStyles = null;
     let previousHtmlStyles = null;
-
-    const syncNavScrollOffset = () => {
-      if (window.innerWidth <= 768 || nav.dataset.open !== 'true') {
-        nav.style.setProperty('--nav-scroll-offset', '0px');
-        return;
-      }
-
-      const currentScrollY = window.scrollY || window.pageYOffset || 0;
-      const scrollOffset = Math.min(0, navOpenScrollY - currentScrollY);
-      nav.style.setProperty('--nav-scroll-offset', `${scrollOffset}px`);
-
-      if (Math.abs(scrollOffset) >= nav.offsetHeight + 6) {
-        toggleMenu(false);
-      }
-    };
 
     const setPageScrollLocked = (locked) => {
       if (locked) {
@@ -1013,11 +1003,7 @@ footer {
       button.setAttribute('aria-expanded', nextState ? 'true' : 'false');
       setPageScrollLocked(nextState && window.innerWidth <= 768);
 
-      if (nextState) {
-        navOpenScrollY = window.scrollY || window.pageYOffset || 0;
-      }
-
-      syncNavScrollOffset();
+      nav.style.removeProperty('--nav-scroll-offset');
     };
 
     button.addEventListener('click', (event) => {
@@ -1052,7 +1038,11 @@ footer {
       toggleMenu(false);
     });
 
-    window.addEventListener('scroll', syncNavScrollOffset, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (window.innerWidth > 768 && nav.dataset.open === 'true') {
+        toggleMenu(false);
+      }
+    }, { passive: true });
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
