@@ -21,6 +21,7 @@
   --bg3: #dfd2b8;
   --border: #10100d;
   --accent2: #244d67;
+  --rust: #b9482e;
   --green: #7cff6b;
   --text: #10100d;
   --text2: #625d50;
@@ -43,6 +44,7 @@
   --bg3: #2b2e27;
   --border: #f3ecd9;
   --green: #7cff6b;
+  --rust: #ff8a66;
   --text: #f3ecd9;
   --text2: #d1c7b2;
   --shadow-color: #050505;
@@ -61,7 +63,7 @@
 }
 
 .site-component ::selection {
-  background: var(--fw-rust);
+  background: var(--rust);
   color: #ffffff;
 }
 
@@ -287,6 +289,9 @@
 }
 
 .menu-toggle:hover {
+  background: var(--rust);
+  color: var(--bg);
+  border-color: var(--border);
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--shadow-color);
 }
@@ -405,9 +410,9 @@
 }
 
 .btn-secondary:hover {
-  background: #e2ad30;
+  background: var(--rust) !important;
   border-color: var(--border);
-  color: var(--text);
+  color: var(--bg) !important;
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--shadow-color);
 }

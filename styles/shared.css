@@ -450,7 +450,8 @@ button {
 }
 
 .menu-toggle:hover {
-  background: var(--fw-gold);
+  background: var(--fw-rust);
+  color: var(--fw-paper);
   border-color: var(--fw-ink);
 }
 
@@ -548,9 +549,9 @@ button {
 }
 
 .btn-secondary:hover {
-  background: var(--fw-gold);
-  color: var(--fw-ink);
-  border-color: var(--fw-ink);
+  background: var(--fw-rust) !important;
+  color: var(--fw-paper) !important;
+  border-color: var(--fw-ink) !important;
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--fw-shadow-color);
 }
@@ -908,7 +909,8 @@ footer {
 .service-cta:hover,
 .pricing-cta.secondary:hover,
 .item-btn.secondary:hover {
-  background: var(--fw-gold) !important;
+  background: var(--fw-rust) !important;
+  color: var(--fw-paper) !important;
   border-color: var(--fw-ink) !important;
 }
 
@@ -1039,6 +1041,27 @@ select,
   background: var(--fw-paper) !important;
   color: var(--fw-ink) !important;
   font-weight: 800;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--fw-ink) 50%),
+    linear-gradient(135deg, var(--fw-ink) 50%, transparent 50%) !important;
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50% !important;
+  background-size: 6px 6px, 6px 6px !important;
+  background-repeat: no-repeat !important;
+  box-shadow: var(--fw-shadow-sm) !important;
+}
+
+select:hover {
+  background-color: var(--fw-paper) !important;
+  transform: none !important;
+  box-shadow: var(--fw-shadow-sm) !important;
 }
 
 :root[data-theme="dark"] input,

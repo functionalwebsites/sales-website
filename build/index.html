@@ -84,7 +84,7 @@ body.builder-dark {
   --shadow-sm: 4px 4px 0 #050505;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { padding-top: 0; scroll-padding-top: 0; scrollbar-width: thin; }
+html { padding-top: 0; scroll-padding-top: 0; scrollbar-width: thin; scrollbar-color: var(--paper) var(--bg2); }
 body {
   background:
     radial-gradient(circle at 12% 10%, rgba(36,77,103,.16), transparent 18rem),
@@ -110,7 +110,7 @@ input, textarea, select { font-family: inherit; font-size: 13px; outline: none; 
 a { color: var(--accent); text-decoration: none; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--paper); border-radius: 0; }
 
 /* ===== UTILITY ===== */
 .hidden { display: none !important; }
@@ -234,7 +234,7 @@ select.input { appearance: none; }
 .library-card-meta { color: var(--text2); font-size: 12px; line-height: 1.5; }
 .library-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 /* Left panel tabs (Add / Layout) */
-.left-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.left-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; margin-top: 8px; }
 .left-tab { flex: 1; padding: 8px 4px; border: none; background: transparent; color: var(--text2); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; cursor: pointer; transition: all .1s; }
 .left-tab.active { color: var(--text); background: var(--bg3); border-bottom: 2px solid var(--accent); }
 .left-tab-panel { display: none; flex-direction: column; }
@@ -269,8 +269,8 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .editor-toolbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 6px 12px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .device-btn { padding: 4px 8px; border-radius: 5px; background: transparent; border: 1px solid transparent; color: var(--green); font-size: 16px; }
 .device-btn.active, .device-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--green); }
-.canvas-wrap { flex: 1; min-height: 0; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
-.canvas-frame { background: #fff; border-radius: 4px; box-shadow: var(--shadow); transition: width .2s; min-height: 320px; width: 100%; max-width: 100%; position: relative; }
+.canvas-wrap { flex: 1; min-height: 0; overflow: auto; padding: 24px; display: flex; justify-content: center; align-items: flex-start; }
+.canvas-frame { background: #fff; border-radius: 2px; box-shadow: none; transition: width .2s; min-height: 320px; width: 100%; max-width: 100%; position: relative; }
 #canvas-iframe { width: 100%; border: none; display: block; min-height: 320px; }
 
 /* Right panel - properties */
@@ -647,8 +647,7 @@ html[data-theme="dark"] .builder-theme-toggle::after {
 
 .btn:hover:not(:disabled),
 .device-btn:hover,
-.editor-mode-tab:hover,
-.left-tab:hover {
+.editor-mode-tab:hover {
   transform: translate(2px, 2px) !important;
   box-shadow: 2px 2px 0 var(--shadow-color) !important;
 }
@@ -680,7 +679,6 @@ html[data-theme="dark"] .builder-theme-toggle::after {
 }
 
 .btn-ghost:hover,
-.btn-secondary:hover,
 .btn-icon:hover,
 .editor-mode-tab.active,
 .code-tab.active,
@@ -688,6 +686,34 @@ html[data-theme="dark"] .builder-theme-toggle::after {
 .device-btn.active {
   background: var(--gold) !important;
   color: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
+
+.btn-secondary:hover {
+  background: var(--rust) !important;
+  color: var(--paper) !important;
+  border-color: var(--ink) !important;
+}
+
+.left-tabs {
+  background: var(--panel) !important;
+  box-shadow: none !important;
+}
+
+.left-tab,
+.left-tab:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.left-tab:not(.active):hover {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+.builder-menu-toggle:hover {
+  background: var(--rust) !important;
+  color: var(--paper) !important;
   border-color: var(--ink) !important;
 }
 
@@ -897,9 +923,17 @@ textarea::placeholder {
 .editor-center,
 .editor-toolbar,
 .code-area,
-.code-textarea,
-.canvas-wrap {
+.code-textarea {
   background: var(--bg3) !important;
+}
+
+.canvas-wrap {
+  background:
+    linear-gradient(rgba(16, 16, 13, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 16, 13, 0.045) 1px, transparent 1px),
+    var(--panel-strong) !important;
+  background-size: 24px 24px;
+  box-shadow: none !important;
 }
 
 .editor-left {
@@ -939,6 +973,29 @@ textarea::placeholder {
   background: var(--paper) !important;
 }
 
+select.input,
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding-right: 36px !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+    linear-gradient(135deg, var(--ink) 50%, transparent 50%) !important;
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50% !important;
+  background-size: 6px 6px, 6px 6px !important;
+  background-repeat: no-repeat !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+select.input:hover,
+select:hover {
+  background-color: var(--paper) !important;
+  transform: none !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
 .block-btn .block-icon,
 .layout-item-icon,
 .mob-tab-icon,
@@ -962,9 +1019,9 @@ textarea::placeholder {
 }
 
 .canvas-frame {
-  border: var(--line);
-  border-radius: var(--radius) !important;
-  box-shadow: var(--shadow) !important;
+  border: 1px solid rgba(16, 16, 13, 0.22);
+  border-radius: 2px !important;
+  box-shadow: none !important;
 }
 
 .code-textarea {
@@ -1206,7 +1263,7 @@ textarea::placeholder {
     <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
     <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
     <!-- Mobile overflow trigger -->
-    <button class="btn btn-ghost btn-sm m-only" onclick="toggleMobileOverflow(event)" style="font-size:18px;padding:4px 8px;">⋮</button>
+    <button class="btn btn-ghost btn-sm m-only builder-menu-toggle" onclick="toggleMobileOverflow(event)" style="font-size:18px;padding:4px 8px;">⋮</button>
   </div>
 
   <!-- Mobile overflow menu (hidden by default) -->
