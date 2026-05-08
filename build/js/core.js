@@ -186,6 +186,49 @@ function toggleBuilderTheme() {
   setBuilderTheme(getBuilderTheme() === 'dark' ? 'light' : 'dark');
 }
 
+function getBuilderPanelState() {
+  const saved = LS.get('builderPanelState') || {};
+  return {
+    leftCollapsed: !!saved.leftCollapsed,
+    rightCollapsed: !!saved.rightCollapsed
+  };
+}
+
+function applyBuilderPanelState(state = getBuilderPanelState()) {
+  const layout = document.getElementById('mode-visual');
+  if (!layout) return;
+  layout.classList.toggle('panel-left-collapsed', !!state.leftCollapsed);
+  layout.classList.toggle('panel-right-collapsed', !!state.rightCollapsed);
+
+  const leftBtn = layout.querySelector('.panel-collapse-btn[aria-label="Collapse left panel"]');
+  const rightBtn = layout.querySelector('.panel-collapse-btn[aria-label="Collapse right panel"]');
+  if (leftBtn) leftBtn.setAttribute('aria-expanded', state.leftCollapsed ? 'false' : 'true');
+  if (rightBtn) rightBtn.setAttribute('aria-expanded', state.rightCollapsed ? 'false' : 'true');
+}
+
+function setBuilderPanelState(nextState) {
+  const state = {
+    ...getBuilderPanelState(),
+    ...nextState
+  };
+  LS.set('builderPanelState', state);
+  applyBuilderPanelState(state);
+}
+
+function toggleBuilderPanel(panel, forceCollapsed) {
+  const state = getBuilderPanelState();
+  if (panel === 'left') {
+    setBuilderPanelState({
+      leftCollapsed: typeof forceCollapsed === 'boolean' ? forceCollapsed : !state.leftCollapsed
+    });
+  }
+  if (panel === 'right') {
+    setBuilderPanelState({
+      rightCollapsed: typeof forceCollapsed === 'boolean' ? forceCollapsed : !state.rightCollapsed
+    });
+  }
+}
+
 // ============================================================
 // PRO TIER SYSTEM
 // ============================================================

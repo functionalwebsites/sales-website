@@ -218,6 +218,8 @@ select.input { appearance: none; }
 /* Left panel - blocks */
 .editor-left { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; }
 .panel-title { padding: 10px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.panel-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.panel-collapse-btn { width: 26px; height: 24px; padding: 0 !important; justify-content: center; line-height: 1; flex-shrink: 0; }
 .block-btn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; background: transparent; border: none; color: var(--text); text-align: left; border-radius: 0; transition: background .1s; font-size: 13px; }
 .block-btn:hover { background: var(--bg3); }
 .block-btn .block-icon { width: 28px; height: 28px; border-radius: 5px; background: var(--bg3); border: 1px solid var(--border); color: var(--green); display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 1; flex-shrink: 0; }
@@ -265,13 +267,23 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .page-item:hover .page-item-action { opacity: 1; }
 
 /* Center - canvas */
-.editor-center { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: #18181b; }
+.editor-center { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: #18181b; position: relative; }
 .editor-toolbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 6px 12px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .device-btn { padding: 4px 8px; border-radius: 5px; background: transparent; border: 1px solid transparent; color: var(--green); font-size: 16px; }
 .device-btn.active, .device-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--green); }
 .canvas-wrap { flex: 1; min-height: 0; overflow: auto; padding: 24px; display: flex; justify-content: center; align-items: flex-start; }
 .canvas-frame { background: #fff; border-radius: 2px; box-shadow: none; transition: width .2s; min-height: 320px; width: 100%; max-width: 100%; position: relative; }
 #canvas-iframe { width: 100%; border: none; display: block; min-height: 320px; }
+.panel-restore-btn {
+  display: none;
+  position: absolute;
+  top: 54px;
+  z-index: 20;
+  min-width: 0;
+  padding: 6px 10px !important;
+}
+.panel-restore-btn[data-panel="left"] { left: 12px; }
+.panel-restore-btn[data-panel="right"] { right: 12px; }
 
 /* Right panel - properties */
 .editor-right { width: 260px; background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; }
@@ -421,6 +433,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
   .canvas-frame { width: 100% !important; }
   .canvas-wrap { padding: 0; }
   .canvas-frame { border-radius: 0; box-shadow: none; }
+  .panel-restore-btn { display: none !important; }
 
   /* Block lib buttons slightly bigger tap targets */
   .block-btn { padding: 10px 12px; }
@@ -711,6 +724,13 @@ html[data-theme="dark"] .builder-theme-toggle::after {
   color: var(--ink) !important;
 }
 
+.panel-collapse-btn,
+.panel-collapse-btn:hover,
+.panel-restore-btn,
+.panel-restore-btn:hover {
+  transform: none !important;
+}
+
 .builder-menu-toggle:hover {
   background: var(--rust) !important;
   color: var(--paper) !important;
@@ -942,6 +962,18 @@ textarea::placeholder {
 
 .editor-right {
   border-left: var(--line) !important;
+}
+
+@media (min-width: 768px) {
+  .editor-layout.panel-left-collapsed .editor-left,
+  .editor-layout.panel-right-collapsed .editor-right {
+    display: none !important;
+  }
+
+  .editor-layout.panel-left-collapsed .panel-restore-btn[data-panel="left"],
+  .editor-layout.panel-right-collapsed .panel-restore-btn[data-panel="right"] {
+    display: inline-flex;
+  }
 }
 
 .left-tabs,
@@ -1285,7 +1317,10 @@ select:hover {
   <div id="mode-visual" class="editor-layout" style="flex:1;overflow:hidden;">
     <!-- Left: blocks + pages -->
     <div class="editor-left">
-      <div class="panel-title">Pages</div>
+      <div class="panel-title panel-title-row">
+        <span>Pages</span>
+        <button class="btn btn-ghost btn-sm panel-collapse-btn d-only" type="button" onclick="toggleBuilderPanel('left')" title="Collapse left panel" aria-label="Collapse left panel">‹</button>
+      </div>
       <div class="pages-list" id="pages-list"></div>
       <button class="btn btn-ghost btn-sm" style="margin:4px 8px;" onclick="addPage()">+ Add Page</button>
       <!-- Add / Layout tabs -->
@@ -1341,6 +1376,8 @@ select:hover {
         <button class="device-btn" data-device="mobile" onclick="setDevice('mobile')" title="Mobile phone 390px">▢</button>
         <span class="text-muted text-sm ml-auto" id="page-url-display"></span>
       </div>
+      <button class="btn btn-secondary btn-sm panel-restore-btn" type="button" data-panel="left" onclick="toggleBuilderPanel('left', false)" title="Open left panel" aria-label="Open left panel">Add / Layout</button>
+      <button class="btn btn-secondary btn-sm panel-restore-btn" type="button" data-panel="right" onclick="toggleBuilderPanel('right', false)" title="Open properties panel" aria-label="Open properties panel">Properties</button>
       <div class="canvas-wrap">
         <div class="canvas-frame" id="canvas-frame">
           <iframe id="canvas-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
@@ -1350,7 +1387,10 @@ select:hover {
 
     <!-- Right: properties -->
     <div class="editor-right">
-      <div class="panel-title">Properties</div>
+      <div class="panel-title panel-title-row">
+        <span>Properties</span>
+        <button class="btn btn-ghost btn-sm panel-collapse-btn d-only" type="button" onclick="toggleBuilderPanel('right')" title="Collapse right panel" aria-label="Collapse right panel">›</button>
+      </div>
       <div class="props-panel" id="props-panel">
         <div class="text-muted text-sm">Click a block in the canvas to edit its properties.</div>
       </div>

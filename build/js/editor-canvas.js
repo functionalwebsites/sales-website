@@ -14,6 +14,7 @@ function openEditor(id) {
 
   // Start in visual mode
   switchEditorMode('visual');
+  applyBuilderPanelState();
   renderPagesList();
   renderLayoutList();
   renderCanvas();

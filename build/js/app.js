@@ -44,6 +44,7 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 document.addEventListener('DOMContentLoaded', function init() {
   console.log('DOM loaded, initializing app');
   applyBuilderTheme(getBuilderTheme());
+  applyBuilderPanelState();
   initProFeatures();
   loadProjects();
   renderDashboard();
