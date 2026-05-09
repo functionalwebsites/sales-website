@@ -47,7 +47,9 @@ document.addEventListener('DOMContentLoaded', function init() {
   applyBuilderPanelState();
   initProFeatures();
   loadProjects();
-  renderDashboard();
+  if (!restoreProjectFromUrl()) {
+    renderDashboard();
+  }
 
   // Keyboard shortcuts
   document.addEventListener('keydown', e => {

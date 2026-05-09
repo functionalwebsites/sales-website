@@ -1,12 +1,14 @@
 // Site builder editor-canvas. Loaded by build/index.html in dependency order.
 let _projectData = null;
 
-function openEditor(id) {
+function openEditor(id, options = {}) {
   document.body.classList.add('editor-mode');
   STATE.currentProjectId = id;
-  STATE.currentPageIndex = 0;
   STATE.selectedBlockId = null;
   _projectData = getProjectData(id);
+  const maxPageIndex = Math.max((_projectData.pages || []).length - 1, 0);
+  STATE.currentPageIndex = Math.min(Math.max(Number(options.pageIndex) || 0, 0), maxPageIndex);
+  setProjectIdInUrl(id, STATE.currentPageIndex);
   _resetUndo();
   setSaveStatus('saved');
 
@@ -71,6 +73,7 @@ function renderPagesList() {
 function switchPage(i) {
   if (STATE.currentMode === 'code') applyCode();
   STATE.currentPageIndex = i;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   STATE.selectedBlockId = null;
   renderPagesList();
   renderLayoutList();
@@ -90,6 +93,7 @@ function confirmAddPage() {
   const slug = name.toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
   _projectData.pages.push({ id: uid(), name, slug, blocks: [] });
   STATE.currentPageIndex = _projectData.pages.length - 1;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   closeModal('modal-add-page');
   renderPagesList();
   renderCanvas();
@@ -110,6 +114,7 @@ function deletePage(i) {
   if (_projectData.pages.length <= 1) { toast('Cannot delete the only page', 'error'); return; }
   _projectData.pages.splice(i, 1);
   if (STATE.currentPageIndex >= _projectData.pages.length) STATE.currentPageIndex = _projectData.pages.length - 1;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderPagesList();
   renderLayoutList();
   renderCanvas();

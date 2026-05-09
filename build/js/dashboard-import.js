@@ -4,12 +4,14 @@ function showView(v) {
   document.getElementById('view-'+v).classList.add('active');
 }
 function showDashboard() {
+  clearProjectIdFromUrl();
   document.body.classList.remove('editor-mode');
   renderDashboard();
   showView('dashboard');
 }
 function showSettings() {
   console.log('Showing settings page');
+  clearProjectIdFromUrl();
   document.body.classList.remove('editor-mode');
   loadSettingsForm();
   updateStorageInfo();

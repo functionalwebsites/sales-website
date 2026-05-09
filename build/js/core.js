@@ -31,6 +31,8 @@ const STATE = {
 const BUILDER_MANIFEST_FILE = 'functional-websites-manifest.json';
 const BUILDER_PROJECT_FILE = 'functional-websites-project.json';
 const LIBRARY_PACK_VERSION = 1;
+const BUILDER_PROJECT_QUERY_PARAM = 'project';
+const BUILDER_PAGE_QUERY_PARAM = 'page';
 
 // ============================================================
 // UNDO / REDO  (max 50 states, snapshots everything except images)
@@ -227,6 +229,56 @@ function toggleBuilderPanel(panel, forceCollapsed) {
       rightCollapsed: typeof forceCollapsed === 'boolean' ? forceCollapsed : !state.rightCollapsed
     });
   }
+}
+
+function getProjectIdFromUrl() {
+  try {
+    return new URL(window.location.href).searchParams.get(BUILDER_PROJECT_QUERY_PARAM);
+  } catch(e) {
+    return null;
+  }
+}
+
+function getPageIndexFromUrl(maxPages = 1) {
+  try {
+    const value = new URL(window.location.href).searchParams.get(BUILDER_PAGE_QUERY_PARAM);
+    const index = Number.parseInt(value, 10);
+    if (!Number.isFinite(index)) return 0;
+    return Math.min(Math.max(index, 0), Math.max(maxPages - 1, 0));
+  } catch(e) {
+    return 0;
+  }
+}
+
+function setProjectIdInUrl(projectId, pageIndex = STATE.currentPageIndex) {
+  if (!window.history || !projectId) return;
+  const url = new URL(window.location.href);
+  url.searchParams.set(BUILDER_PROJECT_QUERY_PARAM, projectId);
+  url.searchParams.set(BUILDER_PAGE_QUERY_PARAM, String(Math.max(Number(pageIndex) || 0, 0)));
+  window.history.replaceState({ view: 'editor', projectId, pageIndex }, '', url);
+}
+
+function clearProjectIdFromUrl() {
+  if (!window.history) return;
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has(BUILDER_PROJECT_QUERY_PARAM) && !url.searchParams.has(BUILDER_PAGE_QUERY_PARAM)) return;
+  url.searchParams.delete(BUILDER_PROJECT_QUERY_PARAM);
+  url.searchParams.delete(BUILDER_PAGE_QUERY_PARAM);
+  window.history.replaceState({ view: 'dashboard' }, '', url);
+}
+
+function restoreProjectFromUrl() {
+  const projectId = getProjectIdFromUrl();
+  if (!projectId) return false;
+  const exists = STATE.projects.some(project => project.id === projectId) && !!LS.get('proj_' + projectId);
+  if (!exists) {
+    clearProjectIdFromUrl();
+    toast('That saved website could not be found in this browser.', 'error');
+    return false;
+  }
+  const projectData = LS.get('proj_' + projectId);
+  openEditor(projectId, { pageIndex: getPageIndexFromUrl(projectData?.pages?.length || 1) });
+  return true;
 }
 
 // ============================================================
