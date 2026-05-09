@@ -172,9 +172,9 @@ function renderLayoutList() {
         <div class="layout-item-slug">${slug}</div>
       </div>
       <div class="layout-item-actions">
-        <button class="btn-icon" onclick="event.stopPropagation();moveBlock('${block.id}',-1)" title="Move up">↑</button>
-        <button class="btn-icon" onclick="event.stopPropagation();moveBlock('${block.id}',1)" title="Move down">↓</button>
-        <button class="btn-icon" onclick="event.stopPropagation();removeBlock('${block.id}')" title="Delete">×</button>
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${block.id}',-1)" title="Move up" aria-label="Move up">↑</button>
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${block.id}',1)" title="Move down" aria-label="Move down">↓</button>
+        <button class="btn btn-danger btn-sm layout-block-action" onclick="event.stopPropagation();removeBlock('${block.id}')" title="Delete" aria-label="Delete">×</button>
       </div>
     </div>`;
   }).join('');
@@ -189,7 +189,7 @@ function getCanvasHTML() {
   const page = _projectData.pages[STATE.currentPageIndex];
   const blocksHTML = (page.blocks||[]).map(b => {
     const html = renderBlock(b, true);
-    return `<div data-block-id="${b.id}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${b.id}')">${html}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${b.id}',-1)" title="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${b.id}',1)" title="Move down">↓</button><button class="block-ctrl-btn" style="background:#e74c3c;" onclick="event.stopPropagation();window.parent.removeBlock('${b.id}')" title="Delete">✕</button></div></div>`;
+    return `<div data-block-id="${b.id}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${b.id}')">${html}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${b.id}',-1)" title="Move up" aria-label="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${b.id}',1)" title="Move down" aria-label="Move down">↓</button><button class="block-ctrl-btn block-ctrl-danger" onclick="event.stopPropagation();window.parent.removeBlock('${b.id}')" title="Delete" aria-label="Delete">✕</button></div></div>`;
   }).join('');
 
   return `<!DOCTYPE html>
@@ -200,16 +200,18 @@ function getCanvasHTML() {
 * { box-sizing: border-box; }
 body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: default; }
 .block-wrapper { position: relative; }
-.block-wrapper:hover { outline: 2px dashed #7c6af7; outline-offset: -2px; }
-.block-wrapper.selected { outline: 2px solid #7c6af7 !important; outline-offset: -2px; }
+.block-wrapper:hover { outline: 3px dashed #b9482e; outline-offset: -3px; }
+.block-wrapper.selected { outline: 3px solid #b9482e !important; outline-offset: -3px; }
 .command-drag .block-wrapper:hover { cursor: grab !important; }
 .command-drag .block-wrapper:active { cursor: grabbing !important; }
 .block-wrapper.dragging { opacity: .45; }
-.block-wrapper.drop-before { box-shadow: inset 0 4px 0 #4ade80; }
-.block-wrapper.drop-after { box-shadow: inset 0 -4px 0 #4ade80; }
-.block-controls { position: absolute; top: 4px; right: 4px; display: none; gap: 4px; z-index: 999; }
+.block-wrapper.drop-before { box-shadow: inset 0 4px 0 #b9482e; }
+.block-wrapper.drop-after { box-shadow: inset 0 -4px 0 #b9482e; }
+.block-controls { position: absolute; top: 8px; right: 8px; display: none; gap: 6px; z-index: 999; padding: 5px; background: #f5efe0; border: 3px solid #10100d; box-shadow: 4px 4px 0 #10100d; }
 .block-wrapper:hover .block-controls { display: flex; }
-.block-ctrl-btn { width: 26px; height: 26px; border-radius: 4px; background: #7c6af7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; border: none; }
+.block-ctrl-btn { width: 28px; height: 28px; border-radius: 4px; background: #f5efe0; color: #10100d; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; font-size: 14px; font-weight: 900; cursor: pointer; border: 3px solid #10100d; box-shadow: 2px 2px 0 #10100d; line-height: 1; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease; }
+.block-ctrl-btn:hover { background: #b9482e; color: #f5efe0; transform: translate(1px, 1px); box-shadow: 1px 1px 0 #10100d; }
+.block-ctrl-danger { background: #b9482e; color: #f5efe0; }
 ${buildBrandCSS(_projectData)}
 ${buildStyleSystemCSS(_projectData)}
 ${buildSiteThemeCSS(_projectData)}

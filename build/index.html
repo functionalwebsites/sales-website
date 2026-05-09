@@ -254,7 +254,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .layout-item-info { flex: 1; min-width: 0; }
 .layout-item-type { font-size: 11px; font-weight: 600; text-transform: capitalize; }
 .layout-item-slug { font-size: 10px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.layout-item-actions { display: flex; gap: 1px; flex-shrink: 0; opacity: 0; transition: opacity .1s; }
+.layout-item-actions { display: flex; gap: 4px; flex-shrink: 0; opacity: 0; transition: opacity .1s; }
 .layout-item:hover .layout-item-actions { opacity: 1; }
 
 /* Pages list */
@@ -336,6 +336,17 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .block-wrapper:hover .block-controls { opacity: 1; }
 .block-controls { position: absolute; top: 4px; right: 4px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; z-index: 10; }
 .block-ctrl-btn { width: 24px; height: 24px; border-radius: 4px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: none; }
+.layout-block-action {
+  width: 26px;
+  height: 26px;
+  padding: 0 !important;
+  justify-content: center;
+  line-height: 1;
+}
+.layout-block-action:hover {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0 var(--shadow-color) !important;
+}
 
 /* Publish bar */
 .publish-bar { background: var(--bg2); border-top: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
