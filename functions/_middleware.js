@@ -2,6 +2,7 @@ const BUILDER_HOST = 'build.functionalwebsites.com';
 const DOCS_HOST = 'docs.functionalwebsites.com';
 const DOCS_ROUTES = new Set([
   'cloudflare',
+  'clone-static',
   'custom-blocks',
   'custom-templates',
   'export-selfhost',

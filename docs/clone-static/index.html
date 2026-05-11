@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Clone a simple website into static HTML files using free terminal and browser tools, then deploy it with GitHub Pages.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#4ade80">
+  <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
+  <meta name="msapplication-TileColor" content="#0f0f13">
+  <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#0f0f13">
+  <title>Clone a Website to Static HTML — Functional Websites</title>
+  <link rel="stylesheet" href="/components/hero-gear.css">
+  <link rel="stylesheet" href="/styles/docs.css">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main>
+    <section class="hero gear-hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Static Clone Guide</div>
+        <h1>Clone a Website Into Static Files</h1>
+        <p>Use free browser or terminal tools to save a simple site as HTML, CSS, JavaScript, and images. Then clean it up and deploy it with GitHub Pages.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://docs.functionalwebsites.com/github/">Deploy to GitHub Next</a>
+          <a class="btn btn-secondary" href="https://functionalwebsites.com/services#website-cloning">Get Help Cloning</a>
+          <a class="btn btn-secondary" href="https://docs.functionalwebsites.com/">Back to Docs</a>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <strong>Before you clone</strong>
+        <ul>
+          <li>Only clone sites you own or have permission to copy</li>
+          <li>Expect static files, not backend features</li>
+          <li>Forms, logins, carts, and dashboards need rebuilding</li>
+          <li>Clean up links, metadata, and unused assets before deploy</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="section">
+      <article class="doc-card">
+        <h2>What This Works For</h2>
+        <p>This workflow is best for simple brochure sites, landing pages, portfolios, old business websites, documentation pages, and static marketing pages. It is not a magic copy of an app.</p>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong>Good fit</strong>
+            <p>Mostly public pages made from HTML, CSS, images, and light JavaScript.</p>
+          </div>
+          <div class="mini-card">
+            <strong>Needs rebuilding</strong>
+            <p>Forms, booking flows, payments, search, login areas, CMS content, and server-rendered features.</p>
+          </div>
+          <div class="mini-card">
+            <strong>Legal note</strong>
+            <p>Cloning can copy copyrighted design, text, images, and code. Use this for your own sites, migrations, backups, or authorized work.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="doc-card">
+        <h2>Option 1: Browser Save</h2>
+        <p>This is the lowest-friction free method. It is useful for one page at a time.</p>
+        <ol>
+          <li>Open the page in your browser.</li>
+          <li>Use <strong>File > Save Page As</strong>.</li>
+          <li>Choose <strong>Webpage, Complete</strong> if your browser offers it.</li>
+          <li>Save into a new folder.</li>
+          <li>Open the saved <code>.html</code> file locally and check what broke.</li>
+        </ol>
+        <p style="margin-top: 18px;">This usually saves an HTML file plus a folder of assets. It may miss lazy-loaded images, fonts, scripts, videos, and pages linked from the page.</p>
+      </article>
+
+      <article class="doc-card">
+        <h2>Option 2: Terminal Clone with wget</h2>
+        <p><code>wget</code> can mirror public static pages and rewrite links so the copy works locally. On macOS, install it with Homebrew if you do not already have it:</p>
+        <div style="background: #0a0d0d; border: 1px solid #2a3333; border-radius: 12px; padding: 16px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 13px; color: #f3ecd9;">
+brew install wget
+        </div>
+        <p style="margin-top: 16px;">Then run:</p>
+        <div style="background: #0a0d0d; border: 1px solid #2a3333; border-radius: 12px; padding: 16px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 13px; color: #f3ecd9;">
+wget --mirror --convert-links --adjust-extension --page-requisites --no-parent https://example.com/
+        </div>
+        <ul style="margin-top: 18px;">
+          <li><code>--mirror</code> recursively downloads linked pages and assets.</li>
+          <li><code>--convert-links</code> rewrites links for local browsing.</li>
+          <li><code>--adjust-extension</code> saves HTML pages with useful extensions.</li>
+          <li><code>--page-requisites</code> downloads assets needed to display pages.</li>
+          <li><code>--no-parent</code> avoids crawling above the starting URL path.</li>
+        </ul>
+      </article>
+
+      <article class="doc-card">
+        <h2>Option 3: Terminal Clone with httrack</h2>
+        <p><code>httrack</code> is another free website copier. It is often easier for multi-page static sites.</p>
+        <div style="background: #0a0d0d; border: 1px solid #2a3333; border-radius: 12px; padding: 16px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 13px; color: #f3ecd9;">
+brew install httrack<br>
+mkdir cloned-site<br>
+httrack https://example.com/ -O cloned-site
+        </div>
+        <p style="margin-top: 16px;">After it finishes, open the generated folder and test the local <code>index.html</code>. If the clone pulled too much, start again from a narrower URL such as <code>https://example.com/services/</code>.</p>
+      </article>
+
+      <article class="doc-card">
+        <h2>Clean Up the Clone</h2>
+        <p>A copied site usually needs cleanup before it is worth deploying.</p>
+        <ol>
+          <li>Find the real site root, usually the folder containing <code>index.html</code>.</li>
+          <li>Delete tracking scripts, old analytics tags, chat widgets, and dead third-party embeds you no longer need.</li>
+          <li>Replace absolute production links with local links where appropriate, for example <code>/about/</code> or <code>about.html</code>.</li>
+          <li>Check images and fonts load from local files instead of hotlinking another domain.</li>
+          <li>Update page titles, meta descriptions, Open Graph images, favicon links, and contact links.</li>
+          <li>Test every nav link and button by opening the local site in a browser.</li>
+        </ol>
+      </article>
+
+      <article class="doc-card">
+        <h2>Test Locally</h2>
+        <p>Opening <code>index.html</code> directly can work, but a tiny local server catches path problems before deploy. If you have Python installed, run this from the site folder:</p>
+        <div style="background: #0a0d0d; border: 1px solid #2a3333; border-radius: 12px; padding: 16px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 13px; color: #f3ecd9;">
+python3 -m http.server 8080
+        </div>
+        <p style="margin-top: 16px;">Then open <code>http://localhost:8080</code>. Click through the site, resize the browser, and check the console for missing files.</p>
+      </article>
+
+      <article class="doc-card">
+        <h2>Deploy to GitHub Pages Next</h2>
+        <p>Once the static clone works locally, GitHub Pages is a good free next step. Create a repository, commit the cleaned files, push to GitHub, then enable Pages in the repository settings.</p>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <strong>Use the full guide</strong>
+            <p>Follow the GitHub Pages deployment doc for the exact repository and Pages settings.</p>
+          </div>
+          <div class="mini-card">
+            <strong>Keep it simple</strong>
+            <p>Your repository root should contain <code>index.html</code> unless you intentionally deploy from a subfolder.</p>
+          </div>
+          <div class="mini-card">
+            <strong>Custom domain later</strong>
+            <p>Get the GitHub Pages URL working first, then connect a custom domain after the files are stable.</p>
+          </div>
+        </div>
+        <p style="margin-top: 22px;"><a class="btn btn-primary" href="https://docs.functionalwebsites.com/github/">Continue to GitHub Pages Deployment</a></p>
+      </article>
+
+      <article class="doc-card">
+        <h2>Don't Feel Like Doing This Yourself?</h2>
+        <p>We can help clone an existing site, clean up the static files, rebuild parts that cannot be copied cleanly, and prepare it for hosting. This is useful when the original site is messy, old, slow, or tied to a platform you want to leave.</p>
+        <p style="margin-top: 22px;"><a class="btn btn-secondary" href="https://functionalwebsites.com/services#website-cloning">See Website Cloning Services</a></p>
+      </article>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js"></script>
+</body>
+</html>
