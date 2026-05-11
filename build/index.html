@@ -161,6 +161,15 @@ select.input { appearance: none; }
 .builder-dialog-message { color: var(--text2); line-height: 1.55; margin: -4px 0 14px; }
 .builder-dialog-field { margin-bottom: 12px; }
 .builder-dialog-field:last-child { margin-bottom: 0; }
+.icon-picker { margin-top: 8px; border: 1px solid var(--border); background: var(--paper); box-shadow: var(--shadow-sm); padding: 8px; }
+.icon-picker-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.icon-picker-tab { padding: 4px 7px; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); box-shadow: 2px 2px 0 var(--shadow-color); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+.icon-picker-tab.active { background: var(--gold); }
+.icon-picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); gap: 6px; }
+.icon-picker-btn { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); box-shadow: 2px 2px 0 var(--shadow-color); font-size: 16px; line-height: 1; }
+.icon-picker-btn:hover { background: var(--rust); color: var(--paper); transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--shadow-color); }
+.icon-picker-pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.icon-picker-page-label { color: var(--text2); font-size: 11px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 
 /* ===== TOAST ===== */

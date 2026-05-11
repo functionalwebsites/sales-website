@@ -589,6 +589,39 @@ function escapeHtmlForTextarea(str = '') {
     .replace(/>/g, '&gt;');
 }
 
+const ICON_PICKER_PAGE_SIZE = 36;
+const ICON_PICKER_SETS = {
+  popular: ['✦', '★', '✓', '⚡', '◆', '◈', '✉', '☎', '⌕', '→', '↗', '↑', '①', '②', '③', '☀', '☾', '☁', '●', '○', '▲', '■', '☑', '☒'],
+  misc: ['☀', '☁', '☂', '☃', '☄', '★', '☆', '☇', '☈', '☉', '☊', '☋', '☌', '☍', '☎', '☏', '☐', '☑', '☒', '☓', '☔', '☕', '☘', '☙', '☚', '☛', '☜', '☝', '☞', '☟', '☠', '☡', '☢', '☣', '☤', '☥', '☦', '☧', '☨', '☩', '☪', '☫', '☬', '☭', '☮', '☯', '☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷', '☸', '☹', '☺', '☻', '☼', '☽', '☾', '☿', '♀', '♁', '♂', '♃', '♄', '♅', '♆', '♇', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '♔', '♕', '♖', '♗', '♘', '♙', '♚', '♛', '♜', '♝', '♞', '♟', '♠', '♡', '♢', '♣', '♤', '♥', '♦', '♧', '♨', '♩', '♪', '♫', '♬', '♭', '♮', '♯'],
+  shapes: ['◆', '◇', '◈', '◉', '◎', '○', '●', '◌', '◍', '◐', '◑', '◒', '◓', '◔', '◕', '◖', '◗', '◘', '◙', '◚', '◛', '▲', '△', '▴', '▵', '▶', '▷', '▸', '▹', '▼', '▽', '▾', '▿', '◀', '◁', '◂', '◃', '■', '□', '▣', '▤', '▥', '▦', '▧', '▨', '▩', '▪', '▫', '▬', '▭', '▮', '▯'],
+  arrows: ['←', '↑', '→', '↓', '↔', '↕', '↖', '↗', '↘', '↙', '↚', '↛', '↜', '↝', '↞', '↟', '↠', '↡', '↢', '↣', '↤', '↥', '↦', '↧', '↩', '↪', '↫', '↬', '↭', '↯', '↰', '↱', '↲', '↳', '↴', '↵', '⇐', '⇑', '⇒', '⇓', '⇔', '⇕'],
+  marks: ['✓', '✔', '✕', '✖', '✗', '✘', '✚', '✛', '✜', '✝', '✞', '✟', '✠', '✡', '✢', '✣', '✤', '✥', '✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮', '✯', '✰', '✱', '✲', '✳', '✴', '✵', '✶', '✷', '✸', '✹', '✺', '✻', '✼', '✽', '✾', '✿', '❀', '❁', '❂', '❃', '❄', '❅', '❆', '❇', '❈', '❉', '❊', '❋'],
+  numbers: ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬', '⑭', '⑮', '⑯', '⑰', '⑱', '⑲', '⑳', '❶', '❷', '❸', '❹', '❺', '❻', '❼', '❽', '❾', '❿', '➀', '➁', '➂', '➃', '➄', '➅', '➆', '➇', '➈', '➉']
+};
+const ICON_PICKER_LABELS = {
+  popular: 'Popular',
+  misc: 'Misc',
+  shapes: 'Shapes',
+  arrows: 'Arrows',
+  marks: 'Marks',
+  numbers: 'Numbers'
+};
+
+function buildIconPicker(blockId, key, index, field, currentValue = '') {
+  const inputId = `icon_${blockId}_${key}_${index}_${field}`;
+  const pickerId = `picker_${inputId}`;
+  const tabs = Object.keys(ICON_PICKER_SETS).map(category => `<button type="button" class="icon-picker-tab${category === 'popular' ? ' active' : ''}" data-icon-category="${category}" onclick="renderIconPickerPage('${blockId}','${key}',${index},'${field}','${inputId}','${pickerId}','${category}',0)">${ICON_PICKER_LABELS[category]}</button>`).join('');
+  return `<div class="field">
+    <label class="label">Icon</label>
+    <input class="input" id="${inputId}" type="text" value="${String(currentValue || '').replace(/"/g,'&quot;')}" placeholder="Paste an emoji or symbol" style="max-width:120px;" oninput="updateItem('${blockId}','${key}',${index},'${field}',this.value)">
+    <details class="icon-picker" ontoggle="if(this.open&&!this.dataset.ready){this.dataset.ready='true';renderIconPickerPage('${blockId}','${key}',${index},'${field}','${inputId}','${pickerId}','popular',0)}">
+      <summary style="cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);user-select:none;">Choose Basic Icon</summary>
+      <div class="icon-picker-tabs">${tabs}</div>
+      <div id="${pickerId}" style="margin-top:8px;"></div>
+    </details>
+  </div>`;
+}
+
 function getBlockRawHTML(block) {
   return renderBlock(block, false, Object.assign({}, _projectData, { _imageMap: buildImageAssetMap(_projectData) }));
 }
@@ -1072,7 +1105,7 @@ function buildPropsForm(block, options = {}) {
             <span style="font-size:11px;font-weight:600;color:var(--text2);">Feature ${i+1}</span>
             <button class="btn btn-danger btn-sm" style="padding:2px 8px;font-size:11px;" onclick="removeItem('${block.id}','features',${i})">× Remove</button>
           </div>
-          <div class="field"><label class="label">Icon</label><input class="input" type="text" value="${(f.icon||'').replace(/"/g,'&quot;')}" style="max-width:80px;" oninput="updateItem('${block.id}','features',${i},'icon',this.value)"></div>
+          ${buildIconPicker(block.id, 'features', i, 'icon', f.icon || '')}
           <div class="field"><label class="label">Title</label><input class="input" type="text" value="${(f.title||'').replace(/"/g,'&quot;')}" oninput="updateItem('${block.id}','features',${i},'title',this.value)"></div>
           <div class="field"><label class="label">Description</label><textarea class="input" rows="2" oninput="updateItem('${block.id}','features',${i},'desc',this.value)">${f.desc||''}</textarea></div>
         </div>`;
@@ -1314,6 +1347,35 @@ function updateItem(blockId, key, index, field, value) {
   pushUndoDebounced();
   block.props[key][index][field] = value;
   renderCanvas();
+}
+
+function setItemIcon(blockId, key, index, field, value, inputId) {
+  const input = document.getElementById(inputId);
+  if (input) input.value = value;
+  updateItem(blockId, key, index, field, value);
+}
+
+function renderIconPickerPage(blockId, key, index, field, inputId, pickerId, category = 'popular', page = 0) {
+  const picker = document.getElementById(pickerId);
+  if (!picker) return;
+  const icons = ICON_PICKER_SETS[category] || ICON_PICKER_SETS.popular;
+  const totalPages = Math.max(1, Math.ceil(icons.length / ICON_PICKER_PAGE_SIZE));
+  const currentPage = Math.min(Math.max(Number(page) || 0, 0), totalPages - 1);
+  const start = currentPage * ICON_PICKER_PAGE_SIZE;
+  const pageIcons = icons.slice(start, start + ICON_PICKER_PAGE_SIZE);
+  const buttons = pageIcons.map(icon => `<button type="button" class="icon-picker-btn" onclick="setItemIcon('${blockId}','${key}',${index},'${field}','${icon}','${inputId}')" title="${icon}" aria-label="Use icon ${icon}">${icon}</button>`).join('');
+  const previousPage = Math.max(0, currentPage - 1);
+  const nextPage = Math.min(totalPages - 1, currentPage + 1);
+  picker.innerHTML = `
+    <div class="icon-picker-grid">${buttons}</div>
+    <div class="icon-picker-pager">
+      <button type="button" class="btn btn-secondary btn-sm" ${currentPage === 0 ? 'disabled' : ''} onclick="renderIconPickerPage('${blockId}','${key}',${index},'${field}','${inputId}','${pickerId}','${category}',${previousPage})">Prev</button>
+      <span class="icon-picker-page-label">${ICON_PICKER_LABELS[category] || category} ${currentPage + 1} / ${totalPages}</span>
+      <button type="button" class="btn btn-secondary btn-sm" ${currentPage >= totalPages - 1 ? 'disabled' : ''} onclick="renderIconPickerPage('${blockId}','${key}',${index},'${field}','${inputId}','${pickerId}','${category}',${nextPage})">Next</button>
+    </div>`;
+  picker.closest('.icon-picker')?.querySelectorAll('.icon-picker-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.iconCategory === category);
+  });
 }
 
 function updateGlobalCSS(value) {
