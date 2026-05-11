@@ -16,6 +16,111 @@ function renderBlock(block, editing = false, ctx = null) {
   return outWithResponsiveCSS;
 }
 
+function normalizeFormFields(fields) {
+  const fallback = [
+    { id: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your name' },
+    { id: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com' },
+    { id: 'message', label: 'Message', type: 'textarea', required: false, placeholder: 'How can we help?', rows: 5 }
+  ];
+  let list = fields;
+  if (typeof list === 'string') {
+    try { list = JSON.parse(list); } catch (e) { list = fallback; }
+  }
+  if (!Array.isArray(list) || !list.length) list = fallback;
+  return list.map((field, index) => {
+    const id = String(field.id || field.name || `field_${index + 1}`).trim().replace(/[^a-zA-Z0-9_-]/g, '_') || `field_${index + 1}`;
+    const type = ['text', 'email', 'tel', 'number', 'date', 'select', 'textarea'].includes(field.type) ? field.type : 'text';
+    const options = Array.isArray(field.options)
+      ? field.options
+      : String(field.options || '').split('\n').map(item => item.trim()).filter(Boolean);
+    return {
+      id,
+      label: String(field.label || id),
+      type,
+      required: Boolean(field.required),
+      placeholder: String(field.placeholder || ''),
+      defaultValue: String(field.defaultValue || ''),
+      options,
+      rows: Math.max(2, Math.min(12, Number(field.rows || 5)))
+    };
+  });
+}
+
+function renderMailtoFormBlock(block, sel, p, opts) {
+  const fields = normalizeFormFields(p.fields);
+  const formId = `fw-mailto-${String(block.id || Math.random().toString(36).slice(2)).replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const recipient = String(p.mailtoEmail || p.action || '').replace(/^mailto:/, '');
+  const inputStyle = `width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;background:#fff;color:#111;box-sizing:border-box;`;
+  const labelStyle = `display:block;margin-bottom:4px;font-weight:500;`;
+  const fieldsHtml = fields.map(field => {
+    const required = field.required ? ' required' : '';
+    const common = `id="${escAttr(`${formId}-${field.id}`)}" name="${escAttr(field.id)}"${required}`;
+    const label = `<label for="${escAttr(`${formId}-${field.id}`)}" style="${labelStyle}">${escapeHtml(field.label)}${field.required ? '*' : ''}</label>`;
+    if (field.type === 'textarea') {
+      return `<div>${label}<textarea ${common} placeholder="${escAttr(field.placeholder)}" rows="${field.rows}" style="${inputStyle}resize:vertical;">${escapeHtml(field.defaultValue)}</textarea></div>`;
+    }
+    if (field.type === 'select') {
+      const optsHtml = [`<option value="">${field.placeholder ? escapeHtml(field.placeholder) : '-- Select One --'}</option>`]
+        .concat(field.options.map(option => `<option value="${escAttr(option)}"${option === field.defaultValue ? ' selected' : ''}>${escapeHtml(option)}</option>`))
+        .join('');
+      return `<div>${label}<select ${common} style="${inputStyle}">${optsHtml}</select></div>`;
+    }
+    return `<div>${label}<input ${common} type="${escAttr(field.type)}" placeholder="${escAttr(field.placeholder)}" value="${escAttr(field.defaultValue)}" style="${inputStyle}"></div>`;
+  }).join('\n      ');
+  const config = {
+    recipient,
+    subjectTemplate: p.subjectTemplate || 'New message from {{name}}',
+    successTitle: p.successTitle || 'Thank you for reaching out!',
+    successMessage: p.successMessage || 'Your email app should have opened with a pre-filled message.',
+    fields
+  };
+  return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||opts.siteSectionPadding};">
+  <div style="max-width:600px;margin:0 auto;">
+    <h2 style="font-family:${opts.siteHeadingFont};text-align:center;margin:0 0 16px;font-size:calc(2em * var(--site-heading-scale, 1));">${escapeHtml(p.title||'Contact Us')}</h2>
+    ${p.introText ? `<p style="text-align:center;margin:0 0 28px;color:#555;line-height:1.6;">${escapeHtml(p.introText)}</p>` : ''}
+    <form id="${escAttr(formId)}" data-fw-mailto-form style="display:flex;flex-direction:column;gap:${opts.siteContentGap};">
+      ${fieldsHtml}
+      <p style="margin:0;color:#666;font-size:13px;line-height:1.6;"><em>Submitting opens your email app with a pre-filled message. Review it, then hit send.</em></p>
+      <button type="submit" style="background:${p.btnBg||'#7c6af7'};color:${p.btnColor||'#fff'};padding:12px;border-radius:${opts.siteButtonRadius};font-weight:600;font-size:15px;border:none;cursor:pointer;">${escapeHtml(p.submitText||'Send Message')}</button>
+    </form>
+    <div id="${escAttr(formId)}-thanks" style="display:none;text-align:center;">
+      <p style="font-weight:700;margin:0 0 8px;">${escapeHtml(config.successTitle)}</p>
+      <p style="margin:0;color:#555;line-height:1.6;">${escapeHtml(config.successMessage)}${recipient ? ` If you had trouble sending, email <a href="mailto:${escAttr(recipient)}">${escapeHtml(recipient)}</a>.` : ''}</p>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var form = document.getElementById(${JSON.stringify(formId)});
+    if (!form) return;
+    var config = ${safeJsonForScript(config)};
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      var values = {};
+      config.fields.forEach(function(field) {
+        var input = form.elements[field.id];
+        values[field.id] = input ? String(input.value || '') : '';
+      });
+      var recipient = String(config.recipient || '').replace(/^mailto:/, '');
+      if (!recipient) {
+        alert('Add a recipient email address before using this form.');
+        return false;
+      }
+      var subject = String(config.subjectTemplate || 'New message')
+        .replace(/\\{\\{\\s*([a-zA-Z0-9_-]+)\\s*\\}\\}/g, function(match, key) { return values[key] || ''; });
+      var body = config.fields.map(function(field) {
+        return field.label + ': ' + (values[field.id] || '');
+      }).join('\\n') + '\\n\\nSent from website contact form.';
+      window.location.href = 'mailto:' + recipient + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      form.style.display = 'none';
+      var thanks = document.getElementById(${JSON.stringify(`${formId}-thanks`)});
+      if (thanks) thanks.style.display = 'block';
+      return false;
+    });
+  })();
+  <\/script>
+</section>`;
+}
+
 function _renderBlockInner(block, editing = false, ctx = null) {
   const p = block.props;
   const safeType = String(block.type || 'block').replace(/[^a-zA-Z0-9_-]/g, '-');
@@ -280,17 +385,12 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 </footer>`;
     }
     case 'form': {
-      return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||siteSectionPadding};">
-  <div style="max-width:600px;margin:0 auto;">
-    <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 32px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Contact Us'}</h2>
-    <form action="${p.action||'#'}" style="display:flex;flex-direction:column;gap:${siteContentGap};">
-      <div><label style="display:block;margin-bottom:4px;font-weight:500;">Name</label><input type="text" placeholder="Your name" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;"></div>
-      <div><label style="display:block;margin-bottom:4px;font-weight:500;">Email</label><input type="email" placeholder="your@email.com" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;"></div>
-      <div><label style="display:block;margin-bottom:4px;font-weight:500;">Message</label><textarea placeholder="Your message..." rows="5" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;resize:vertical;"></textarea></div>
-      <button type="submit" style="background:${p.btnBg||'#7c6af7'};color:${p.btnColor||'#fff'};padding:12px;border-radius:${siteButtonRadius};font-weight:600;font-size:15px;border:none;cursor:pointer;">${p.submitText||'Send Message'}</button>
-    </form>
-  </div>
-</section>`;
+      return renderMailtoFormBlock(block, sel, p, {
+        siteSectionPadding,
+        siteContentGap,
+        siteButtonRadius,
+        siteHeadingFont
+      });
     }
     case 'html': {
       return `<div ${sel}>${p.code||''}</div>`;
@@ -304,6 +404,10 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 // PROJECT COMPILATION
 // ============================================================
 function escAttr(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function safeJsonForScript(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
+}
 
 function hexToRgb(hex) {
   const clean = String(hex || '#000000').replace('#', '').trim();

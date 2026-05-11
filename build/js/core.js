@@ -37,6 +37,7 @@ const BUILDER_PROJECT_QUERY_PARAM = 'project';
 const BUILDER_PAGE_QUERY_PARAM = 'page';
 const BUILDER_BLOCK_QUERY_PARAM = 'block';
 const BUILDER_COLUMN_QUERY_PARAM = 'column';
+const BUILDER_CONTACT_FORM_QUERY_PARAM = 'contactForm';
 
 // ============================================================
 // UNDO / REDO  (max 50 states, snapshots everything except images)
@@ -337,6 +338,64 @@ function restoreProjectFromUrl() {
     selection: getBuilderSelectionFromUrl()
   });
   return true;
+}
+
+function normalizeImportedContactFormConfig(config = {}) {
+  const allowedTypes = ['text', 'email', 'tel', 'number', 'date', 'select', 'textarea'];
+  const rawFields = Array.isArray(config.fields) && config.fields.length ? config.fields : [
+    { id: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your name' },
+    { id: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com' },
+    { id: 'message', label: 'Message', type: 'textarea', required: false, placeholder: 'How can we help?', rows: 5 }
+  ];
+  return {
+    id: `form_${Date.now()}`,
+    name: String(config.name || config.title || 'Imported Contact Form'),
+    title: String(config.title || 'Contact Us'),
+    introText: String(config.introText || ''),
+    mailtoEmail: String(config.mailtoEmail || ''),
+    subjectTemplate: String(config.subjectTemplate || 'New message from {{name}}'),
+    submitText: String(config.submitText || 'Send Message'),
+    successTitle: String(config.successTitle || 'Thank you for reaching out!'),
+    successMessage: String(config.successMessage || ''),
+    fields: rawFields.map((field, index) => {
+      const type = allowedTypes.includes(field.type) ? field.type : 'text';
+      return {
+        id: String(field.id || field.name || `field_${index + 1}`).trim().replace(/[^a-zA-Z0-9_-]/g, '_') || `field_${index + 1}`,
+        label: String(field.label || `Field ${index + 1}`),
+        type,
+        required: Boolean(field.required),
+        placeholder: String(field.placeholder || ''),
+        defaultValue: String(field.defaultValue || ''),
+        options: Array.isArray(field.options)
+          ? field.options.map(option => String(option))
+          : String(field.options || '').split('\n').map(option => option.trim()).filter(Boolean),
+        rows: Math.max(2, Math.min(12, Number(field.rows || 5)))
+      };
+    })
+  };
+}
+
+function importContactFormFromUrlParam() {
+  let url;
+  try {
+    url = new URL(window.location.href);
+  } catch (error) {
+    return;
+  }
+  const rawConfig = url.searchParams.get(BUILDER_CONTACT_FORM_QUERY_PARAM);
+  if (!rawConfig) return;
+  url.searchParams.delete(BUILDER_CONTACT_FORM_QUERY_PARAM);
+  window.history.replaceState(window.history.state || {}, '', url);
+  try {
+    const imported = normalizeImportedContactFormConfig(JSON.parse(rawConfig));
+    const saved = JSON.parse(localStorage.getItem('fw_mailto_form_builder_forms') || '[]');
+    const forms = Array.isArray(saved) ? saved : [];
+    forms.unshift(imported);
+    localStorage.setItem('fw_mailto_form_builder_forms', JSON.stringify(forms.slice(0, 40)));
+    toast('Contact form imported into the builder library.', 'success');
+  } catch (error) {
+    toast('Contact form import link was invalid.', 'error');
+  }
 }
 
 // ============================================================
@@ -1210,7 +1269,12 @@ function mkBlock(type, props = {}) {
     ]},
     cta: { bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', padding: '', heading: 'Ready to get started?', subheading: 'Join thousands of happy users today.', buttonText: 'Get Started Free', buttonHref: '#', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7' },
     footer: { bgColor: brand.dark || '#1a1a1a', textColor: '#aaaaaa', linkColor: '#cccccc', brand: projectBrandName, tagline: 'Building the web.', copyright: `© ${new Date().getFullYear()} ${projectBrandName}. All rights reserved.` },
-    form: { bgColor: '#f8f8f8', padding: '', title: 'Contact Us', submitText: 'Send Message', action: '#', btnBg: brand.accent || '#7c6af7', btnColor: '#ffffff' },
+    form: { bgColor: '#f8f8f8', padding: '', title: 'Contact Us', introText: '', submitText: 'Send Message', action: '#', mailtoEmail: '', subjectTemplate: 'New message from {{name}}', successTitle: 'Thank you for reaching out!', successMessage: 'Your email app should have opened with a pre-filled message. If you do not see it, email us directly.', btnBg: brand.accent || '#7c6af7', btnColor: '#ffffff', fields: [
+      { id: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your name' },
+      { id: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com' },
+      { id: 'phone', label: 'Phone Number', type: 'tel', required: false, placeholder: '' },
+      { id: 'message', label: 'Message', type: 'textarea', required: false, placeholder: 'How can we help?', defaultValue: '', rows: 5 }
+    ] },
     youtubeEmbed: { title: 'Featured Video', description: 'Use a YouTube video to explain your offer or show your work.', videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', maxWidth: '960px', aspectRatio: '16 / 9', autoplay: false, showControls: true, privacyMode: true, rounded: true, sectionBg: '#ffffff' },
     testimonialWall: { title: 'What Customers Say', intro: 'Social proof helps visitors trust you faster. Add a few real reviews to show the quality of your work.', bgColor: '#f5f8fc', padding: '80px 20px', maxWidth: '1100px', columns: '3', showStars: true, highlightFirst: false, testimonials: [
       { name: 'Jordan M.', role: 'Homeowner', quote: 'Fast response, fair pricing, and clear communication from start to finish.', rating: '5' },

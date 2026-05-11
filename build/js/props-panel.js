@@ -589,6 +589,49 @@ function escapeHtmlForTextarea(str = '') {
     .replace(/>/g, '&gt;');
 }
 
+function escapeHtmlAttr(str = '') {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function normalizeBuilderFormFields(fields) {
+  let list = fields;
+  if (typeof list === 'string') {
+    try { list = JSON.parse(list); } catch (error) { list = []; }
+  }
+  if (!Array.isArray(list) || !list.length) {
+    list = [
+      { id: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your name' },
+      { id: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com' },
+      { id: 'message', label: 'Message', type: 'textarea', required: false, placeholder: 'How can we help?', rows: 5 }
+    ];
+  }
+  return list.map((field, index) => ({
+    id: String(field.id || field.name || `field_${index + 1}`).trim().replace(/[^a-zA-Z0-9_-]/g, '_') || `field_${index + 1}`,
+    label: String(field.label || field.id || `Field ${index + 1}`),
+    type: ['text', 'email', 'tel', 'number', 'date', 'select', 'textarea'].includes(field.type) ? field.type : 'text',
+    required: Boolean(field.required),
+    placeholder: String(field.placeholder || ''),
+    defaultValue: String(field.defaultValue || ''),
+    options: Array.isArray(field.options)
+      ? field.options.map(option => String(option))
+      : String(field.options || '').split('\n').map(option => option.trim()).filter(Boolean),
+    rows: Math.max(2, Math.min(12, Number(field.rows || 5)))
+  }));
+}
+
+function getSavedMailtoForms() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('fw_mailto_form_builder_forms') || '[]');
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    return [];
+  }
+}
+
 const ICON_PICKER_PAGE_SIZE = 36;
 const ICON_PICKER_SETS = {
   popular: ['✦', '★', '✓', '⚡', '◆', '◈', '✉', '☎', '⌕', '→', '↗', '↑', '①', '②', '③', '☀', '☾', '☁', '●', '○', '▲', '■', '☑', '☒'],
@@ -1024,8 +1067,13 @@ function buildPropsForm(block, options = {}) {
       break;
     case 'form':
       html += field('Title', 'title');
+      html += field('Intro Text', 'introText', 'textarea');
+      html += field('Recipient Email', 'mailtoEmail', 'email');
+      html += field('Subject Template', 'subjectTemplate');
       html += field('Submit Button Text', 'submitText');
-      html += field('Form Action URL', 'action');
+      html += field('Success Title', 'successTitle');
+      html += field('Success Message', 'successMessage', 'textarea');
+      html += buildContactFormFieldEditor(block);
       html += field('Background Color', 'bgColor', 'color');
       html += field('Button Color', 'btnBg', 'color');
       html += field('Button Text Color', 'btnColor', 'color');
@@ -1169,6 +1217,58 @@ function buildPropsForm(block, options = {}) {
   return html;
 }
 
+function buildContactFormFieldEditor(block) {
+  const fields = normalizeBuilderFormFields(block.props.fields);
+  const savedForms = getSavedMailtoForms();
+  const savedOptions = savedForms.map(form => `<option value="${escapeHtmlAttr(form.id)}">${escapeHtmlAttr(form.name || 'Saved Form')}</option>`).join('');
+  const typeOptions = ['text', 'email', 'tel', 'number', 'date', 'select', 'textarea'];
+  const fieldsHtml = fields.map((field, index) => {
+    const optionsText = field.options.join('\n');
+    return `<details class="props-advanced" style="border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:8px;" ${index === 0 ? 'open' : ''}>
+      <summary style="padding:10px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span>▸ ${escapeHtmlAttr(field.label || `Field ${index + 1}`)}</span>
+        <span style="display:inline-flex;gap:4px;">
+          <button class="btn btn-ghost btn-sm" onclick="event.preventDefault();event.stopPropagation();moveContactFormField('${block.id}',${index},-1)">↑</button>
+          <button class="btn btn-ghost btn-sm" onclick="event.preventDefault();event.stopPropagation();moveContactFormField('${block.id}',${index},1)">↓</button>
+          <button class="btn btn-danger btn-sm" onclick="event.preventDefault();event.stopPropagation();removeContactFormField('${block.id}',${index})">x</button>
+        </span>
+      </summary>
+      <div style="padding:12px;">
+        <div class="field"><label class="label">Label</label><input class="input" type="text" value="${escapeHtmlAttr(field.label)}" oninput="updateContactFormField('${block.id}',${index},'label',this.value)"></div>
+        <div class="field"><label class="label">Field ID</label><input class="input" type="text" value="${escapeHtmlAttr(field.id)}" oninput="updateContactFormField('${block.id}',${index},'id',this.value)"></div>
+        <div class="field"><label class="label">Type</label><select class="input" onchange="updateContactFormField('${block.id}',${index},'type',this.value)">
+          ${typeOptions.map(type => `<option value="${type}" ${field.type === type ? 'selected' : ''}>${type}</option>`).join('')}
+        </select></div>
+        <div class="field"><label class="label">Placeholder</label><input class="input" type="text" value="${escapeHtmlAttr(field.placeholder)}" oninput="updateContactFormField('${block.id}',${index},'placeholder',this.value)"></div>
+        <div class="field"><label class="label">Default Value</label><input class="input" type="text" value="${escapeHtmlAttr(field.defaultValue)}" oninput="updateContactFormField('${block.id}',${index},'defaultValue',this.value)"></div>
+        <label class="label" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:12px;"><input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateContactFormField('${block.id}',${index},'required',this.checked)"> Required</label>
+        ${field.type === 'textarea' ? `<div class="field"><label class="label">Textarea Rows</label><input class="input" type="number" min="2" max="12" value="${field.rows}" oninput="updateContactFormField('${block.id}',${index},'rows',this.value)"></div>` : ''}
+        ${field.type === 'select' ? `<div class="field"><label class="label">Dropdown Options</label><textarea class="input" rows="4" placeholder="One option per line" oninput="updateContactFormField('${block.id}',${index},'options',this.value)">${escapeHtmlForTextarea(optionsText)}</textarea></div>` : ''}
+      </div>
+    </details>`;
+  }).join('');
+
+  return `<div class="props-section" style="padding:0;margin:12px 0;border:0;">
+    <div class="props-section-title">Form Fields</div>
+    <p class="text-muted text-sm" style="margin-bottom:10px;">These fields generate the email body. Subject templates can use IDs like {{name}}.</p>
+    ${savedForms.length ? `<div class="field">
+      <label class="label">Use Saved Form</label>
+      <div style="display:flex;gap:6px;">
+        <select class="input" id="saved_form_${block.id}" style="flex:1;">
+          <option value="">Choose from tool library</option>
+          ${savedOptions}
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="importContactFormFromLibrary('${block.id}',document.getElementById('saved_form_${block.id}').value)">Import</button>
+      </div>
+    </div>` : ''}
+    ${fieldsHtml}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-sm" onclick="addContactFormField('${block.id}')">+ Add Field</button>
+      <button class="btn btn-secondary btn-sm" onclick="saveContactFormToLibrary('${block.id}')">Save To Tool Library</button>
+    </div>
+  </div>`;
+}
+
 function buildResponsiveControls(block) {
   const p = block.props || {};
   const gridTypes = ['columns2', 'columns3', 'cards', 'features', 'testimonialWall'];
@@ -1222,6 +1322,116 @@ function updateProp(blockId, key, value) {
   if (block.brandLinks && block.brandLinks[key]) delete block.brandLinks[key];
   renderCanvas();
   renderLayoutList();
+}
+
+function setContactFormFields(block, fields) {
+  block.props.fields = normalizeBuilderFormFields(fields);
+  if (block.brandLinks && block.brandLinks.fields) delete block.brandLinks.fields;
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+}
+
+function updateContactFormField(blockId, index, key, value) {
+  const block = findBlockById(blockId);
+  if (!block) return;
+  const fields = normalizeBuilderFormFields(block.props.fields);
+  if (!fields[index]) return;
+  pushUndoDebounced();
+  if (key === 'required') fields[index][key] = Boolean(value);
+  else if (key === 'rows') fields[index][key] = Math.max(2, Math.min(12, Number(value || 5)));
+  else if (key === 'options') fields[index][key] = String(value || '').split('\n').map(option => option.trim()).filter(Boolean);
+  else if (key === 'id') fields[index][key] = String(value || '').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+  else fields[index][key] = value;
+  block.props.fields = fields;
+  if (block.brandLinks && block.brandLinks.fields) delete block.brandLinks.fields;
+  renderCanvas();
+}
+
+function addContactFormField(blockId) {
+  const block = findBlockById(blockId);
+  if (!block) return;
+  pushUndo();
+  const fields = normalizeBuilderFormFields(block.props.fields);
+  const nextNumber = fields.length + 1;
+  fields.push({
+    id: `field_${nextNumber}`,
+    label: `Field ${nextNumber}`,
+    type: 'text',
+    required: false,
+    placeholder: '',
+    defaultValue: '',
+    options: [],
+    rows: 5
+  });
+  setContactFormFields(block, fields);
+}
+
+function removeContactFormField(blockId, index) {
+  const block = findBlockById(blockId);
+  if (!block) return;
+  const fields = normalizeBuilderFormFields(block.props.fields);
+  if (fields.length <= 1 || !fields[index]) return;
+  pushUndo();
+  fields.splice(index, 1);
+  setContactFormFields(block, fields);
+}
+
+function moveContactFormField(blockId, index, dir) {
+  const block = findBlockById(blockId);
+  if (!block) return;
+  const fields = normalizeBuilderFormFields(block.props.fields);
+  const nextIndex = index + dir;
+  if (!fields[index] || nextIndex < 0 || nextIndex >= fields.length) return;
+  pushUndo();
+  const tmp = fields[index];
+  fields[index] = fields[nextIndex];
+  fields[nextIndex] = tmp;
+  setContactFormFields(block, fields);
+}
+
+function importContactFormFromLibrary(blockId, formId) {
+  if (!formId) return;
+  const block = findBlockById(blockId);
+  if (!block) return;
+  const saved = getSavedMailtoForms().find(form => form.id === formId);
+  if (!saved) return;
+  pushUndo();
+  block.props.title = saved.title || block.props.title || 'Contact Us';
+  block.props.introText = saved.introText || block.props.introText || '';
+  block.props.mailtoEmail = saved.mailtoEmail || block.props.mailtoEmail || '';
+  block.props.subjectTemplate = saved.subjectTemplate || block.props.subjectTemplate || 'New message from {{name}}';
+  block.props.submitText = saved.submitText || block.props.submitText || 'Send Message';
+  block.props.successTitle = saved.successTitle || block.props.successTitle || 'Thank you for reaching out!';
+  block.props.successMessage = saved.successMessage || block.props.successMessage || '';
+  block.props.fields = normalizeBuilderFormFields(saved.fields);
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+  toast('Saved form imported.', 'success');
+}
+
+function saveContactFormToLibrary(blockId) {
+  const block = findBlockById(blockId);
+  if (!block) return;
+  const name = block.props.title || 'Contact Form';
+  const saved = getSavedMailtoForms();
+  const form = {
+    id: `form_${Date.now()}`,
+    name,
+    title: block.props.title || 'Contact Us',
+    introText: block.props.introText || '',
+    mailtoEmail: block.props.mailtoEmail || '',
+    subjectTemplate: block.props.subjectTemplate || 'New message from {{name}}',
+    submitText: block.props.submitText || 'Send Message',
+    successTitle: block.props.successTitle || 'Thank you for reaching out!',
+    successMessage: block.props.successMessage || '',
+    fields: normalizeBuilderFormFields(block.props.fields)
+  };
+  saved.unshift(form);
+  localStorage.setItem('fw_mailto_form_builder_forms', JSON.stringify(saved.slice(0, 40)));
+  renderProps();
+  toast('Form saved to the tool library.', 'success');
 }
 
 const BLOCK_STYLE_KEYS = [

@@ -225,7 +225,8 @@ select.input { appearance: none; }
 
 /* ===== EDITOR LAYOUT ===== */
 #view-editor { flex-direction: column; }
-.editor-header { background: var(--bg); border-bottom: 1px solid var(--border); height: 60px; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+.header-wrapper { max-width: 1200px; margin: 0 auto; height: 72px; min-height: 72px; padding: 6px 24px; display: flex; align-items: center; justify-content: space-between; line-height: 1; gap: 16px; }
+.editor-header { background: var(--bg); border-bottom: 1px solid var(--border); height: 72px; min-height: 72px; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
 .editor-title { font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .editor-layout { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
@@ -444,7 +445,8 @@ body.command-drag .layout-item:active { cursor: grabbing; }
     width: 100vw;
   }
   .editor-header {
-    height: calc(60px + env(safe-area-inset-top, 0px));
+    height: calc(72px + env(safe-area-inset-top, 0px));
+    min-height: calc(72px + env(safe-area-inset-top, 0px));
     padding: env(safe-area-inset-top, 0px) 8px 0;
     gap: 5px;
     z-index: 500;
@@ -645,6 +647,7 @@ textarea,
 }
 
 .builder-theme-toggle {
+  display: none !important;
   width: 76px;
   min-width: 76px;
   height: 42px;

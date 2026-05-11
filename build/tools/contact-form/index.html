@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build a free mailto contact form with text fields, dropdowns, and textarea fields. Generate embeddable HTML for any static website.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <title>Mailto Contact Form Builder - Functional Websites</title>
+  <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('https://functionalwebsites.com/styles/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('https://functionalwebsites.com/styles/fonts/JetBrainsMono-Bold.woff2') format('woff2');
+      font-weight: 800;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'JetBrains Mono';
+      src: url('https://functionalwebsites.com/styles/fonts/JetBrainsMono-ExtraBold.woff2') format('woff2');
+      font-weight: 800;
+      font-style: normal;
+    }
+    :root {
+      --ink: #10100d;
+      --paper: #f5efe0;
+      --panel: #ebe2ce;
+      --panel-strong: #dfd2b8;
+      --rust: #b9482e;
+      --muted: #625d50;
+      --shadow: 4px 4px 0 var(--ink);
+      --line: 3px solid var(--ink);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 11% 14%, rgba(36, 77, 103, 0.16), transparent 19rem),
+        radial-gradient(circle at 88% 10%, rgba(185, 72, 46, 0.18), transparent 20rem),
+        repeating-linear-gradient(0deg, rgba(16, 16, 13, 0.035) 0 1px, transparent 1px 7px),
+        linear-gradient(180deg, #d8cfba 0%, #eee5d2 42%, #d2c6ad 100%);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    .topbar {
+      height: 72px;
+      min-height: 72px;
+      padding: 6px 24px;
+      background: var(--paper);
+      border-bottom: 0;
+      box-shadow: inset 0 -3px 0 var(--ink), 0 4px 0 var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .mobile-build-link { display: none; }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 48px;
+    }
+    .logo-mark svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      fill: var(--ink);
+    }
+    .brand strong { color: inherit; }
+    h1, h2 { color: var(--rust); }
+    .nav { display: flex; gap: 12px; flex-wrap: wrap; }
+    .nav a, button {
+      min-height: 45px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      background: var(--panel);
+      color: var(--ink);
+      border: var(--line);
+      border-radius: 4px;
+      box-shadow: var(--shadow);
+      font: inherit;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+      transition: transform .22s ease, box-shadow .22s ease, background-color .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .nav .build-shortcut,
+    .nav a[href="/"] {
+      background: #7cff6b;
+      color: #10100d;
+    }
+    .build-shortcut {
+      position: relative;
+    }
+    .build-shortcut::after {
+      content: "B";
+      position: absolute;
+      top: -10px;
+      right: -8px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border: 1px solid var(--ink);
+      border-radius: 5px;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(3px);
+      transition: opacity .16s ease, transform .16s ease;
+    }
+    .build-shortcut:hover::after,
+    .build-shortcut:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .nav a:hover, button:hover { background: var(--rust); color: #fff; transform: translate(1px, 1px); box-shadow: 3px 3px 0 var(--ink); }
+    .menu-toggle {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      min-height: 42px;
+      max-width: 42px;
+      max-height: 42px;
+      aspect-ratio: 1 / 1;
+      padding: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex: 0 0 42px;
+      order: -1;
+    }
+    .menu-toggle-bar,
+    .menu-toggle-bar::before,
+    .menu-toggle-bar::after {
+      content: "";
+      width: 22px;
+      height: 3px;
+      display: block;
+      background: currentColor;
+      position: relative;
+      transition: transform .2s ease, opacity .2s ease, background-color .2s ease;
+    }
+    .menu-toggle-bar::before,
+    .menu-toggle-bar::after {
+      position: absolute;
+      left: 0;
+    }
+    .menu-toggle-bar::before { top: -8px; }
+    .menu-toggle-bar::after { top: 8px; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-bar { background: transparent; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-bar::before { transform: translateY(8px) rotate(45deg); background: currentColor; }
+    .menu-toggle[aria-expanded="true"] .menu-toggle-bar::after { transform: translateY(-8px) rotate(-45deg); background: currentColor; }
+    main { max-width: 1280px; margin: 0 auto; padding: 52px 24px 80px; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap: 28px; align-items: end; margin-bottom: 32px; }
+    h1 {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 0 18px;
+      padding: 14px 18px;
+      background: var(--panel);
+      border: var(--line);
+      box-shadow: var(--shadow);
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.05;
+    }
+    .hero p { max-width: 760px; color: var(--muted); }
+    .note { background: var(--rust); color: #fff; border: var(--line); box-shadow: var(--shadow); padding: 18px; font-size: 14px; }
+    .shell { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 22px; align-items: start; }
+    .panel { background: var(--panel); border: var(--line); box-shadow: var(--shadow); padding: 18px; }
+    h2 { font-size: 18px; margin: 0 0 14px; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 6px; }
+    input, textarea, select {
+      width: 100%;
+      background: var(--paper);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 0;
+      padding: 9px 10px;
+      font: inherit;
+      font-size: 13px;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .field-card { background: var(--paper); border: 2px solid var(--ink); margin-bottom: 10px; overflow: hidden; }
+    .field-card summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px; cursor: pointer; user-select: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .field-card-body { padding: 0 10px 12px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .small-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .small-actions button { padding: 6px 8px; font-size: 11px; border-width: 2px; }
+    .danger { background: var(--rust) !important; color: #fff !important; }
+    .preview-frame { width: 100%; min-height: 560px; border: 2px solid var(--ink); background: var(--paper); }
+    .code { margin-top: 18px; min-height: 260px; font-size: 12px; white-space: pre; overflow: auto; }
+    .status { min-height: 20px; margin-top: 8px; color: var(--rust); font-size: 12px; font-weight: 700; }
+    @media (max-width: 900px) {
+      .hero, .shell { grid-template-columns: 1fr; }
+      main { padding-inline: 16px; }
+      .topbar {
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 16px;
+      }
+      .mobile-build-link {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 14px;
+        background: #7cff6b;
+        color: #10100d;
+        border: var(--line);
+        border-radius: 4px;
+        box-shadow: var(--shadow);
+        font-weight: 800;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: none;
+      }
+      .brand {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .brand-text {
+        display: none;
+      }
+      .logo-mark {
+        width: 48px;
+        height: 48px;
+      }
+      .menu-toggle { display: inline-flex; }
+      .nav {
+        display: none;
+        position: absolute;
+        top: calc(100% + 3px);
+        left: 0;
+        right: 0;
+        padding: 14px 16px 18px;
+        background: var(--paper);
+        border-bottom: var(--line);
+        box-shadow: 0 4px 0 var(--ink);
+      }
+      .nav[data-open="true"] {
+        display: flex;
+        flex-direction: column;
+      }
+      .nav a {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Functional Websites builder home">
+      <span class="logo-mark" aria-hidden="true"><svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path class="logo-globe" d="M124.99998,63.77464c-33.75761,0-61.22533,27.46775-61.22533,61.22522,0,33.76176,27.46772,61.2255,61.22533,61.2255,33.76173,0,61.22536-27.46374,61.22536-61.2255,0-33.75747-27.46363-61.22522-61.22536-61.22522ZM113.19576,73.70539c-5.24093,3.38575-9.97977,7.57761-14.00227,12.45118-1.12043,1.35914-2.1796,2.76325-3.1735,4.21026-2.09593-1.39595-4.09805-2.94908-5.99805-4.65523,6.49394-5.7858,14.41656-9.99191,23.17382-12.0062ZM84.08719,91.93213c2.38774,2.16525,4.9184,4.11838,7.56944,5.85111-3.63878,7.32246-5.80005,15.34712-6.29394,23.56563h-12.86755c.76532-11.09812,4.98783-21.26146,11.59205-29.41674ZM72.60331,129.94289h12.85126c.63467,7.76121,2.75509,15.33495,6.20207,22.27373-2.65104,1.73881-5.18171,3.69195-7.56944,5.85305-6.34911-7.8387-10.49403-17.53285-11.48388-28.12678ZM90.02395,164.29228c1.90007-1.7081,3.9042-3.2633,5.99809-4.65717.83267,1.21234,1.71021,2.3959,2.63471,3.54708,4.12458,5.1449,9.0593,9.56935,14.54922,13.1185-8.75729-2.01236-16.69008-6.22054-23.18202-12.00842ZM120.70401,170.84337c-6.86334-3.81025-12.70424-9.07553-17.1676-15.35321,5.37559-2.41236,11.15935-3.90005,17.1676-4.37768v19.73089ZM120.70401,142.49411c-7.57768.52038-14.85939,2.41015-21.57991,5.55723-2.70618-5.57563-4.45309-11.68797-5.04701-18.10844h26.62692v12.55121ZM120.70401,121.34887h-26.73097c.47756-6.85521,2.30001-13.40838,5.21844-19.36353,6.70011,3.12452,13.95733,5.00419,21.51252,5.52056v13.84298ZM120.70401,98.89139c-5.97155-.47763-11.72671-1.94899-17.07577-4.33672,4.46741-6.26551,10.28586-11.53895,17.07577-15.35335v19.69007ZM159.97595,85.70952c-1.9449,1.74905-4.00206,3.34092-6.15513,4.76136-1.01023-1.48367-2.09396-2.92445-3.24293-4.31638-4.04906-4.90623-8.83277-9.12465-14.11859-12.52672,8.89202,1.98164,16.94107,6.2204,23.51665,12.08175ZM129.29596,79.33194c6.72051,3.82035,12.4757,9.07152,16.90433,15.29814-5.30008,2.34498-10.992,3.78783-16.90433,4.26131v-19.55946ZM129.29596,107.50589c7.48172-.51028,14.67983-2.35937,21.32888-5.43284,2.8939,5.93067,4.69595,12.45325,5.17358,19.27581h-26.50246v-13.84298ZM129.29596,129.94289h26.3963c-.60614,6.34894-2.3592,12.42461-5.07762,17.98391-6.64497-3.07153-13.83696-4.9184-21.31868-5.43284v-12.55108ZM129.29596,151.11248c5.90825.46947,11.59606,1.9144,16.89209,4.25315-4.42251,6.22455-10.17773,11.47572-16.89209,15.29814v-19.55129ZM136.46138,176.37417c5.32457-3.42657,10.13076-7.67972,14.20016-12.63077,1.11638-1.35928,2.17147-2.76547,3.16537-4.21233,2.14902,1.42044,4.20621,3.01231,6.15112,4.76122-6.57765,5.86135-14.62473,10.09817-23.51665,12.08189ZM165.91278,158.06967c-2.43879-2.21022-5.0266-4.19988-7.74088-5.96526,3.41633-6.9082,5.51634-14.43697,6.147-22.16152h13.08184c-.99386,10.59393-5.13881,20.28808-11.48796,28.12678ZM164.4107,121.34887c-.48974-8.17976-2.63063-16.1636-6.2388-23.45342,2.71434-1.7633,5.30208-3.75311,7.74088-5.96332,6.6083,8.15527,10.82672,18.32069,11.59208,29.41674h-13.09415Z"/><path class="logo-gear" d="M222.17682,134.82829l23.41662-12.14607-3.19748-25.03112-25.74334-6.40991c-1.9816-5.36282-4.42368-10.50373-7.27356-15.37863l11.8203-23.62087-17.29971-18.37109-24.63473,9.96199c-4.69123-3.14666-9.67007-5.89485-14.88628-8.2023l-4.31793-26.03796-24.79403-4.69386-14.05755,22.51225c-5.77186.22145-11.41635.94546-16.89186,2.13073l-18.7873-18.51651-22.8179,10.77607,1.86267,26.51771c-4.44631,3.51122-8.57799,7.40256-12.35252,11.62022l-26.14687-3.94686-12.12606,22.12996,17.05413,20.31136c-1.52977,5.40507-2.60469,10.99906-3.18078,16.73784l-23.41608,12.14607,3.19748,25.03112,25.74277,6.40976c1.98164,5.36313,4.42376,10.50389,7.27376,15.37909l-11.82034,23.62102,17.29971,18.37124,24.63503-9.9623c4.69112,3.14666,9.6698,5.89469,14.88589,8.20199l4.31801,26.03827,24.79403,4.69401,14.05759-22.51256c5.77186-.2216,11.41631-.94562,16.89182-2.13073l18.7873,18.51635,22.8179-10.77591-1.86271-26.51771c4.44619-3.51122,8.57788-7.40241,12.35241-11.62006l26.14722,3.94686,12.1261-22.12996-17.05436-20.31151c1.52969-5.40507,2.60461-10.9989,3.18067-16.738ZM124.99975,199.17443c-40.90011,0-74.17462-33.27444-74.17462-74.17459S84.09964,50.82511,124.99975,50.82511s74.17466,33.2746,74.17466,74.17474-33.27452,74.17459-74.17466,74.17459Z"/></svg></span>
+      <span class="brand-text">functional(Websites)</span>
+    </a>
+    <nav class="nav" id="tools-nav" data-open="false">
+      <a href="/tools/">Tools</a>
+      <a href="https://functionalwebsites.com/">Main Site</a>
+      <a class="build-shortcut" href="/" aria-label="Open builder. Shortcut: B" aria-keyshortcuts="B">Build</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="tools-nav" aria-label="Toggle navigation">
+      <span class="menu-toggle-bar"></span>
+    </button>
+    <a class="mobile-build-link build-shortcut" href="/" aria-label="Open builder. Shortcut: B" aria-keyshortcuts="B">Build</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Mailto Contact Form Builder</h1>
+        <p>Create a free contact form for a static website. Add text fields, dropdowns, required fields, and a message box, then generate HTML that opens a pre-filled email in the visitor's email app.</p>
+      </div>
+      <aside class="note">Mailto forms are free and static-friendly, but they are not a full form backend. The visitor's email app must open, and the visitor still has to send the email.</aside>
+    </section>
+
+    <section class="shell">
+      <div class="panel">
+        <h2>Form Setup</h2>
+        <div class="field"><label for="savedForms">Saved Forms</label><select id="savedForms"></select></div>
+        <div class="actions" style="margin-top:0;margin-bottom:18px;">
+          <button type="button" id="loadSaved">Load</button>
+          <button type="button" id="saveForm">Save</button>
+          <button type="button" id="deleteSaved" class="danger">Delete Saved</button>
+        </div>
+        <div class="field"><label for="formName">Library Name</label><input id="formName" type="text"></div>
+        <div class="field"><label for="title">Visible Title</label><input id="title" type="text"></div>
+        <div class="field"><label for="introText">Intro Text</label><textarea id="introText"></textarea></div>
+        <div class="field"><label for="mailtoEmail">Recipient Email</label><input id="mailtoEmail" type="email" placeholder="hello@example.com"></div>
+        <div class="field"><label for="subjectTemplate">Subject Template</label><input id="subjectTemplate" type="text" placeholder="New message from {{name}}"></div>
+        <div class="field"><label for="submitText">Button Text</label><input id="submitText" type="text"></div>
+        <div class="field"><label for="successMessage">Success Message</label><textarea id="successMessage"></textarea></div>
+        <h2 style="margin-top:22px;">Fields</h2>
+        <div id="fields"></div>
+        <div class="actions">
+          <button type="button" id="addField">+ Add Field</button>
+          <button type="button" id="addDropdown">+ Add Dropdown</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Preview</h2>
+        <iframe id="preview" class="preview-frame" title="Generated contact form preview"></iframe>
+        <div class="actions">
+          <button type="button" id="copyCode">Copy HTML</button>
+          <button type="button" id="copyJson">Copy Builder JSON</button>
+          <button type="button" id="openBuilder">Use In Builder</button>
+        </div>
+        <div id="status" class="status" aria-live="polite"></div>
+        <div class="field" style="margin-top:18px;"><label for="code">Embed Code</label><textarea id="code" class="code" readonly spellcheck="false"></textarea></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'fw_mailto_form_builder_state';
+    const LIBRARY_KEY = 'fw_mailto_form_builder_forms';
+    const fieldTypes = ['text', 'email', 'tel', 'number', 'date', 'select', 'textarea'];
+    const defaultState = {
+      id: '',
+      name: 'Service Request Form',
+      title: 'Request a Quote',
+      introText: 'Tell us what you need and we will get back to you.',
+      mailtoEmail: 'hello@example.com',
+      subjectTemplate: 'New service request from {{name}}',
+      submitText: 'Send Request',
+      successTitle: 'Thank you for reaching out!',
+      successMessage: 'Your email app should have opened with a pre-filled message. If you do not see it, you can email us directly.',
+      fields: [
+        { id: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your name', defaultValue: '', options: [], rows: 5 },
+        { id: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com', defaultValue: '', options: [], rows: 5 },
+        { id: 'phone', label: 'Phone Number', type: 'tel', required: false, placeholder: '', defaultValue: '', options: [], rows: 5 },
+        { id: 'contact_method', label: 'Preferred Contact Method', type: 'select', required: true, placeholder: '-- Select One --', defaultValue: '', options: ['Call', 'Text', 'Email'], rows: 5 },
+        { id: 'message', label: 'Message', type: 'textarea', required: false, placeholder: 'How can we help?', defaultValue: 'Hello, I am interested in your services.', options: [], rows: 5 }
+      ]
+    };
+    let state = loadState();
+    const $ = id => document.getElementById(id);
+
+    function escapeHtml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function escapeAttr(value) { return escapeHtml(value).replace(/'/g, '&#39;'); }
+    function cleanId(value, fallback) { return String(value || fallback || '').trim().replace(/[^a-zA-Z0-9_-]/g, '_') || fallback || 'field'; }
+    function normalizeFields(fields) {
+      const list = Array.isArray(fields) && fields.length ? fields : defaultState.fields;
+      return list.map((field, index) => ({
+        id: cleanId(field.id || field.name, `field_${index + 1}`),
+        label: String(field.label || `Field ${index + 1}`),
+        type: fieldTypes.includes(field.type) ? field.type : 'text',
+        required: Boolean(field.required),
+        placeholder: String(field.placeholder || ''),
+        defaultValue: String(field.defaultValue || ''),
+        options: Array.isArray(field.options) ? field.options.map(String) : String(field.options || '').split('\n').map(option => option.trim()).filter(Boolean),
+        rows: Math.max(2, Math.min(12, Number(field.rows || 5)))
+      }));
+    }
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        return { ...defaultState, ...(saved || {}), fields: normalizeFields(saved && saved.fields) };
+      } catch (error) {
+        return { ...defaultState, fields: normalizeFields(defaultState.fields) };
+      }
+    }
+    function getLibrary() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LIBRARY_KEY) || '[]');
+        return Array.isArray(saved) ? saved : [];
+      } catch (error) {
+        return [];
+      }
+    }
+    function setLibrary(forms) { localStorage.setItem(LIBRARY_KEY, JSON.stringify(forms.slice(0, 40))); }
+    function saveCurrentState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+    function bindInputs() {
+      ['formName', 'title', 'introText', 'mailtoEmail', 'subjectTemplate', 'submitText', 'successMessage'].forEach(id => {
+        $(id).addEventListener('input', event => {
+          state[id === 'formName' ? 'name' : id] = event.target.value;
+          updateGeneratedOutput();
+        });
+      });
+      $('addField').addEventListener('click', () => addField('text'));
+      $('addDropdown').addEventListener('click', () => addField('select'));
+      $('copyCode').addEventListener('click', () => copyText($('code').value, 'HTML copied.'));
+      $('copyJson').addEventListener('click', () => copyText(JSON.stringify(toBuilderConfig(), null, 2), 'Builder JSON copied.'));
+      $('saveForm').addEventListener('click', saveToLibrary);
+      $('loadSaved').addEventListener('click', loadFromLibrary);
+      $('deleteSaved').addEventListener('click', deleteFromLibrary);
+      $('openBuilder').addEventListener('click', () => {
+        saveToLibrary();
+        const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+        window.location.href = isLocal ? '/build/' : '/';
+      });
+    }
+
+    function render() {
+      $('formName').value = state.name || '';
+      $('title').value = state.title || '';
+      $('introText').value = state.introText || '';
+      $('mailtoEmail').value = state.mailtoEmail || '';
+      $('subjectTemplate').value = state.subjectTemplate || '';
+      $('submitText').value = state.submitText || '';
+      $('successMessage').value = state.successMessage || '';
+      renderSavedSelect();
+      renderFields();
+      updateGeneratedOutput();
+    }
+    function updateGeneratedOutput() {
+      const code = generateEmbedCode(state);
+      $('code').value = code;
+      $('preview').srcdoc = code;
+      $('status').textContent = estimateMailtoLength(state) > 1800 ? 'Warning: this form may create a long mailto link. Keep labels and defaults concise.' : '';
+      saveCurrentState();
+    }
+    function renderSavedSelect() {
+      const forms = getLibrary();
+      const current = $('savedForms').value || state.id || '';
+      $('savedForms').innerHTML = `<option value="">Saved forms in this browser</option>${forms.map(form => `<option value="${escapeAttr(form.id)}">${escapeHtml(form.name || 'Untitled Form')}</option>`).join('')}`;
+      $('savedForms').value = current;
+    }
+    function renderFields() {
+      $('fields').innerHTML = state.fields.map((field, index) => `
+        <details class="field-card" ${index === 0 ? 'open' : ''}>
+          <summary>
+            <span>${escapeHtml(field.label || `Field ${index + 1}`)}</span>
+            <span class="small-actions">
+              <button type="button" onclick="moveField(${index}, -1)">Up</button>
+              <button type="button" onclick="moveField(${index}, 1)">Down</button>
+              <button type="button" class="danger" onclick="removeField(${index})">x</button>
+            </span>
+          </summary>
+          <div class="field-card-body">
+            <div class="field"><label>Label</label><input type="text" value="${escapeAttr(field.label)}" oninput="updateField(${index}, 'label', this.value)"></div>
+            <div class="field"><label>Field ID</label><input type="text" value="${escapeAttr(field.id)}" oninput="updateField(${index}, 'id', this.value)"></div>
+            <div class="field"><label>Type</label><select onchange="updateField(${index}, 'type', this.value)">${fieldTypes.map(type => `<option value="${type}" ${field.type === type ? 'selected' : ''}>${type}</option>`).join('')}</select></div>
+            <div class="field"><label>Placeholder</label><input type="text" value="${escapeAttr(field.placeholder)}" oninput="updateField(${index}, 'placeholder', this.value)"></div>
+            <div class="field"><label>Default Value</label><input type="text" value="${escapeAttr(field.defaultValue)}" oninput="updateField(${index}, 'defaultValue', this.value)"></div>
+            <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;"><input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateField(${index}, 'required', this.checked)" style="width:auto;"> Required</label>
+            ${field.type === 'textarea' ? `<div class="field"><label>Rows</label><input type="number" min="2" max="12" value="${field.rows}" oninput="updateField(${index}, 'rows', this.value)"></div>` : ''}
+            ${field.type === 'select' ? `<div class="field"><label>Dropdown Options</label><textarea oninput="updateField(${index}, 'options', this.value)">${escapeHtml(field.options.join('\n'))}</textarea></div>` : ''}
+          </div>
+        </details>
+      `).join('');
+    }
+    function addField(type) {
+      const next = state.fields.length + 1;
+      state.fields.push({ id: type === 'select' ? `dropdown_${next}` : `field_${next}`, label: type === 'select' ? `Dropdown ${next}` : `Field ${next}`, type, required: false, placeholder: type === 'select' ? '-- Select One --' : '', defaultValue: '', options: type === 'select' ? ['Option One', 'Option Two'] : [], rows: 5 });
+      render();
+    }
+    function updateField(index, key, value) {
+      const field = state.fields[index];
+      if (!field) return;
+      if (key === 'required') field[key] = Boolean(value);
+      else if (key === 'rows') field[key] = Math.max(2, Math.min(12, Number(value || 5)));
+      else if (key === 'options') field[key] = String(value || '').split('\n').map(option => option.trim()).filter(Boolean);
+      else if (key === 'id') field[key] = cleanId(value, field.id);
+      else field[key] = value;
+      if (key === 'type') render();
+      else updateGeneratedOutput();
+    }
+    function moveField(index, dir) {
+      const next = index + dir;
+      if (next < 0 || next >= state.fields.length) return;
+      const field = state.fields[index];
+      state.fields[index] = state.fields[next];
+      state.fields[next] = field;
+      render();
+    }
+    function removeField(index) {
+      if (state.fields.length <= 1) return;
+      state.fields.splice(index, 1);
+      render();
+    }
+    function saveToLibrary() {
+      const forms = getLibrary();
+      const id = state.id || `form_${Date.now()}`;
+      state.id = id;
+      const next = { ...state, id, fields: normalizeFields(state.fields) };
+      const existingIndex = forms.findIndex(form => form.id === id);
+      if (existingIndex >= 0) forms[existingIndex] = next;
+      else forms.unshift(next);
+      setLibrary(forms);
+      render();
+      setStatus('Form saved in this browser.');
+    }
+    function loadFromLibrary() {
+      const id = $('savedForms').value;
+      const form = getLibrary().find(item => item.id === id);
+      if (!form) return;
+      state = { ...defaultState, ...form, fields: normalizeFields(form.fields) };
+      render();
+      setStatus('Saved form loaded.');
+    }
+    function deleteFromLibrary() {
+      const id = $('savedForms').value || state.id;
+      if (!id) return;
+      setLibrary(getLibrary().filter(form => form.id !== id));
+      if (state.id === id) state.id = '';
+      render();
+      setStatus('Saved form deleted from this browser.');
+    }
+    function toBuilderConfig() {
+      return { name: state.name, title: state.title, introText: state.introText, mailtoEmail: state.mailtoEmail, subjectTemplate: state.subjectTemplate, submitText: state.submitText, successTitle: state.successTitle, successMessage: state.successMessage, fields: normalizeFields(state.fields) };
+    }
+    function generateEmbedCode(form) {
+      const fields = normalizeFields(form.fields);
+      const formId = `fw-mailto-${Math.random().toString(36).slice(2, 8)}`;
+      const fieldsHtml = fields.map(field => {
+        const required = field.required ? ' required' : '';
+        const label = `<label for="${formId}-${escapeAttr(field.id)}">${escapeHtml(field.label)}${field.required ? '*' : ''}</label>`;
+        if (field.type === 'textarea') return `<div class="fw-form-row">${label}<textarea id="${formId}-${escapeAttr(field.id)}" name="${escapeAttr(field.id)}" rows="${field.rows}" placeholder="${escapeAttr(field.placeholder)}"${required}>${escapeHtml(field.defaultValue)}</textarea></div>`;
+        if (field.type === 'select') {
+          const options = [`<option value="">${escapeHtml(field.placeholder || '-- Select One --')}</option>`].concat(field.options.map(option => `<option value="${escapeAttr(option)}"${option === field.defaultValue ? ' selected' : ''}>${escapeHtml(option)}</option>`)).join('');
+          return `<div class="fw-form-row">${label}<select id="${formId}-${escapeAttr(field.id)}" name="${escapeAttr(field.id)}"${required}>${options}</select></div>`;
+        }
+        return `<div class="fw-form-row">${label}<input id="${formId}-${escapeAttr(field.id)}" name="${escapeAttr(field.id)}" type="${escapeAttr(field.type)}" placeholder="${escapeAttr(field.placeholder)}" value="${escapeAttr(field.defaultValue)}"${required}></div>`;
+      }).join('\n      ');
+      const config = { recipient: form.mailtoEmail || '', subjectTemplate: form.subjectTemplate || 'New message', successTitle: form.successTitle || 'Thank you for reaching out!', successMessage: form.successMessage || 'Your email app should have opened with a pre-filled message.', fields };
+      return `<style>
+.fw-mailto-contact{max-width:560px;margin:0 auto;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:inherit}.fw-mailto-contact h2{margin:0 0 10px}.fw-mailto-contact p{line-height:1.6}.fw-mailto-contact form{display:grid;gap:16px}.fw-form-row label{display:block;margin-bottom:6px;font-weight:700}.fw-form-row input,.fw-form-row textarea,.fw-form-row select{width:100%;box-sizing:border-box;padding:10px 12px;color:inherit;background:transparent;border:1px solid currentColor;border-radius:0;font:inherit}.fw-form-row textarea{resize:vertical}.fw-mailto-contact button{width:fit-content;padding:12px 18px;border:1px solid #10100d;border-radius:4px;background:#10100d;color:#fff;cursor:pointer;font:inherit;font-weight:700}.fw-mailto-thanks{display:none;text-align:center}
+</style>
+<div class="fw-mailto-contact">
+  <div id="${formId}-wrapper">
+    <h2>${escapeHtml(form.title || 'Contact Us')}</h2>
+    ${form.introText ? `<p>${escapeHtml(form.introText)}</p>` : ''}
+    <form id="${formId}">
+      ${fieldsHtml}
+      <p><em>Submitting opens your email app with a pre-filled message. Review it, then hit send.</em></p>
+      <button type="submit">${escapeHtml(form.submitText || 'Send Message')}</button>
+    </form>
+  </div>
+  <div id="${formId}-thanks" class="fw-mailto-thanks">
+    <p><strong>${escapeHtml(config.successTitle)}</strong></p>
+    <p>${escapeHtml(config.successMessage)}${config.recipient ? ` If you had trouble sending, email <a href="mailto:${escapeAttr(config.recipient)}">${escapeHtml(config.recipient)}</a>.` : ''}</p>
+  </div>
+</div>
+<script>
+(function(){var form=document.getElementById(${JSON.stringify(formId)});if(!form)return;var config=${JSON.stringify(config).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')};form.addEventListener('submit',function(event){event.preventDefault();var values={};config.fields.forEach(function(field){var input=form.elements[field.id];values[field.id]=input?String(input.value||''):'';});var recipient=String(config.recipient||'').replace(/^mailto:/,'');if(!recipient){alert('Add a recipient email address before using this form.');return false;}var subject=String(config.subjectTemplate||'New message').replace(/\\{\\{\\s*([a-zA-Z0-9_-]+)\\s*\\}\\}/g,function(match,key){return values[key]||'';});var body=config.fields.map(function(field){return field.label+': '+(values[field.id]||'');}).join('\\n')+'\\n\\nSent from website contact form.';window.location.href='mailto:'+recipient+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);document.getElementById(${JSON.stringify(`${formId}-wrapper`)}).style.display='none';document.getElementById(${JSON.stringify(`${formId}-thanks`)}).style.display='block';return false;});})();
+<\/script>`;
+    }
+    function estimateMailtoLength(form) {
+      const body = normalizeFields(form.fields).map(field => `${field.label}: ${field.defaultValue || field.placeholder || ''}`).join('\n');
+      return `mailto:${form.mailtoEmail}?subject=${form.subjectTemplate}&body=${body}`.length;
+    }
+    async function copyText(text, message) {
+      try { await navigator.clipboard.writeText(text); setStatus(message); }
+      catch (error) { setStatus('Copy failed. Select the code and copy it manually.'); }
+    }
+    function setStatus(message) {
+      $('status').textContent = message;
+      window.clearTimeout(setStatus.timer);
+      setStatus.timer = window.setTimeout(() => { if ($('status').textContent === message) $('status').textContent = ''; }, 2500);
+    }
+    const nav = document.getElementById('tools-nav');
+    const toggle = document.querySelector('.menu-toggle');
+    if (nav && toggle) {
+      toggle.addEventListener('click', () => {
+        const isOpen = nav.dataset.open === 'true';
+        nav.dataset.open = String(!isOpen);
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+    }
+    if (!window.__fwToolsBuilderShortcutBound) {
+      window.__fwToolsBuilderShortcutBound = true;
+      document.addEventListener('keydown', (event) => {
+        if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+          return;
+        }
+
+        if (event.key.toLowerCase() !== 'b') {
+          return;
+        }
+
+        const target = event.target;
+        const tagName = target?.tagName?.toLowerCase();
+        if (target?.isContentEditable || ['input', 'textarea', 'select'].includes(tagName)) {
+          return;
+        }
+
+        event.preventDefault();
+        window.location.href = '/';
+      });
+    }
+    bindInputs();
+    render();
+  </script>
+</body>
+</html>

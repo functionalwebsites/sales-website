@@ -163,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function init() {
   applyBuilderPanelState();
   initProFeatures();
   loadProjects();
+  importContactFormFromUrlParam();
   if (!restoreProjectFromUrl()) {
     renderDashboard();
   }
