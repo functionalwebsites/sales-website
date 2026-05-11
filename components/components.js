@@ -832,7 +832,7 @@ footer {
         <a href="https://functionalwebsites.com/services">Services</a>
         <a href="https://functionalwebsites.com/hosting">Hosting</a>
         <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
-        <a href="https://build.functionalwebsites.com/build/tools/">Tools</a>
+        <a href="https://build.functionalwebsites.com/tools/">Tools</a>
         <a href="https://docs.functionalwebsites.com/">Docs</a>
       </div>
       <div class="nav-actions desktop-builder-action">
@@ -868,7 +868,7 @@ footer {
     <div class="footer-section">
       <h4>Resources</h4>
       <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
-      <a href="https://build.functionalwebsites.com/build/tools/contact-form/">Contact Form Builder</a>
+      <a href="https://build.functionalwebsites.com/tools/contact-form/">Contact Form Builder</a>
       <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>
       <a href="https://docs.functionalwebsites.com/">Docs</a>
     </div>

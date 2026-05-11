@@ -228,6 +228,57 @@
     .preview-frame { width: 100%; min-height: 560px; border: 2px solid var(--ink); background: var(--paper); }
     .code { margin-top: 18px; min-height: 260px; font-size: 12px; white-space: pre; overflow: auto; }
     .status { min-height: 20px; margin-top: 8px; color: var(--rust); font-size: 12px; font-weight: 700; }
+    footer {
+      background: var(--panel);
+      border-top: 1px solid var(--ink);
+      padding: 40px 24px;
+      margin-top: 100px;
+    }
+    .footer-brand {
+      max-width: 1200px;
+      margin: 0 auto 28px;
+      display: block;
+      color: var(--ink);
+      font-size: clamp(24px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .footer-brand strong {
+      color: var(--rust);
+      font-weight: 800;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+    .footer-section h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    .footer-section a {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .footer-section a:hover {
+      color: var(--ink);
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid var(--ink);
+      padding-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
     @media (max-width: 900px) {
       .hero, .shell { grid-template-columns: 1fr; }
       main { padding-inline: 16px; }
@@ -283,6 +334,14 @@
       .nav a {
         width: 100%;
       }
+      footer {
+        padding: 24px;
+        margin-top: 60px;
+      }
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
     }
   </style>
 </head>
@@ -293,7 +352,7 @@
       <span class="brand-text">functional(Websites)</span>
     </a>
     <nav class="nav" id="tools-nav" data-open="false">
-      <a href="/build/tools/">Tools</a>
+      <a href="/tools/">Tools</a>
       <a href="https://functionalwebsites.com/">Main Site</a>
       <a class="build-shortcut" href="/build/" aria-label="Open builder. Shortcut: B" aria-keyshortcuts="B">Build</a>
     </nav>
@@ -349,6 +408,40 @@
       </div>
     </section>
   </main>
+  <footer>
+    <a class="footer-brand" href="https://functionalwebsites.com/" aria-label="Functional Websites home">
+      <span>functional</span> <strong>(Websites)</strong>
+    </a>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Product</h4>
+        <a href="/build/">Builder</a>
+        <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
+      </div>
+      <div class="footer-section">
+        <h4>Services</h4>
+        <a href="https://functionalwebsites.com/services">Custom Sites</a>
+        <a href="https://functionalwebsites.com/services#website-cloning">Website Cloning</a>
+        <a href="https://functionalwebsites.com/hosting">Hosting</a>
+        <a href="https://functionalwebsites.com/pricing">Pricing</a>
+        <a href="mailto:cooper@functionalwebsites.com">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
+        <a href="/tools/contact-form/">Contact Form Builder</a>
+        <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>
+        <a href="https://docs.functionalwebsites.com/">Docs</a>
+      </div>
+      <div class="footer-section">
+        <h4>Company</h4>
+        <a href="mailto:cooper@functionalwebsites.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Functional Websites. Built static. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script>
     const STORAGE_KEY = 'fw_mailto_form_builder_state';

@@ -208,6 +208,57 @@
     }
     .card p { color: var(--muted); margin: 0; }
     .button { display: inline-block; width: fit-content; margin-top: auto; }
+    footer {
+      background: var(--panel);
+      border-top: 1px solid var(--ink);
+      padding: 40px 24px;
+      margin-top: 100px;
+    }
+    .footer-brand {
+      max-width: 1200px;
+      margin: 0 auto 28px;
+      display: block;
+      color: var(--ink);
+      font-size: clamp(24px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .footer-brand strong {
+      color: var(--rust);
+      font-weight: 800;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+    .footer-section h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 16px;
+    }
+    .footer-section a {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .footer-section a:hover {
+      color: var(--ink);
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid var(--ink);
+      padding-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
     @media (max-width: 720px) {
       .topbar {
         align-items: center;
@@ -264,6 +315,14 @@
         width: 100%;
       }
       main { padding-inline: 16px; }
+      footer {
+        padding: 24px;
+        margin-top: 60px;
+      }
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
     }
   </style>
 </head>
@@ -290,10 +349,44 @@
       <article class="card">
         <h2>Mailto Contact Form Builder</h2>
         <p>Create a free static contact form with text fields, dropdowns, required fields, and a generated HTML embed. Saved forms are available inside builder contact blocks on this same browser.</p>
-        <a class="button" href="/build/tools/contact-form/">Open Tool</a>
+        <a class="button" href="/tools/contact-form/">Open Tool</a>
       </article>
     </section>
   </main>
+  <footer>
+    <a class="footer-brand" href="https://functionalwebsites.com/" aria-label="Functional Websites home">
+      <span>functional</span> <strong>(Websites)</strong>
+    </a>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Product</h4>
+        <a href="/build/">Builder</a>
+        <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
+      </div>
+      <div class="footer-section">
+        <h4>Services</h4>
+        <a href="https://functionalwebsites.com/services">Custom Sites</a>
+        <a href="https://functionalwebsites.com/services#website-cloning">Website Cloning</a>
+        <a href="https://functionalwebsites.com/hosting">Hosting</a>
+        <a href="https://functionalwebsites.com/pricing">Pricing</a>
+        <a href="mailto:cooper@functionalwebsites.com">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
+        <a href="/tools/contact-form/">Contact Form Builder</a>
+        <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>
+        <a href="https://docs.functionalwebsites.com/">Docs</a>
+      </div>
+      <div class="footer-section">
+        <h4>Company</h4>
+        <a href="mailto:cooper@functionalwebsites.com">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Functional Websites. Built static. All rights reserved.</p>
+    </div>
+  </footer>
   <script>
     const nav = document.getElementById('tools-nav');
     const toggle = document.querySelector('.menu-toggle');
