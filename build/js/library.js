@@ -67,8 +67,14 @@ function saveCurrentPageAsLibraryTemplate() {
   toast('Website template saved to library.', 'success');
 }
 
-function deleteTemplate(templateId) {
-  if (!confirm('Delete this template?')) return;
+async function deleteTemplate(templateId) {
+  const confirmed = await showBuilderDialog({
+    title: 'Delete Template',
+    message: 'Delete this saved block template? This cannot be undone.',
+    confirmText: 'Delete Template',
+    destructive: true
+  });
+  if (!confirmed) return;
   _projectData.templates = (_projectData.templates||[]).filter(t => t.id !== templateId);
   pushUndoDebounced();
   toast('Template deleted', 'success');
@@ -206,9 +212,17 @@ function renderLibraryModal() {
   }
 }
 
-function deleteLibraryItem(kind, id) {
+async function deleteLibraryItem(kind, id) {
   const library = getLibraryData();
   if (!library[kind]) return;
+  const item = library[kind].find(entry => entry.id === id);
+  const confirmed = await showBuilderDialog({
+    title: 'Delete Library Item',
+    message: `Delete "${item?.name || 'this library item'}"? This cannot be undone.`,
+    confirmText: 'Delete Item',
+    destructive: true
+  });
+  if (!confirmed) return;
   library[kind] = library[kind].filter(item => item.id !== id);
   saveLibraryData(library);
   renderTemplatesSection();

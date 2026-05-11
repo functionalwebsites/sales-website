@@ -54,7 +54,14 @@ function useSelectedLibraryImage() {
   renderProps();
 }
 
-function deleteLibraryImage(id) {
+async function deleteLibraryImage(id) {
+  const confirmed = await showBuilderDialog({
+    title: 'Delete Image',
+    message: 'Delete this image from the current website library? Blocks using it may no longer display correctly.',
+    confirmText: 'Delete Image',
+    destructive: true
+  });
+  if (!confirmed) return;
   pushUndo();
   _projectData.images = (_projectData.images||[]).filter(i => i.id !== id);
   if (STATE.imgLibSelectedId === id) STATE.imgLibSelectedId = null;

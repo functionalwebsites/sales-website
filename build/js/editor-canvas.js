@@ -111,8 +111,16 @@ function renamePage(i) {
   renderCanvas();
 }
 
-function deletePage(i) {
+async function deletePage(i) {
   if (_projectData.pages.length <= 1) { toast('Cannot delete the only page', 'error'); return; }
+  const page = _projectData.pages[i];
+  const confirmed = await showBuilderDialog({
+    title: 'Delete Page',
+    message: `Delete "${page?.name || 'this page'}"? This cannot be undone.`,
+    confirmText: 'Delete Page',
+    destructive: true
+  });
+  if (!confirmed) return;
   _projectData.pages.splice(i, 1);
   if (STATE.currentPageIndex >= _projectData.pages.length) STATE.currentPageIndex = _projectData.pages.length - 1;
   setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);

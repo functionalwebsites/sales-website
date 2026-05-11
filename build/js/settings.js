@@ -94,8 +94,14 @@ function updateStorageInfo() {
   document.getElementById('storage-info').textContent = `${count} website${count!==1?'s':''} stored · ~${kb} KB used`;
 }
 
-function clearAllData() {
-  if (!confirm('Clear ALL websites and settings? This cannot be undone.')) return;
+async function clearAllData() {
+  const confirmed = await showBuilderDialog({
+    title: 'Clear All Data',
+    message: 'Delete all websites and builder settings stored in this browser? This cannot be undone.',
+    confirmText: 'Clear All Data',
+    destructive: true
+  });
+  if (!confirmed) return;
   LS.keys().forEach(k => LS.del(k));
   loadProjects();
   toast('All data cleared', 'info');

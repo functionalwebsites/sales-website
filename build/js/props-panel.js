@@ -486,11 +486,19 @@ function updateBrandNameSitewide(value) {
   renderCanvas();
 }
 
-function replaceBrandNameInCopy() {
-  const oldName = prompt('Replace what brand text?', _projectData.brandName || _projectData.name || '');
-  if (!oldName) return;
-  const newName = prompt('Replace it with?', _projectData.brandName || _projectData.name || '');
-  if (!newName) return;
+async function replaceBrandNameInCopy() {
+  const values = await showBuilderDialog({
+    title: 'Replace Brand Text',
+    message: 'Find old brand text inside editable page copy and replace it with the current brand name or a new value.',
+    confirmText: 'Replace Text',
+    fields: [
+      { id: 'oldName', label: 'Find', value: _projectData.brandName || _projectData.name || '' },
+      { id: 'newName', label: 'Replace With', value: _projectData.brandName || _projectData.name || '' }
+    ]
+  });
+  const oldName = values?.oldName?.trim();
+  const newName = values?.newName?.trim();
+  if (!oldName || !newName) return;
   pushUndo();
   updateGeneratedBrandReferences(oldName, newName, true);
   _projectData.brandName = newName;
@@ -1378,9 +1386,17 @@ async function setNavLogoAsFavicon(navbarId) {
   }
 }
 
-function createNavVariant(blockId) {
-  const name = prompt('Variant name (e.g. "Dark Nav"):');
-  if (!name || !name.trim()) return;
+async function createNavVariant(blockId) {
+  const values = await showBuilderDialog({
+    title: 'New Nav Variant',
+    message: 'Create a copy of the current nav settings and switch this nav block to the new variant.',
+    confirmText: 'Create Variant',
+    fields: [
+      { id: 'name', label: 'Variant Name', placeholder: 'Dark Nav' }
+    ]
+  });
+  const name = values?.name?.trim();
+  if (!name) return;
   const newId = 'nav_' + uid();
   const page = _projectData.pages[STATE.currentPageIndex];
   const block = page.blocks.find(b => b.id === blockId);
@@ -1388,11 +1404,11 @@ function createNavVariant(blockId) {
   ensureNavbar(sourceId);
   pushUndo();
   _projectData.navbars[newId] = JSON.parse(JSON.stringify(_projectData.navbars[sourceId]));
-  _projectData.navbars[newId].name = name.trim();
+  _projectData.navbars[newId].name = name;
   if (block) block.props.navbarId = newId;
   renderCanvas();
   renderProps();
-  toast(`Created variant "${name.trim()}"`, 'success');
+  toast(`Created variant "${name}"`, 'success');
 }
 
 function switchNavVariant(blockId, navbarId) {
