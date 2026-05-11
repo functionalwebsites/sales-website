@@ -156,6 +156,8 @@ select.input { appearance: none; }
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
 .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
 .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.modal-storage-warning { background: var(--rust); color: var(--paper); border: var(--line); box-shadow: var(--shadow-sm); padding: 12px; margin: 0 0 16px; line-height: 1.5; font-size: 12px; }
+.modal-storage-warning a { color: var(--paper); font-weight: 900; text-decoration: underline; text-underline-offset: 3px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 
 /* ===== TOAST ===== */
@@ -1468,6 +1470,9 @@ select:hover {
 <div id="modal-new-project" class="modal-overlay hidden">
   <div class="modal">
     <div class="modal-title">Create New Website</div>
+    <div class="modal-storage-warning">
+      Websites are saved in this browser only. They will not appear on other devices or browsers, and clearing browser data can delete them. Download a ZIP backup when the site matters. <a href="https://functionalwebsites.com/docs/" target="_blank" rel="noopener">Read the docs</a>.
+    </div>
     <div class="field">
       <label class="label">Website Name</label>
       <input class="input" id="new-project-name" type="text" placeholder="My Awesome Site">
@@ -1833,7 +1838,7 @@ select:hover {
           <li>Use <strong>Save</strong> often. Your projects are stored in this browser's localStorage.</li>
           <li>Use <strong>Preview</strong> to open the current page, or <strong>Download ZIP</strong> to export the full site for free.</li>
         </ol>
-        <p style="margin-top:12px;"><a href="/docs/" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">Open full docs in a new tab</a></p>
+        <p style="margin-top:12px;"><a href="https://functionalwebsites.com/docs/" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">Open full docs in a new tab</a></p>
       </div>
 
       <div class="help-card">

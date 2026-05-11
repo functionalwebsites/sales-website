@@ -74,6 +74,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const menuId = `${navId}-menu`;
       const breakpoint = Math.max(320, Number(nc.mobileBreakpoint || 768) || 768);
       const mobileLayout = nc.mobileLayout || 'hamburger';
+      const previewMenuOpen = editing && mobileLayout === 'hamburger' && nc.previewMenuOpen;
       const align = nc.align || 'split';
       const justify = align === 'left' ? 'flex-start' : align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'space-between';
       const textAlign = align === 'right' ? 'right' : align === 'center' ? 'center' : 'left';
@@ -96,7 +97,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
           : mobileLayout === 'inline'
             ? `@media (max-width:${breakpoint}px){#${navId}{flex-wrap:wrap;justify-content:${justify};}#${navId} .nav-links{display:flex !important;flex-direction:row;justify-content:${mobileJustify};gap:8px;flex-wrap:wrap;width:100%;}#${navId} .nav-toggle{display:none !important;}}`
             : `@media (max-width:${breakpoint}px){#${navId}{z-index:30;}#${navId} .nav-toggle{display:inline-flex !important;}#${navId} .nav-links{display:none !important;position:absolute;z-index:9999;top:calc(100% + 10px);left:24px;right:24px;background:${nc.bgColor||'#fff'};border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.18);padding:14px;flex-direction:column;align-items:${mobileAlignItems};gap:12px;text-align:${textAlign};}#${navId}[data-open=\"true\"] .nav-links{display:flex !important;}}`;
-      return `<nav ${sel} id="${navId}" data-open="false" style="background:${nc.bgColor||'#fff'};padding:14px 24px;display:flex;align-items:center;justify-content:${justify};text-align:${textAlign};gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);position:relative;z-index:20;">
+      return `<nav ${sel} id="${navId}" data-open="${previewMenuOpen ? 'true' : 'false'}" style="background:${nc.bgColor||'#fff'};padding:14px 24px;display:flex;align-items:center;justify-content:${justify};text-align:${textAlign};gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);position:relative;z-index:20;">
   <style>
     #${navId} .nav-brand{font-weight:700;font-size:18px;color:${nc.textColor||'#333'};display:inline-flex;align-items:center;gap:10px;text-decoration:none;}
     #${navId} .nav-links{display:flex;align-items:center;justify-content:${mobileJustify};gap:0;flex-wrap:wrap;}
@@ -106,7 +107,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     ${stackCss}
   </style>
   <div class="nav-brand">${logoHtml}${brandTextHtml}</div>
-  <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="${menuId}" onclick="event.stopPropagation();const nav=this.closest('nav');const open=nav.getAttribute('data-open')==='true';nav.setAttribute('data-open',open?'false':'true');this.setAttribute('aria-expanded',open?'false':'true');">☰</button>
+  <button type="button" class="nav-toggle" aria-expanded="${previewMenuOpen ? 'true' : 'false'}" aria-controls="${menuId}" onclick="event.stopPropagation();const nav=this.closest('nav');const open=nav.getAttribute('data-open')==='true';nav.setAttribute('data-open',open?'false':'true');this.setAttribute('aria-expanded',open?'false':'true');">☰</button>
   <div class="nav-links" id="${menuId}">${linkHtml}</div>
 </nav>`;
     }

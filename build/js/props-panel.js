@@ -803,6 +803,12 @@ function buildPropsForm(block, options = {}) {
           <option value="inline" ${(nc.mobileLayout||'hamburger')==='inline'?'selected':''}>Inline wrap</option>
         </select>
       </div>`;
+      if ((nc.mobileLayout || 'hamburger') === 'hamburger') {
+        html += `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0 10px;" class="label">
+          <input type="checkbox" ${nc.previewMenuOpen ? 'checked' : ''} onchange="updateNavConfig('${navId}','previewMenuOpen',this.checked)">
+          Show mobile menu open in builder preview
+        </label>`;
+      }
       html += `<div class="field"><label class="label">Mobile Breakpoint (px)</label>
         <input class="input" type="number" min="320" max="1400" step="1" value="${nc.mobileBreakpoint||'768'}" oninput="updateNavConfig('${navId}','mobileBreakpoint',this.value)">
       </div>`;
