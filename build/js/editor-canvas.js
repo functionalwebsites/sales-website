@@ -243,6 +243,12 @@ function isCommandDragEvent(event) {
   return Boolean(event.metaKey || event.ctrlKey || commandDragActive);
 }
 
+function isEditableShortcutTarget(target) {
+  if (!target) return false;
+  const tag = String(target.tagName || '').toLowerCase();
+  return target.isContentEditable || ['input', 'textarea', 'select'].includes(tag);
+}
+
 function setCommandDragActive(active) {
   commandDragActive = Boolean(active);
   document.body.classList.toggle('command-drag', commandDragActive);
@@ -263,6 +269,7 @@ function getDropPlacement(event, target) {
 }
 
 document.addEventListener('keydown', function(event) {
+  if (isEditableShortcutTarget(event.target)) return;
   const key = String(event.key || '').toLowerCase();
   if ((event.metaKey || event.ctrlKey) && key === 's') {
     event.preventDefault();
@@ -277,6 +284,16 @@ document.addEventListener('keydown', function(event) {
   if ((event.metaKey || event.ctrlKey) && ((event.shiftKey && key === 'z') || key === 'y')) {
     event.preventDefault();
     if (window.parent && typeof window.parent.redo === 'function') window.parent.redo();
+    return;
+  }
+  if (window.parent && typeof window.parent.handleBuilderShortcut === 'function' && window.parent.handleBuilderShortcut({
+    key: event.key,
+    metaKey: event.metaKey,
+    ctrlKey: event.ctrlKey,
+    altKey: event.altKey,
+    shiftKey: event.shiftKey
+  })) {
+    event.preventDefault();
     return;
   }
   if (event.metaKey || event.ctrlKey) setCommandDragActive(true);

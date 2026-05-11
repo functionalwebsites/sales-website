@@ -112,6 +112,48 @@ function toast(msg, type = 'info') {
 // ============================================================
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+function isEditableShortcutTarget(target) {
+  if (!target) return false;
+  const tag = String(target.tagName || '').toLowerCase();
+  return target.isContentEditable || ['input', 'textarea', 'select'].includes(tag);
+}
+
+window.handleBuilderShortcut = function(eventLike = {}) {
+  if (!STATE.currentProjectId || !document.body.classList.contains('editor-mode')) return false;
+  if (document.querySelector('.modal-overlay:not(.hidden)')) return false;
+  const key = String(eventLike.key || '');
+  const shortcut = Boolean(eventLike.metaKey || eventLike.ctrlKey);
+
+  if (key === 'Delete' || key === 'Backspace') {
+    if (!STATE.selectedBlockId) return false;
+    removeBlock(STATE.selectedBlockId);
+    return true;
+  }
+
+  if (!shortcut || eventLike.altKey || eventLike.shiftKey) return false;
+
+  if (key === 'ArrowUp' && STATE.selectedBlockId) {
+    moveBlock(STATE.selectedBlockId, -1);
+    return true;
+  }
+  if (key === 'ArrowDown' && STATE.selectedBlockId) {
+    moveBlock(STATE.selectedBlockId, 1);
+    return true;
+  }
+  if ((key === 'ArrowLeft' || key === 'ArrowRight') && STATE.selectedColumn) {
+    moveColumn(STATE.selectedColumn.parentId, STATE.selectedColumn.index, key === 'ArrowLeft' ? -1 : 1);
+    return true;
+  }
+  if ((key === 'ArrowLeft' || key === 'ArrowRight') && STATE.selectedBlockId) {
+    const context = findBlockContext(STATE.selectedBlockId);
+    if (context?.parentBlock && ['columns2', 'columns3'].includes(context.parentBlock.type)) {
+      moveColumn(context.parentBlock.id, Number(context.groupIndex), key === 'ArrowLeft' ? -1 : 1);
+      return true;
+    }
+  }
+  return false;
+};
+
 // ============================================================
 // INIT
 // ============================================================
@@ -127,6 +169,10 @@ document.addEventListener('DOMContentLoaded', function init() {
 
   // Keyboard shortcuts
   document.addEventListener('keydown', e => {
+    if (!isEditableShortcutTarget(e.target) && window.handleBuilderShortcut(e)) {
+      e.preventDefault();
+      return;
+    }
     const key = String(e.key || '').toLowerCase();
     if ((e.ctrlKey||e.metaKey) && key === 's') {
       e.preventDefault();
