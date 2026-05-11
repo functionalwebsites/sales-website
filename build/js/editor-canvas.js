@@ -188,8 +188,7 @@ function renderLayoutList() {
 function getCanvasHTML() {
   const page = _projectData.pages[STATE.currentPageIndex];
   const blocksHTML = (page.blocks||[]).map(b => {
-    const html = renderBlock(b, true);
-    return `<div data-block-id="${b.id}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${b.id}')">${html}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${b.id}',-1)" title="Move up" aria-label="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${b.id}',1)" title="Move down" aria-label="Move down">↓</button><button class="block-ctrl-btn block-ctrl-danger" onclick="event.stopPropagation();window.parent.removeBlock('${b.id}')" title="Delete" aria-label="Delete">✕</button></div></div>`;
+    return renderBlock(b, true);
   }).join('');
 
   return `<!DOCTYPE html>
@@ -208,7 +207,7 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 .block-wrapper.drop-before { box-shadow: inset 0 4px 0 #b9482e; }
 .block-wrapper.drop-after { box-shadow: inset 0 -4px 0 #b9482e; }
 .block-controls { position: absolute; top: 8px; right: 8px; display: none; gap: 6px; z-index: 999; padding: 5px; background: #f5efe0; border: 3px solid #10100d; box-shadow: 4px 4px 0 #10100d; }
-.block-wrapper:hover .block-controls { display: flex; }
+.block-wrapper:hover > .block-controls { display: flex; }
 .block-ctrl-btn { width: 28px; height: 28px; border-radius: 4px; background: #f5efe0; color: #10100d; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; font-size: 14px; font-weight: 900; cursor: pointer; border: 3px solid #10100d; box-shadow: 2px 2px 0 #10100d; line-height: 1; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease; }
 .block-ctrl-btn:hover { background: #b9482e; color: #f5efe0; transform: translate(1px, 1px); box-shadow: 1px 1px 0 #10100d; }
 .block-ctrl-danger { background: #b9482e; color: #f5efe0; }
@@ -641,27 +640,26 @@ window.selectBlock = function(id, scrollToBlock = false) {
 };
 
 window.moveBlock = function(id, dir) {
-  const page = _projectData.pages[STATE.currentPageIndex];
-  const idx = page.blocks.findIndex(b=>b.id===id);
-  if (idx < 0) return;
+  const ctx = findBlockContext(id);
+  if (!ctx) return;
+  const blocks = ctx.blocks;
+  const idx = ctx.index;
   const newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= page.blocks.length) return;
+  if (newIdx < 0 || newIdx >= blocks.length) return;
   pushUndo();
-  const tmp = page.blocks[idx];
-  page.blocks[idx] = page.blocks[newIdx];
-  page.blocks[newIdx] = tmp;
+  const tmp = blocks[idx];
+  blocks[idx] = blocks[newIdx];
+  blocks[newIdx] = tmp;
   renderCanvas();
   renderLayoutList();
   renderProps();
 };
 
 window.removeBlock = function(id) {
-  const page = _projectData.pages[STATE.currentPageIndex];
-  const beforeLength = page.blocks.length;
-  if (!page.blocks.some(b => b.id === id)) return;
+  const ctx = findBlockContext(id);
+  if (!ctx) return;
   pushUndo();
-  page.blocks = page.blocks.filter(b=>b.id!==id);
-  if (page.blocks.length === beforeLength) return;
+  ctx.blocks.splice(ctx.index, 1);
   if (STATE.selectedBlockId === id) STATE.selectedBlockId = null;
   renderCanvas();
   renderLayoutList();

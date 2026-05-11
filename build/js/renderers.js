@@ -3,6 +3,9 @@ function renderBlock(block, editing = false, ctx = null) {
   const html = _renderBlockInner(block, editing, ctx);
   const responsiveCSS = buildBlockResponsiveCSS(block);
   const outWithResponsiveCSS = responsiveCSS ? `<style>\n${responsiveCSS}\n</style>\n${html}` : html;
+  if (editing) {
+    return `<div data-block-id="${block.id}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${block.id}')">${outWithResponsiveCSS}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',-1)" title="Move up" aria-label="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',1)" title="Move down" aria-label="Move down">↓</button><button class="block-ctrl-btn block-ctrl-danger" onclick="event.stopPropagation();window.parent.removeBlock('${block.id}')" title="Delete" aria-label="Delete">✕</button></div></div>`;
+  }
   if (!editing) {
     const p = block.props;
     let out = outWithResponsiveCSS;
@@ -19,7 +22,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
   const blockClass = `fw-block fw-${safeType}`;
   const anchorAttr = p.anchor ? ` id="${escAttr(p.anchor)}"` : '';
   const sel = editing
-    ? `data-block-id="${block.id}" data-fw-block="${block.id}" class="block-wrapper ${blockClass}"${anchorAttr}`
+    ? `data-fw-block="${block.id}" class="${blockClass}"${anchorAttr}`
     : `data-fw-block="${block.id}" class="${blockClass}"${anchorAttr}`;
   const pd = ctx || _projectData;
   const siteSectionPadding = 'var(--site-section-padding, 72px 20px)';
@@ -29,6 +32,8 @@ function _renderBlockInner(block, editing = false, ctx = null) {
   const siteCardRadius = 'var(--site-card-radius, 8px)';
   const siteHeadingFont = 'var(--site-heading-font-family, inherit)';
   const siteBodySize = 'var(--site-body-size, 16px)';
+  const renderNestedBlocks = (blocks) => (blocks || []).map(child => renderBlock(child, editing, pd)).join('');
+  const editingEmpty = (label) => editing ? `<div style="min-height:44px;padding:12px;border:1px dashed #b8b8b8;color:#777;font-size:13px;">${label}</div>` : '';
 
   switch(block.type) {
     case 'nav': {
@@ -151,24 +156,34 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 </div>`;
     }
     case 'section': {
+      const nested = Array.isArray(p.blocks) ? renderNestedBlocks(p.blocks) : (p.content || '');
       return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div style="max-width:${p.maxWidth||siteSectionWidth};margin:0 auto;">${p.content||''}</div>
+  <div style="max-width:${p.maxWidth||siteSectionWidth};margin:0 auto;">${nested || editingEmpty('Add blocks to this section from the Properties panel.')}</div>
 </section>`;
     }
     case 'columns2': {
+      const columns = Array.isArray(p.columns) ? p.columns : [
+        p.col1 ? [{ id: `${block.id}-legacy-1`, type: 'html', props: { code: p.col1 } }] : [],
+        p.col2 ? [{ id: `${block.id}-legacy-2`, type: 'html', props: { code: p.col2 } }] : []
+      ];
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
   <div class="fw-grid fw-grid-2" style="grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
-    <div>${p.col1||'<p>Column 1</p>'}</div>
-    <div>${p.col2||'<p>Column 2</p>'}</div>
+    <div>${renderNestedBlocks(columns[0]) || editingEmpty('Column 1 is empty.')}</div>
+    <div>${renderNestedBlocks(columns[1]) || editingEmpty('Column 2 is empty.')}</div>
   </div>
 </div>`;
     }
     case 'columns3': {
+      const columns = Array.isArray(p.columns) ? p.columns : [
+        p.col1 ? [{ id: `${block.id}-legacy-1`, type: 'html', props: { code: p.col1 } }] : [],
+        p.col2 ? [{ id: `${block.id}-legacy-2`, type: 'html', props: { code: p.col2 } }] : [],
+        p.col3 ? [{ id: `${block.id}-legacy-3`, type: 'html', props: { code: p.col3 } }] : []
+      ];
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
   <div class="fw-grid fw-grid-3" style="grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
-    <div>${p.col1||'<p>Col 1</p>'}</div>
-    <div>${p.col2||'<p>Col 2</p>'}</div>
-    <div>${p.col3||'<p>Col 3</p>'}</div>
+    <div>${renderNestedBlocks(columns[0]) || editingEmpty('Column 1 is empty.')}</div>
+    <div>${renderNestedBlocks(columns[1]) || editingEmpty('Column 2 is empty.')}</div>
+    <div>${renderNestedBlocks(columns[2]) || editingEmpty('Column 3 is empty.')}</div>
   </div>
 </div>`;
     }

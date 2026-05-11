@@ -1169,9 +1169,78 @@ function mkBlock(type, props = {}) {
     footer: { bgColor: 'dark' },
     form:   { btnBg: 'accent' },
   };
-  const block = { id: uid(), type, props: Object.assign({}, defaults[type] || {}, props) };
+  const block = { id: uid(), type, props: Object.assign({}, JSON.parse(JSON.stringify(defaults[type] || {})), props) };
+  if (type === 'section' && !Array.isArray(block.props.blocks)) {
+    const legacyContent = block.props.content;
+    block.props.blocks = [
+      ...(legacyContent ? [] : [mkBlock('heading', { text: 'Section Title', level: 'h2' })]),
+      mkBlock('text', { content: legacyContent || '<p>Add your section content here.</p>' })
+    ];
+    delete block.props.content;
+  }
+  if ((type === 'columns2' || type === 'columns3') && !Array.isArray(block.props.columns)) {
+    const count = type === 'columns3' ? 3 : 2;
+    block.props.columns = Array.from({ length: count }, (_, index) => [
+      ...(block.props[`col${index + 1}`] ? [] : [mkBlock('heading', { text: `Column ${index + 1}`, level: 'h3' })]),
+      mkBlock('text', { content: block.props[`col${index + 1}`] || `<p>Add column ${index + 1} content here.</p>` })
+    ]);
+    delete block.props.col1;
+    delete block.props.col2;
+    delete block.props.col3;
+  }
   if (brandLinkDefaults[type] && brand.accent) {
     block.brandLinks = Object.assign({}, brandLinkDefaults[type]);
+  }
+  return block;
+}
+
+function getCurrentPageBlocks() {
+  return _projectData?.pages?.[STATE.currentPageIndex]?.blocks || [];
+}
+
+function getBlockChildGroups(block) {
+  if (!block?.props) return [];
+  if (block.type === 'section') {
+    return Array.isArray(block.props.blocks) ? [block.props.blocks] : [];
+  }
+  if (block.type === 'columns2' || block.type === 'columns3') {
+    return Array.isArray(block.props.columns) ? block.props.columns.filter(Array.isArray) : [];
+  }
+  return [];
+}
+
+function findBlockContext(id, blocks = getCurrentPageBlocks(), parentBlock = null, groupIndex = null) {
+  for (let index = 0; index < blocks.length; index += 1) {
+    const block = blocks[index];
+    if (block.id === id) return { block, blocks, index, parentBlock, groupIndex };
+    const childGroups = getBlockChildGroups(block);
+    for (let childGroupIndex = 0; childGroupIndex < childGroups.length; childGroupIndex += 1) {
+      const found = findBlockContext(id, childGroups[childGroupIndex], block, childGroupIndex);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function findBlockById(id) {
+  return findBlockContext(id)?.block || null;
+}
+
+function normalizeContainerBlock(block) {
+  if (!block?.props) return block;
+  if (block.type === 'section' && !Array.isArray(block.props.blocks) && block.props.content) {
+    block.props.blocks = [mkBlock('text', { content: block.props.content })];
+    delete block.props.content;
+  }
+  if ((block.type === 'columns2' || block.type === 'columns3') && !Array.isArray(block.props.columns)) {
+    const count = block.type === 'columns3' ? 3 : 2;
+    block.props.columns = Array.from({ length: count }, (_, index) => {
+      const legacy = block.props[`col${index + 1}`];
+      return legacy ? [mkBlock('text', { content: legacy })] : [];
+    });
+    delete block.props.col1;
+    delete block.props.col2;
+    delete block.props.col3;
   }
   return block;
 }

@@ -13,6 +13,44 @@ function addBlock(type) {
   if (isMobile()) switchMobileTab('canvas');
 }
 
+function addNestedBlock(parentId, type, groupIndex = 0) {
+  const parent = findBlockById(parentId);
+  if (!parent) return;
+  normalizeContainerBlock(parent);
+  let target = null;
+  if (parent.type === 'section') {
+    if (!Array.isArray(parent.props.blocks)) parent.props.blocks = [];
+    target = parent.props.blocks;
+  }
+  if (parent.type === 'columns2' || parent.type === 'columns3') {
+    if (!Array.isArray(parent.props.columns)) parent.props.columns = [];
+    if (!Array.isArray(parent.props.columns[groupIndex])) parent.props.columns[groupIndex] = [];
+    target = parent.props.columns[groupIndex];
+  }
+  if (!target) return;
+  pushUndo();
+  const block = mkBlock(type);
+  target.push(block);
+  STATE.selectedBlockId = block.id;
+  STATE.pendingScrollBlockId = block.id;
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+}
+
+function moveColumn(parentId, columnIndex, dir) {
+  const block = findBlockById(parentId);
+  if (!block || !Array.isArray(block.props?.columns)) return;
+  const nextIndex = columnIndex + dir;
+  if (nextIndex < 0 || nextIndex >= block.props.columns.length) return;
+  pushUndo();
+  const tmp = block.props.columns[columnIndex];
+  block.props.columns[columnIndex] = block.props.columns[nextIndex];
+  block.props.columns[nextIndex] = tmp;
+  renderCanvas();
+  renderProps();
+}
+
 function getPrimaryActionHref() {
   const pages = _projectData?.pages || [];
   const actionPage = pages.find(page => /contact|reserve|booking|donate|checkout|pricing/i.test(page.name || ''));
@@ -105,8 +143,7 @@ function renderProps() {
     panel.innerHTML = buildSitePropsHTML();
     return;
   }
-  const page = _projectData.pages[STATE.currentPageIndex];
-  const block = page.blocks.find(b=>b.id===STATE.selectedBlockId);
+  const block = findBlockById(STATE.selectedBlockId);
   if (!block) { panel.innerHTML = '<div class="text-muted text-sm">Block not found.</div>'; return; }
 
   panel.innerHTML = buildPropsForm(block);
@@ -558,6 +595,39 @@ function buildPropsForm(block) {
     return `<div class="field"><label class="label">${label}</label><input class="input" type="${inputType}" value="${p[key]||''}" oninput="updateProp('${block.id}','${key}',this.value)"></div>`;
   };
 
+  const nestedAddButtons = (parentId, groupIndex = 0) => {
+    const types = [
+      ['heading', 'Header'],
+      ['text', 'Text'],
+      ['image', 'Image'],
+      ['button', 'Button'],
+      ['cards', 'Cards'],
+      ['features', 'Features'],
+      ['divider', 'Divider'],
+      ['spacer', 'Spacer'],
+      ['cta', 'CTA']
+    ];
+    return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+      ${types.map(([blockType, label]) => `<button class="btn btn-secondary btn-sm" onclick="addNestedBlock('${parentId}','${blockType}',${groupIndex})">+ ${label}</button>`).join('')}
+    </div>`;
+  };
+
+  const nestedBlockList = (blocks = []) => {
+    if (!blocks.length) return `<div class="text-muted text-sm" style="padding:8px 0;">No nested blocks yet.</div>`;
+    return blocks.map((child, index) => `<div class="layout-item${STATE.selectedBlockId === child.id ? ' selected' : ''}" style="border:1px solid var(--border);margin-bottom:6px;" onclick="selectBlock('${child.id}', true)">
+      <div class="layout-item-icon">${getBlockIcon(child.type)}</div>
+      <div class="layout-item-info">
+        <div class="layout-item-type">${index + 1}. ${child.type}</div>
+        <div class="layout-item-slug">${child.props?.text || child.props?.heading || child.props?.title || child.props?.content?.replace(/<[^>]+>/g, '').slice(0, 32) || 'Nested block'}</div>
+      </div>
+      <div class="layout-item-actions" style="opacity:1;">
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${child.id}',-1)" title="Move up" aria-label="Move up">↑</button>
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${child.id}',1)" title="Move down" aria-label="Move down">↓</button>
+        <button class="btn btn-danger btn-sm layout-block-action" onclick="event.stopPropagation();removeBlock('${child.id}')" title="Delete" aria-label="Delete">×</button>
+      </div>
+    </div>`).join('');
+  };
+
   switch(type) {
     case 'nav': {
       // Legacy blocks without navbarId
@@ -752,25 +822,35 @@ function buildPropsForm(block) {
       </select></div>`;
       break;
     case 'section':
+      normalizeContainerBlock(block);
       html += field('Background Color', 'bgColor', 'color');
       html += field('Padding', 'padding');
       html += field('Max Width', 'maxWidth');
-      html += buildContentInsertButtons(block.id, 'content');
-      html += `<div class="field"><label class="label">Section HTML</label><textarea class="input" rows="8" oninput="updateProp('${block.id}','content',this.value)">${escapeHtmlForTextarea(p.content||'')}</textarea></div>`;
+      if (!Array.isArray(p.blocks) && p.content) {
+        html += `<div class="field"><button class="btn btn-secondary btn-sm" style="width:100%;" onclick="convertLegacyContainerContent('${block.id}')">Convert legacy HTML to nested text block</button></div>`;
+      }
+      html += `<div class="props-section-title" style="margin-top:12px;">Nested Blocks</div>`;
+      html += nestedBlockList(p.blocks || []);
+      html += nestedAddButtons(block.id);
       break;
     case 'columns2':
     case 'columns3':
+      normalizeContainerBlock(block);
       html += field('Background Color', 'bgColor', 'color');
       html += field('Padding', 'padding');
       html += field('Gap', 'gap');
-      html += buildContentInsertButtons(block.id, 'col1');
-      html += `<div class="field"><label class="label">Column 1 HTML</label><textarea class="input" rows="5" oninput="updateProp('${block.id}','col1',this.value)">${escapeHtmlForTextarea(p.col1||'')}</textarea></div>`;
-      html += buildContentInsertButtons(block.id, 'col2');
-      html += `<div class="field"><label class="label">Column 2 HTML</label><textarea class="input" rows="5" oninput="updateProp('${block.id}','col2',this.value)">${escapeHtmlForTextarea(p.col2||'')}</textarea></div>`;
-      if (type === 'columns3') {
-        html += buildContentInsertButtons(block.id, 'col3');
-        html += `<div class="field"><label class="label">Column 3 HTML</label><textarea class="input" rows="5" oninput="updateProp('${block.id}','col3',this.value)">${escapeHtmlForTextarea(p.col3||'')}</textarea></div>`;
-      }
+      (p.columns || []).forEach((columnBlocks, columnIndex) => {
+        html += `<details class="props-advanced" open style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+          <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
+            <span>Column ${columnIndex + 1}</span>
+            <span style="float:right;display:inline-flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveColumn('${block.id}',${columnIndex},-1)" title="Move column left">←</button>
+              <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveColumn('${block.id}',${columnIndex},1)" title="Move column right">→</button>
+            </span>
+          </summary>
+          <div style="padding:10px;">${nestedBlockList(columnBlocks)}${nestedAddButtons(block.id, columnIndex)}</div>
+        </details>`;
+      });
       break;
     case 'divider':
       html += field('Color', 'color', 'color');
@@ -988,8 +1068,7 @@ function buildResponsiveControls(block) {
 
 
 function updateProp(blockId, key, value) {
-  const page = _projectData.pages[STATE.currentPageIndex];
-  const block = page.blocks.find(b=>b.id===blockId);
+  const block = findBlockById(blockId);
   if (!block) return;
   pushUndoDebounced();
   block.props[key] = value;
@@ -1009,8 +1088,7 @@ const BLOCK_STYLE_KEYS = [
 ];
 
 function resetBlockStyle(blockId) {
-  const page = _projectData.pages[STATE.currentPageIndex];
-  const block = page?.blocks.find(b => b.id === blockId);
+  const block = findBlockById(blockId);
   if (!block) return;
 
   pushUndo();
@@ -1040,6 +1118,30 @@ function resetBlockStyle(blockId) {
     nav.mobileBreakpoint = '768';
   }
 
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+}
+
+function convertLegacyContainerContent(blockId) {
+  const block = findBlockById(blockId);
+  if (!block) return;
+  pushUndo();
+  if (block.type === 'section') {
+    const content = block.props.content || '<p>Add your section content here.</p>';
+    block.props.blocks = [mkBlock('text', { content })];
+    delete block.props.content;
+  }
+  if (block.type === 'columns2' || block.type === 'columns3') {
+    const count = block.type === 'columns3' ? 3 : 2;
+    block.props.columns = Array.from({ length: count }, (_, index) => {
+      const content = block.props[`col${index + 1}`] || `<p>Column ${index + 1}</p>`;
+      return [mkBlock('text', { content })];
+    });
+    delete block.props.col1;
+    delete block.props.col2;
+    delete block.props.col3;
+  }
   renderCanvas();
   renderLayoutList();
   renderProps();
