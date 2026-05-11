@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Custom static website services. We build fast, simple, fully-owned websites for your business.">
+  <meta name="description" content="Static website services from Functional Websites: custom sites, website cloning, and custom templates or block packs for the site builder.">
   <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
@@ -13,7 +13,7 @@
   <meta name="msapplication-TileColor" content="#f5efe0">
   <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
   <meta name="theme-color" content="#0f0f13">
-  <title>Custom Website Services — Functional Websites</title>
+  <title>Website Services — Functional Websites</title>
   <link rel="stylesheet" href="/styles/shared.css">
   <link rel="stylesheet" href="/components/hero-gear.css">
   <style>
@@ -52,52 +52,63 @@
       margin-bottom: 0;
     }
 
-    /* PROCESS */
-    .process {
+    /* SERVICE OVERVIEW */
+    .service-overview {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 80px 24px 40px;
+      scroll-margin-top: 96px;
     }
 
-    .process h2 {
+    .service-overview h2 {
       text-align: center;
       font-size: 32px;
       font-weight: 700;
-      margin-bottom: 60px;
+      margin-bottom: 28px;
     }
 
-    .process-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-      margin-bottom: 80px;
-    }
-
-    .process-step {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 32px;
+    .service-overview-intro {
+      color: var(--text2);
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 760px;
+      margin: 0 auto 44px;
       text-align: center;
     }
 
-    .step-number {
-      font-size: 48px;
+    .service-category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .service-category-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: var(--fw-shadow-sm);
+    }
+
+    .service-category-card h3 {
+      font-size: 19px;
       font-weight: 700;
-      color: var(--green);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      color: var(--fw-rust);
     }
 
-    .process-step h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .process-step p {
+    .service-category-card p {
       color: var(--text2);
       font-size: 14px;
-      line-height: 1.8;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .service-category-card a {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
     }
 
     /* SERVICES */
@@ -105,6 +116,7 @@
       max-width: 1200px;
       margin: 0 auto;
       padding: 80px 24px;
+      scroll-margin-top: 96px;
     }
 
     .services h2 {
@@ -210,15 +222,13 @@
       font-size: 16px;
       line-height: 1.7;
       max-width: 760px;
-      margin: -36px auto 48px;
+      margin: 0 auto 48px;
     }
 
     .clone-note {
-      margin-top: 28px;
-      background: var(--bg2);
-      border: 1px solid rgba(74, 222, 128, 0.35);
-      border-radius: 12px;
-      padding: 24px;
+      max-width: 860px;
+      margin: 28px auto 0;
+      padding: 0;
       color: var(--text2);
       font-size: 14px;
       line-height: 1.8;
@@ -228,61 +238,134 @@
       color: var(--text);
     }
 
-    /* TIMELINE / WHAT TO EXPECT */
-    .timeline {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 80px 24px;
-    }
-
-    .timeline h2 {
-      text-align: center;
-      font-size: 32px;
+    /* PROJECT FLOW */
+    .flow-inline-button {
+      display: inline;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      color: var(--fw-rust);
+      font: inherit;
       font-weight: 700;
-      margin-bottom: 60px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
     }
 
-    .timeline-item {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 40px;
-      margin-bottom: 60px;
-      position: relative;
+    .flow-modal {
+      width: min(860px, calc(100vw - 32px));
+      max-height: min(92vh, 980px);
+      padding: 0;
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      background: var(--bg);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow);
+      color: var(--text);
+      overflow: auto;
     }
 
-    .timeline-item:not(:last-child):after {
-      content: "";
-      position: absolute;
-      left: 99px;
-      top: 120px;
-      width: 2px;
-      height: 100px;
-      background: var(--border);
+    .flow-modal::backdrop {
+      background: rgba(16, 16, 13, 0.58);
     }
 
-    .timeline-label {
-      font-weight: 600;
-      color: var(--green);
-      padding-top: 8px;
+    .flow-sheet {
+      padding: 28px;
+      background: var(--fw-paper);
     }
 
-    .timeline-content {
+    .flow-sheet-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      border-bottom: var(--fw-border-width) solid var(--fw-ink);
+      padding-bottom: 18px;
+    }
+
+    .flow-sheet h2 {
+      font-size: 26px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      color: var(--fw-rust);
+    }
+
+    .flow-sheet-header p {
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 620px;
+    }
+
+    .flow-close {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
     }
 
-    .timeline-content h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      counter-reset: flow-step;
     }
 
-    .timeline-content p {
+    .flow-step {
+      counter-increment: flow-step;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      min-height: 150px;
+    }
+
+    .flow-step h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .flow-step h3::before {
+      content: counter(flow-step);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--fw-rust);
+      color: var(--fw-paper);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .flow-step p {
       color: var(--text2);
-      font-size: 14px;
-      line-height: 1.8;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .flow-footer {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--text2);
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     /* CTA */
@@ -364,12 +447,16 @@
         font-size: 32px;
       }
 
-      .timeline-item {
+      .flow-steps {
         grid-template-columns: 1fr;
       }
 
-      .timeline-item:not(:last-child):after {
-        display: none;
+      .flow-sheet {
+        padding: 20px;
+      }
+
+      .flow-sheet-header {
+        align-items: flex-start;
       }
     }
   </style>
@@ -383,36 +470,33 @@
     <p>From a fast starter site to a fully custom system, we match the build to what your business actually needs.</p>
   </section>
 
-  <!-- PROCESS -->
-  <section class="process">
-    <h2>How It Works</h2>
-    <div class="process-steps">
-      <div class="process-step">
-        <div class="step-number">1</div>
-        <h3>Discovery Call</h3>
-        <p>We'll discuss your goals, audience, and vision for your site. No fluff, just questions that matter.</p>
+  <!-- SERVICE OVERVIEW -->
+  <section class="service-overview">
+    <h2>Services We Offer</h2>
+    <p class="service-overview-intro">Functional Websites is built around static sites, but not every project needs the same kind of help. Some clients need a new site, some need an existing site cloned or rebuilt, and some need reusable templates for the site builder.</p>
+    <div class="service-category-grid">
+      <div class="service-category-card">
+        <h3>Custom Static Websites</h3>
+        <p>New business sites, landing pages, and larger custom systems built to be fast, portable, and owned by you.</p>
+        <a href="#web-design-services">View web design services</a>
       </div>
-      <div class="process-step">
-        <div class="step-number">2</div>
-        <h3>Design & Proposal</h3>
-        <p>We'll send you a design proposal with page layout, features, and timeline. You approve before we start building.</p>
+      <div class="service-category-card">
+        <h3>Website Cloning</h3>
+        <p>Static copies or cleaner editable rebuilds of websites you own, manage, or have permission to reproduce.</p>
+        <a href="#website-cloning">View cloning options</a>
       </div>
-      <div class="process-step">
-        <div class="step-number">3</div>
-        <h3>Build & Test</h3>
-        <p>We build your site with responsive design, Search Engine Optimization, and all your content. Full testing included.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-number">4</div>
-        <h3>Launch & Handoff</h3>
-        <p>Your site goes live cleanly, with a practical handoff so you understand what was built and how to use it.</p>
+      <div class="service-category-card">
+        <h3>Builder Templates</h3>
+        <p>Custom page templates and reusable section systems for businesses, niches, or teams using the site builder.</p>
+        <a href="#builder-templates">View template services</a>
       </div>
     </div>
   </section>
 
   <!-- SERVICES -->
-  <section class="services">
-    <h2>Service Tiers</h2>
+  <section class="services" id="web-design-services">
+    <h2>Web Design Services</h2>
+    <p class="section-intro">Choose the level of website build that fits your business now. These are new site builds, from simple starter sites to custom systems. <button class="flow-inline-button" type="button" data-flow-open>See how a web design project works.</button></p>
 
     <div class="services-grid">
       <!-- LAUNCH -->
@@ -524,79 +608,86 @@
     </div>
   </section>
 
-  <!-- WHAT TO EXPECT -->
-  <section class="timeline">
-    <h2>What to Expect</h2>
+  <!-- BUILDER TEMPLATES -->
+  <section class="services" id="builder-templates">
+    <h2>Custom Templates for the Site Builder</h2>
+    <p class="section-intro">If you use the Functional Websites builder, we can create reusable templates and block systems for your business, niche, or internal workflow.</p>
 
-    <div class="timeline-item">
-      <div class="timeline-label">Discovery</div>
-      <div class="timeline-content">
-        <h3>Schedule & Discuss</h3>
-        <p>We'll have a call to understand your business, target audience, and goals. You'll provide content, images, and any brand guidelines.</p>
-      </div>
-    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>Template Pack</h3>
+        <div class="service-price">Reusable Pages</div>
+        <p class="service-note">For repeatable site launches</p>
+        <p class="service-description">A set of builder-ready page templates shaped around a specific business type, offer, or content structure.</p>
 
-    <div class="timeline-item">
-      <div class="timeline-label">Design</div>
-      <div class="timeline-content">
-        <h3>Proposal Review</h3>
-        <p>We'll send you a design mockup with page structure, features, and timeline. You can request changes at this stage.</p>
-      </div>
-    </div>
+        <ul class="service-features">
+          <li>Custom homepage and supporting page layouts</li>
+          <li>Reusable section patterns</li>
+          <li>Builder-friendly content structure</li>
+          <li>Mobile-responsive defaults</li>
+          <li>Designed for repeated use</li>
+        </ul>
 
-    <div class="timeline-item">
-      <div class="timeline-label">Build</div>
-      <div class="timeline-content">
-        <h3>Development & Testing</h3>
-        <p>We build your site with responsive design, fast performance, and all your content. You review the work at the agreed checkpoints.</p>
+        <button class="service-cta" onclick="window.location.href='mailto:cooper@functionalwebsites.com?subject=Custom%20Template%20Pack%20Inquiry'">Ask About Templates</button>
       </div>
-    </div>
 
-    <div class="timeline-item">
-      <div class="timeline-label">Launch</div>
-      <div class="timeline-content">
-        <h3>Launch & Handoff</h3>
-        <p>Your site goes live after final review. We walk you through the finished build and the pieces you need to understand.</p>
-      </div>
-    </div>
-  </section>
+      <div class="service-card">
+        <h3>Custom Block Pack</h3>
+        <div class="service-price">Reusable Sections</div>
+        <p class="service-note">For teams that need flexible building blocks</p>
+        <p class="service-description">A focused set of custom builder blocks so you can assemble pages without writing HTML each time.</p>
 
-  <!-- WHY STATIC BENEFITS -->
-  <section style="max-width: 1200px; margin: 80px auto; padding: 80px 24px; text-align: center;">
-    <h2 style="font-size: 32px; font-weight: 700; margin-bottom: 40px;">Why You Want a Static Site</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px;">
-      <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px;">
-        <div style="font-size: 28px; margin-bottom: 16px; color: var(--green); line-height: 1;">ϟ</div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Lightning Fast</h3>
-        <p style="color: var(--text2); font-size: 14px;">Pages load in milliseconds. Speed matters for SEO and user experience.</p>
-      </div>
-      <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px;">
-        <div style="font-size: 28px; margin-bottom: 16px; color: var(--green); line-height: 1;">◈</div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Secure</h3>
-        <p style="color: var(--text2); font-size: 14px;">No database. No plugins. No vulnerabilities. Your data stays yours.</p>
-      </div>
-      <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px;">
-        <div style="font-size: 28px; margin-bottom: 16px; color: var(--green); line-height: 1;">$</div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Lean Infrastructure</h3>
-        <p style="color: var(--text2); font-size: 14px;">Static files stay simple, portable, and efficient as traffic grows.</p>
-      </div>
-      <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px;">
-        <div style="font-size: 28px; margin-bottom: 16px; color: var(--green); line-height: 1;">⌂</div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Own It</h3>
-        <p style="color: var(--text2); font-size: 14px;">Export your site anytime. Never locked in. Your site, your rules.</p>
-      </div>
-      <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px;">
-        <div style="font-size: 28px; margin-bottom: 16px; color: var(--green); line-height: 1;">↗</div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">SEO Wins</h3>
-        <p style="color: var(--text2); font-size: 14px;">Fast sites rank better. We optimize everything for search engines.</p>
-      </div>
-      <div style="background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 32px;">
-        <div style="font-size: 28px; margin-bottom: 16px; color: var(--green); line-height: 1;">◎</div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Simple</h3>
-        <p style="color: var(--text2); font-size: 14px;">No database updates. No plugin conflicts. Just clean HTML.</p>
+        <ul class="service-features">
+          <li>Custom sections for your brand or niche</li>
+          <li>Editable fields in the builder</li>
+          <li>Reusable cards, CTAs, galleries, forms, or layouts</li>
+          <li>Consistent spacing and responsive behavior</li>
+          <li>Import-ready structure</li>
+        </ul>
+
+        <button class="service-cta" onclick="window.location.href='mailto:cooper@functionalwebsites.com?subject=Custom%20Block%20Pack%20Inquiry'">Ask About Blocks</button>
       </div>
     </div>
   </section>
+
+  <dialog class="flow-modal" id="project-flow-modal" aria-labelledby="project-flow-title">
+    <div class="flow-sheet">
+      <div class="flow-sheet-header">
+        <div>
+          <h2 id="project-flow-title">Project Flow</h2>
+          <p>A practical overview of how a custom website project moves from first conversation to launch. Scope can change by project, but this is the usual path.</p>
+        </div>
+        <button class="flow-close" type="button" data-flow-close aria-label="Close project flow">×</button>
+      </div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <h3>Discovery</h3>
+          <p>We talk through your business, goals, audience, content, must-have pages, and any existing brand or site constraints.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Plan</h3>
+          <p>You get a clear proposal with the recommended structure, scope, timeline, deliverables, and any technical requirements.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Design</h3>
+          <p>We shape the page direction, layout, calls to action, and content hierarchy before the build gets too far along.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Build</h3>
+          <p>The site is built as static HTML/CSS/JS with responsive behavior, performance-minded assets, and the agreed sections.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Review</h3>
+          <p>You review the working site, we handle the agreed revisions, and the important pages are tested on mobile and desktop.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Launch</h3>
+          <p>The final site is exported, handed off, and published or prepared for your preferred static hosting setup.</p>
+        </div>
+      </div>
+      <p class="flow-footer">For clones, templates, or systems work, the same basic flow applies, but the plan step is where we define the exact technical scope.</p>
+    </div>
+  </dialog>
 
   <!-- CTA -->
   <section class="cta">
@@ -609,5 +700,26 @@
   </section>
   <div id="footer-placeholder"></div>
   <script src="/components/components.js"></script>
+  <script>
+    (() => {
+      const modal = document.getElementById('project-flow-modal');
+      const openButton = document.querySelector('[data-flow-open]');
+      const closeButton = document.querySelector('[data-flow-close]');
+      if (!modal || !openButton || !closeButton) return;
+
+      openButton.addEventListener('click', () => {
+        if (typeof modal.showModal === 'function') {
+          modal.showModal();
+          return;
+        }
+        modal.setAttribute('open', '');
+      });
+
+      closeButton.addEventListener('click', () => modal.close());
+      modal.addEventListener('click', event => {
+        if (event.target === modal) modal.close();
+      });
+    })();
+  </script>
 </body>
 </html>

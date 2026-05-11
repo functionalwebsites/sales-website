@@ -821,10 +821,8 @@ footer {
 
 .comparison,
 .clone-banner,
-.clone-note,
 .settings-section,
-.cta,
-.section-intro {
+.cta {
   background: var(--fw-panel) !important;
   border: var(--fw-border-width) solid var(--fw-ink) !important;
   border-radius: var(--fw-radius) !important;
