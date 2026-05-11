@@ -193,9 +193,9 @@ button {
 .header-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  height: 64px;
-  min-height: 64px;
-  padding: 0 24px;
+  height: 72px;
+  min-height: 72px;
+  padding: 6px 24px;
   position: relative;
   display: flex;
   align-items: center;
@@ -210,7 +210,7 @@ button {
 }
 
 #header-placeholder {
-  min-height: 64px;
+  min-height: 72px;
   width: 100%;
   position: relative;
   z-index: auto;
@@ -249,8 +249,8 @@ button {
 }
 
 .logo-mark {
-  width: 33px;
-  height: 33px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1196,9 +1196,9 @@ pre code {
 
 @media (max-width: 768px) {
   .header-wrapper {
-    height: 64px;
-    min-height: 64px;
-    padding: 0 16px;
+    height: 72px;
+    min-height: 72px;
+    padding: 6px 16px;
     gap: 8px;
     justify-content: space-between;
   }
@@ -1215,8 +1215,8 @@ pre code {
   }
 
   .logo-mark {
-    width: 54px;
-    height: 54px;
+    width: 46px;
+    height: 46px;
   }
 
   .header-nav {
@@ -1233,8 +1233,8 @@ pre code {
     gap: 16px;
     z-index: 101;
     width: 100%;
-    height: calc(100vh - 67px);
-    height: calc(100dvh - 67px);
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px);
     overflow-y: auto;
     overscroll-behavior: contain;
     opacity: 0;
@@ -1361,9 +1361,9 @@ pre code {
 
 /* Always-collapsed public nav experiment. */
 .site-component .header-wrapper {
-  height: 64px;
-  min-height: 64px;
-  padding: 0 16px;
+  height: 72px;
+  min-height: 72px;
+  padding: 6px 16px;
   justify-content: space-between;
 }
 
@@ -1384,8 +1384,8 @@ pre code {
   top: calc(100% + 7px);
   left: 0;
   width: 100%;
-  height: calc(100vh - 67px);
-  height: calc(100dvh - 67px);
+  height: calc(100vh - 75px);
+  height: calc(100dvh - 75px);
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--fw-paper);
@@ -1462,7 +1462,7 @@ pre code {
   .site-component .header-nav {
     --header-nav-inset: max(16px, calc((100vw - 1200px) / 2 + 16px));
     position: fixed;
-    top: 72px;
+    top: 80px;
     left: var(--header-nav-inset);
     width: calc(100vw - (var(--header-nav-inset) * 2));
     height: 64px;
@@ -1473,7 +1473,7 @@ pre code {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transform: translateY(-76px);
+    transform: translateY(-84px);
   }
 
   .site-component .header-nav[data-open="true"] {

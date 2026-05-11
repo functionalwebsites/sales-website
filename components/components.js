@@ -92,14 +92,14 @@
 .header-wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 14px 24px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   line-height: 1;
-  min-height: 60px;
+  min-height: 72px;
 }
 
 .header-wrapper > :not(.header-nav) {
@@ -134,8 +134,8 @@
 }
 
 .logo-mark {
-  width: 33px;
-  height: 33px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -542,8 +542,8 @@ footer {
 
 @media (max-width: 768px) {
   .header-wrapper {
-    padding: 12px 16px;
-    min-height: 60px;
+    padding: 6px 16px;
+    min-height: 72px;
     gap: 8px;
     justify-content: space-between;
   }
@@ -556,8 +556,8 @@ footer {
 
 
   .logo-mark {
-    width: 54px;
-    height: 54px;
+    width: 46px;
+    height: 46px;
   }
 
   .header-nav {
@@ -573,8 +573,8 @@ footer {
     gap: 16px;
     z-index: 101;
     width: 100%;
-    height: calc(100vh - 67px);
-    height: calc(100dvh - 67px);
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px);
     overflow-y: auto;
     overscroll-behavior: contain;
     opacity: 0;
@@ -662,9 +662,9 @@ footer {
 
 /* Always-collapsed public nav experiment. */
 .header-wrapper {
-  height: 64px;
-  min-height: 64px;
-  padding: 0 16px;
+  height: 72px;
+  min-height: 72px;
+  padding: 6px 16px;
   justify-content: space-between;
 }
 
@@ -685,8 +685,8 @@ footer {
   top: calc(100% + 7px);
   left: 0;
   width: 100%;
-  height: calc(100vh - 67px);
-  height: calc(100dvh - 67px);
+  height: calc(100vh - 75px);
+  height: calc(100dvh - 75px);
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--bg);
@@ -763,7 +763,7 @@ footer {
   .header-nav {
     --header-nav-inset: max(16px, calc((100vw - 1200px) / 2 + 16px));
     position: fixed;
-    top: 72px;
+    top: 80px;
     left: var(--header-nav-inset);
     width: calc(100vw - (var(--header-nav-inset) * 2));
     height: 64px;
@@ -774,7 +774,7 @@ footer {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transform: translateY(-76px);
+    transform: translateY(-84px);
   }
 
   .header-nav[data-open="true"] {
