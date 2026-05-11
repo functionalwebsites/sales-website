@@ -4,7 +4,7 @@ let _projectData = null;
 function openEditor(id, options = {}) {
   document.body.classList.add('editor-mode');
   STATE.currentProjectId = id;
-  STATE.selectedBlockId = null;
+  clearBuilderSelection();
   _projectData = getProjectData(id);
   const maxPageIndex = Math.max((_projectData.pages || []).length - 1, 0);
   STATE.currentPageIndex = Math.min(Math.max(Number(options.pageIndex) || 0, 0), maxPageIndex);
@@ -74,7 +74,7 @@ function switchPage(i) {
   if (STATE.currentMode === 'code') applyCode();
   STATE.currentPageIndex = i;
   setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
-  STATE.selectedBlockId = null;
+  clearBuilderSelection();
   renderPagesList();
   renderLayoutList();
   renderCanvas();
@@ -165,7 +165,8 @@ function renderLayoutList() {
 
   list.innerHTML = blocks.map((block, index) => {
     const slug = block.props?.anchor ? `#${block.props.anchor}` : 'No anchor';
-    return `<div class="layout-item${STATE.selectedBlockId === block.id ? ' selected' : ''}" data-block-id="${block.id}" draggable="false" onclick="selectBlock('${block.id}', true)">
+    const selected = STATE.selectedBlockId === block.id || STATE.selectedColumn?.parentId === block.id;
+    return `<div class="layout-item${selected ? ' selected' : ''}" data-block-id="${block.id}" draggable="false" onclick="selectBlock('${block.id}', true)">
       <div class="layout-item-icon">${getBlockIcon(block.type)}</div>
       <div class="layout-item-info">
         <div class="layout-item-type">${index + 1}. ${block.type}</div>
@@ -206,6 +207,9 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 .block-wrapper.dragging { opacity: .45; }
 .block-wrapper.drop-before { box-shadow: inset 0 4px 0 #b9482e; }
 .block-wrapper.drop-after { box-shadow: inset 0 -4px 0 #b9482e; }
+.fw-builder-column { min-height: 44px; position: relative; }
+.fw-builder-column:hover { outline: 2px dashed #b9482e; outline-offset: -2px; }
+.fw-builder-column.selected-column { outline: 3px solid #b9482e; outline-offset: -3px; }
 .block-controls { position: absolute; top: 8px; right: 8px; display: none; gap: 6px; z-index: 999; padding: 5px; background: #f5efe0; border: 3px solid #10100d; box-shadow: 4px 4px 0 #10100d; }
 .block-wrapper:hover > .block-controls { display: flex; }
 .block-ctrl-btn { width: 28px; height: 28px; border-radius: 4px; background: #f5efe0; color: #10100d; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; font-size: 14px; font-weight: 900; cursor: pointer; border: 3px solid #10100d; box-shadow: 2px 2px 0 #10100d; line-height: 1; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease; }
@@ -363,8 +367,16 @@ function renderCanvas() {
       try {
         const doc = iframe.contentDocument;
         doc.querySelectorAll('.block-wrapper').forEach(el => el.classList.remove('selected'));
+        doc.querySelectorAll('.fw-builder-column').forEach(el => el.classList.remove('selected-column'));
         const sel = doc.querySelector(`[data-block-id="${STATE.selectedBlockId}"]`);
         if (sel) sel.classList.add('selected');
+      } catch(e) {}
+    }
+    if (STATE.selectedColumn) {
+      try {
+        const doc = iframe.contentDocument;
+        const col = doc.querySelector(`[data-column-parent="${STATE.selectedColumn.parentId}"][data-column-index="${STATE.selectedColumn.index}"]`);
+        if (col) col.classList.add('selected-column');
       } catch(e) {}
     }
     setupCanvasAutoResize();
@@ -380,12 +392,17 @@ function renderCanvas() {
 
 function scrollCanvasToBlock(id) {
   const wrap = document.querySelector('.canvas-wrap');
-  const frame = document.getElementById('canvas-frame');
   const iframe = document.getElementById('canvas-iframe');
   const doc = iframe?.contentDocument;
   const target = doc?.querySelector(`[data-block-id="${id}"]`);
-  if (!wrap || !frame || !target) return;
-  const top = frame.offsetTop + target.offsetTop - 24;
+  if (!wrap || !iframe || !target) return;
+  const wrapRect = wrap.getBoundingClientRect();
+  const iframeRect = iframe.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const targetTop = iframeRect.top + targetRect.top;
+  const targetBottom = targetTop + targetRect.height;
+  if (targetTop >= wrapRect.top + 16 && targetBottom <= wrapRect.bottom - 16) return;
+  const top = wrap.scrollTop + (iframeRect.top - wrapRect.top) + targetRect.top - 24;
   wrap.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
@@ -520,6 +537,7 @@ function moveBlockToIndex(id, toIndex) {
   const [block] = page.blocks.splice(fromIndex, 1);
   page.blocks.splice(boundedIndex, 0, block);
   STATE.selectedBlockId = id;
+  STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = id;
   renderCanvas();
   renderLayoutList();
@@ -611,10 +629,11 @@ function closeMobileOverflow() {
 document.addEventListener('click', () => closeMobileOverflow());
 
 window.deselectBlock = function(e) {
-  STATE.selectedBlockId = null;
+  clearBuilderSelection();
   try {
     const doc = document.getElementById('canvas-iframe').contentDocument;
     doc.querySelectorAll('.block-wrapper').forEach(el => el.classList.remove('selected'));
+    doc.querySelectorAll('.fw-builder-column').forEach(el => el.classList.remove('selected-column'));
   } catch(e) {}
   renderProps();
   renderLayoutList();
@@ -624,11 +643,13 @@ window.deselectBlock = function(e) {
 
 window.selectBlock = function(id, scrollToBlock = false) {
   STATE.selectedBlockId = id;
+  STATE.selectedColumn = null;
   // Highlight in iframe
   try {
     const iframe = document.getElementById('canvas-iframe');
     const doc = iframe.contentDocument;
     doc.querySelectorAll('.block-wrapper').forEach(el => el.classList.remove('selected'));
+    doc.querySelectorAll('.fw-builder-column').forEach(el => el.classList.remove('selected-column'));
     const sel = doc.querySelector(`[data-block-id="${id}"]`);
     if (sel) sel.classList.add('selected');
   } catch(e) {}
@@ -636,6 +657,28 @@ window.selectBlock = function(id, scrollToBlock = false) {
   renderLayoutList();
   if (scrollToBlock) scrollCanvasToBlock(id);
   // On mobile, automatically jump to the props panel
+  if (isMobile()) switchMobileTab('props');
+};
+
+window.selectColumn = function(parentId, index, scrollToColumn = false) {
+  const parent = findBlockById(parentId);
+  const columnIndex = Number(index);
+  if (!parent || !Array.isArray(parent.props?.columns) || !Array.isArray(parent.props.columns[columnIndex])) return;
+  STATE.selectedBlockId = null;
+  STATE.selectedColumn = { parentId, index: columnIndex };
+  try {
+    const iframe = document.getElementById('canvas-iframe');
+    const doc = iframe.contentDocument;
+    doc.querySelectorAll('.block-wrapper').forEach(el => el.classList.remove('selected'));
+    doc.querySelectorAll('.fw-builder-column').forEach(el => el.classList.remove('selected-column'));
+    const sel = doc.querySelector(`[data-column-parent="${parentId}"][data-column-index="${columnIndex}"]`);
+    if (sel) {
+      sel.classList.add('selected-column');
+      if (scrollToColumn) sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } catch(e) {}
+  renderProps();
+  renderLayoutList();
   if (isMobile()) switchMobileTab('props');
 };
 
@@ -661,6 +704,7 @@ window.removeBlock = function(id) {
   pushUndo();
   ctx.blocks.splice(ctx.index, 1);
   if (STATE.selectedBlockId === id) STATE.selectedBlockId = null;
+  if (STATE.selectedColumn?.parentId === id) STATE.selectedColumn = null;
   renderCanvas();
   renderLayoutList();
   renderProps();

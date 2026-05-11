@@ -84,6 +84,7 @@ function addTemplateBlock(templateId) {
   newBlock.id = uid();
   page.blocks.push(newBlock);
   STATE.selectedBlockId = newBlock.id;
+  STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = newBlock.id;
   renderCanvas();
   renderLayoutList();
@@ -109,6 +110,7 @@ function addLibraryBlock(libraryBlockId) {
   newBlock.id = uid();
   page.blocks.push(newBlock);
   STATE.selectedBlockId = newBlock.id;
+  STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = newBlock.id;
   renderCanvas();
   renderLayoutList();

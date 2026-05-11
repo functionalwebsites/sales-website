@@ -34,6 +34,11 @@ function _renderBlockInner(block, editing = false, ctx = null) {
   const siteBodySize = 'var(--site-body-size, 16px)';
   const renderNestedBlocks = (blocks) => (blocks || []).map(child => renderBlock(child, editing, pd)).join('');
   const editingEmpty = (label) => editing ? `<div style="min-height:44px;padding:12px;border:1px dashed #b8b8b8;color:#777;font-size:13px;">${label}</div>` : '';
+  const renderColumn = (parentBlock, columns, index) => {
+    const content = renderNestedBlocks(columns[index]) || editingEmpty(`Column ${index + 1} is empty.`);
+    if (!editing) return `<div>${content}</div>`;
+    return `<div class="fw-builder-column" data-column-parent="${parentBlock.id}" data-column-index="${index}" onclick="event.stopPropagation();window.parent.selectColumn('${parentBlock.id}',${index})">${content}</div>`;
+  };
 
   switch(block.type) {
     case 'nav': {
@@ -162,28 +167,30 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 </section>`;
     }
     case 'columns2': {
+      const alignItems = p.verticalAlign === 'bottom' ? 'end' : p.verticalAlign === 'center' ? 'center' : 'start';
       const columns = Array.isArray(p.columns) ? p.columns : [
         p.col1 ? [{ id: `${block.id}-legacy-1`, type: 'html', props: { code: p.col1 } }] : [],
         p.col2 ? [{ id: `${block.id}-legacy-2`, type: 'html', props: { code: p.col2 } }] : []
       ];
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div class="fw-grid fw-grid-2" style="grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
-    <div>${renderNestedBlocks(columns[0]) || editingEmpty('Column 1 is empty.')}</div>
-    <div>${renderNestedBlocks(columns[1]) || editingEmpty('Column 2 is empty.')}</div>
+  <div class="fw-grid fw-grid-2" style="grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};align-items:${alignItems};max-width:${siteSectionWidth};margin:0 auto;">
+    ${renderColumn(block, columns, 0)}
+    ${renderColumn(block, columns, 1)}
   </div>
 </div>`;
     }
     case 'columns3': {
+      const alignItems = p.verticalAlign === 'bottom' ? 'end' : p.verticalAlign === 'center' ? 'center' : 'start';
       const columns = Array.isArray(p.columns) ? p.columns : [
         p.col1 ? [{ id: `${block.id}-legacy-1`, type: 'html', props: { code: p.col1 } }] : [],
         p.col2 ? [{ id: `${block.id}-legacy-2`, type: 'html', props: { code: p.col2 } }] : [],
         p.col3 ? [{ id: `${block.id}-legacy-3`, type: 'html', props: { code: p.col3 } }] : []
       ];
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div class="fw-grid fw-grid-3" style="grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">
-    <div>${renderNestedBlocks(columns[0]) || editingEmpty('Column 1 is empty.')}</div>
-    <div>${renderNestedBlocks(columns[1]) || editingEmpty('Column 2 is empty.')}</div>
-    <div>${renderNestedBlocks(columns[2]) || editingEmpty('Column 3 is empty.')}</div>
+  <div class="fw-grid fw-grid-3" style="grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};align-items:${alignItems};max-width:${siteSectionWidth};margin:0 auto;">
+    ${renderColumn(block, columns, 0)}
+    ${renderColumn(block, columns, 1)}
+    ${renderColumn(block, columns, 2)}
   </div>
 </div>`;
     }

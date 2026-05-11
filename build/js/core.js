@@ -18,6 +18,7 @@ const STATE = {
   currentDevice: 'desktop',
   currentCodeTab: 'html',
   selectedBlockId: null,
+  selectedColumn: null,
   deployTarget: null,
   editingBlockId: null,
   propsTab: 'page',
@@ -82,6 +83,11 @@ function _restore(snap) {
   _projectData.styleSystem = normalizeStyleSystem(s.styleSystem);
 }
 
+function clearBuilderSelection() {
+  STATE.selectedBlockId = null;
+  STATE.selectedColumn = null;
+}
+
 function pushUndo() {
   _undoStack.push(_snapshot());
   if (_undoStack.length > UNDO_LIMIT) _undoStack.shift();
@@ -102,7 +108,7 @@ function undo() {
   if (!_undoStack.length) return;
   _redoStack.push(_snapshot());
   _restore(_undoStack.pop());
-  STATE.selectedBlockId = null;
+  clearBuilderSelection();
   renderPagesList();
   renderCanvas();
   renderProps();
@@ -115,7 +121,7 @@ function redo() {
   if (!_redoStack.length) return;
   _undoStack.push(_snapshot());
   _restore(_redoStack.pop());
-  STATE.selectedBlockId = null;
+  clearBuilderSelection();
   renderPagesList();
   renderCanvas();
   renderProps();
@@ -1136,8 +1142,8 @@ function mkBlock(type, props = {}) {
     image: { src: '', alt: 'Image', width: '100%', height: 'auto', aspectRatio: '', fit: 'contain', align: 'center', rounded: true, caption: '' },
     button: { text: 'Click Here', href: '#', bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', align: 'center', size: 'medium', rounded: true },
     section: { bgColor: '#ffffff', padding: '', maxWidth: '', content: '<h2>Section Title</h2>\n<p>Add your section content here.</p>' },
-    columns2: { bgColor: '#ffffff', padding: '', col1: '<p>Column 1 content</p>', col2: '<p>Column 2 content</p>', gap: '' },
-    columns3: { bgColor: '#ffffff', padding: '', col1: '<p>Column 1</p>', col2: '<p>Column 2</p>', col3: '<p>Column 3</p>', gap: '' },
+    columns2: { bgColor: '#ffffff', padding: '', col1: '<p>Column 1 content</p>', col2: '<p>Column 2 content</p>', gap: '', verticalAlign: 'top' },
+    columns3: { bgColor: '#ffffff', padding: '', col1: '<p>Column 1</p>', col2: '<p>Column 2</p>', col3: '<p>Column 3</p>', gap: '', verticalAlign: 'top' },
     divider: { color: '#dddddd', thickness: '1px', margin: '20px 0' },
     spacer: { height: '40px' },
     cards: { bgColor: '#f8f8f8', padding: '', title: 'Our Work', cards: [

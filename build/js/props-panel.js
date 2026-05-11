@@ -3,9 +3,26 @@ function addBlock(type) {
   pushUndo();
   const block = mkBlock(type);
   const page = _projectData.pages[STATE.currentPageIndex];
-  page.blocks.push(block);
-  STATE.selectedBlockId = block.id;
-  STATE.pendingScrollBlockId = block.id;
+  const selectedColumn = STATE.selectedColumn;
+  const selectedColumnParent = selectedColumn ? findBlockById(selectedColumn.parentId) : null;
+  const selectedContext = !selectedColumn && STATE.selectedBlockId ? findBlockContext(STATE.selectedBlockId) : null;
+  const keepSelectedColumn = selectedColumnParent && Array.isArray(selectedColumnParent.props?.columns) && Array.isArray(selectedColumnParent.props.columns[selectedColumn.index]);
+  if (selectedColumnParent && Array.isArray(selectedColumnParent.props?.columns) && Array.isArray(selectedColumnParent.props.columns[selectedColumn.index])) {
+    selectedColumnParent.props.columns[selectedColumn.index].push(block);
+  } else if (selectedContext) {
+    selectedContext.blocks.splice(selectedContext.index + 1, 0, block);
+  } else {
+    page.blocks.push(block);
+  }
+  if (keepSelectedColumn) {
+    STATE.selectedBlockId = null;
+    STATE.selectedColumn = { parentId: selectedColumn.parentId, index: Number(selectedColumn.index) };
+    STATE.pendingScrollBlockId = null;
+  } else {
+    STATE.selectedBlockId = block.id;
+    STATE.selectedColumn = null;
+    STATE.pendingScrollBlockId = block.id;
+  }
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -30,9 +47,17 @@ function addNestedBlock(parentId, type, groupIndex = 0) {
   if (!target) return;
   pushUndo();
   const block = mkBlock(type);
+  const keepSelectedColumn = STATE.selectedColumn?.parentId === parentId && Number(STATE.selectedColumn.index) === Number(groupIndex);
   target.push(block);
-  STATE.selectedBlockId = block.id;
-  STATE.pendingScrollBlockId = block.id;
+  if (keepSelectedColumn) {
+    STATE.selectedBlockId = null;
+    STATE.selectedColumn = { parentId, index: Number(groupIndex) };
+    STATE.pendingScrollBlockId = null;
+  } else {
+    STATE.selectedBlockId = block.id;
+    STATE.selectedColumn = null;
+    STATE.pendingScrollBlockId = block.id;
+  }
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -47,6 +72,10 @@ function moveColumn(parentId, columnIndex, dir) {
   const tmp = block.props.columns[columnIndex];
   block.props.columns[columnIndex] = block.props.columns[nextIndex];
   block.props.columns[nextIndex] = tmp;
+  if (STATE.selectedColumn?.parentId === parentId) {
+    if (STATE.selectedColumn.index === columnIndex) STATE.selectedColumn.index = nextIndex;
+    else if (STATE.selectedColumn.index === nextIndex) STATE.selectedColumn.index = columnIndex;
+  }
   renderCanvas();
   renderProps();
 }
@@ -126,6 +155,7 @@ function insertSectionRecipe(kind) {
   page.blocks.push(...blocks);
   const firstBlock = blocks[0];
   STATE.selectedBlockId = firstBlock?.id || null;
+  STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = firstBlock?.id || null;
   renderCanvas();
   renderLayoutList();
@@ -139,6 +169,15 @@ function insertSectionRecipe(kind) {
 // ============================================================
 function renderProps() {
   const panel = document.getElementById('props-panel');
+  if (STATE.selectedColumn) {
+    const block = findBlockById(STATE.selectedColumn.parentId);
+    const index = Number(STATE.selectedColumn.index);
+    if (block && Array.isArray(block.props?.columns) && Array.isArray(block.props.columns[index])) {
+      panel.innerHTML = buildColumnPropsForm(block, index);
+      return;
+    }
+    STATE.selectedColumn = null;
+  }
   if (!STATE.selectedBlockId) {
     panel.innerHTML = buildSitePropsHTML();
     return;
@@ -560,11 +599,80 @@ function buildContentInsertButtons(blockId, propKey) {
   </div>`;
 }
 
-function buildPropsForm(block) {
+const NESTED_BLOCK_TYPES = [
+  ['heading', 'Header'],
+  ['text', 'Text'],
+  ['image', 'Image'],
+  ['button', 'Button'],
+  ['cards', 'Cards'],
+  ['features', 'Features'],
+  ['divider', 'Divider'],
+  ['spacer', 'Spacer'],
+  ['cta', 'CTA']
+];
+
+function nestedAddButtons(parentId, groupIndex = 0) {
+  return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+    ${NESTED_BLOCK_TYPES.map(([blockType, label]) => `<button class="btn btn-secondary btn-sm" onclick="addNestedBlock('${parentId}','${blockType}',${groupIndex})">+ ${label}</button>`).join('')}
+  </div>`;
+}
+
+function nestedBlockList(blocks = []) {
+  if (!blocks.length) return `<div class="text-muted text-sm" style="padding:8px 0;">No nested blocks yet.</div>`;
+  return blocks.map((child, index) => `<div class="layout-item${STATE.selectedBlockId === child.id ? ' selected' : ''}" style="border:1px solid var(--border);margin-bottom:6px;" onclick="selectBlock('${child.id}', true)">
+    <div class="layout-item-icon">${getBlockIcon(child.type)}</div>
+    <div class="layout-item-info">
+      <div class="layout-item-type">${index + 1}. ${child.type}</div>
+      <div class="layout-item-slug">${child.props?.text || child.props?.heading || child.props?.title || child.props?.content?.replace(/<[^>]+>/g, '').slice(0, 32) || 'Nested block'}</div>
+    </div>
+    <div class="layout-item-actions" style="opacity:1;">
+      <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${child.id}',-1)" title="Move up" aria-label="Move up">↑</button>
+      <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${child.id}',1)" title="Move down" aria-label="Move down">↓</button>
+      <button class="btn btn-danger btn-sm layout-block-action" onclick="event.stopPropagation();removeBlock('${child.id}')" title="Delete" aria-label="Delete">×</button>
+    </div>
+  </div>`).join('');
+}
+
+function nestedBlockEditorList(blocks = []) {
+  if (!blocks.length) return `<div class="text-muted text-sm" style="padding:8px 0;">No nested blocks yet.</div>`;
+  return blocks.map((child, index) => `<details class="props-advanced" open style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
+      <span>${index + 1}. ${child.type}</span>
+      <span style="float:right;display:inline-flex;gap:4px;">
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();selectBlock('${child.id}', true)" title="Edit only this block">Edit</button>
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveBlock('${child.id}',-1)" title="Move up" aria-label="Move up">↑</button>
+        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveBlock('${child.id}',1)" title="Move down" aria-label="Move down">↓</button>
+        <button class="btn btn-danger btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();removeBlock('${child.id}')" title="Delete" aria-label="Delete">×</button>
+      </span>
+    </summary>
+    <div style="padding:10px;">${buildPropsForm(child, { embedded: true })}</div>
+  </details>`).join('');
+}
+
+function buildColumnPropsForm(block, columnIndex) {
+  normalizeContainerBlock(block);
+  const columnBlocks = block.props.columns[columnIndex] || [];
+  return `<div class="props-section">
+    <div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+      Column ${columnIndex + 1}
+      <button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="selectBlock('${block.id}', true)" title="Back to column group settings">← Columns</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="moveColumn('${block.id}',${columnIndex},-1)">← Move Left</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="moveColumn('${block.id}',${columnIndex},1)">Move Right →</button>
+    </div>
+    <div class="props-section-title" style="margin-top:12px;">Column Blocks</div>
+    ${nestedBlockEditorList(columnBlocks)}
+    ${nestedAddButtons(block.id, columnIndex)}
+  </div>`;
+}
+
+function buildPropsForm(block, options = {}) {
   const p = block.props;
   const type = block.type;
+  const embedded = Boolean(options.embedded);
 
-  let html = `<div class="props-section"><div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">${type.charAt(0).toUpperCase()+type.slice(1)}<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="deselectBlock()" title="Back to Page / Site settings">← Page / Site</button></div>
+  let html = `<div class="props-section"><div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">${type.charAt(0).toUpperCase()+type.slice(1)}${embedded ? '' : `<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="deselectBlock()" title="Back to Page / Site settings">← Page / Site</button>`}</div>
     <button class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:12px;" onclick="resetBlockStyle('${block.id}')">Reset Block Style</button>`;
 
   const field = (label, key, inputType = 'text', extra = '') => {
@@ -593,39 +701,6 @@ function buildPropsForm(block) {
       return `<div class="field"><label class="label">${label}</label><select class="input" onchange="updateProp('${block.id}','${key}',this.value)" ${extra}>${extra}</select></div>`;
     }
     return `<div class="field"><label class="label">${label}</label><input class="input" type="${inputType}" value="${p[key]||''}" oninput="updateProp('${block.id}','${key}',this.value)"></div>`;
-  };
-
-  const nestedAddButtons = (parentId, groupIndex = 0) => {
-    const types = [
-      ['heading', 'Header'],
-      ['text', 'Text'],
-      ['image', 'Image'],
-      ['button', 'Button'],
-      ['cards', 'Cards'],
-      ['features', 'Features'],
-      ['divider', 'Divider'],
-      ['spacer', 'Spacer'],
-      ['cta', 'CTA']
-    ];
-    return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-      ${types.map(([blockType, label]) => `<button class="btn btn-secondary btn-sm" onclick="addNestedBlock('${parentId}','${blockType}',${groupIndex})">+ ${label}</button>`).join('')}
-    </div>`;
-  };
-
-  const nestedBlockList = (blocks = []) => {
-    if (!blocks.length) return `<div class="text-muted text-sm" style="padding:8px 0;">No nested blocks yet.</div>`;
-    return blocks.map((child, index) => `<div class="layout-item${STATE.selectedBlockId === child.id ? ' selected' : ''}" style="border:1px solid var(--border);margin-bottom:6px;" onclick="selectBlock('${child.id}', true)">
-      <div class="layout-item-icon">${getBlockIcon(child.type)}</div>
-      <div class="layout-item-info">
-        <div class="layout-item-type">${index + 1}. ${child.type}</div>
-        <div class="layout-item-slug">${child.props?.text || child.props?.heading || child.props?.title || child.props?.content?.replace(/<[^>]+>/g, '').slice(0, 32) || 'Nested block'}</div>
-      </div>
-      <div class="layout-item-actions" style="opacity:1;">
-        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${child.id}',-1)" title="Move up" aria-label="Move up">↑</button>
-        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.stopPropagation();moveBlock('${child.id}',1)" title="Move down" aria-label="Move down">↓</button>
-        <button class="btn btn-danger btn-sm layout-block-action" onclick="event.stopPropagation();removeBlock('${child.id}')" title="Delete" aria-label="Delete">×</button>
-      </div>
-    </div>`).join('');
   };
 
   switch(type) {
@@ -839,11 +914,19 @@ function buildPropsForm(block) {
       html += field('Background Color', 'bgColor', 'color');
       html += field('Padding', 'padding');
       html += field('Gap', 'gap');
+      html += `<div class="field"><label class="label">Vertical Align</label><select class="input" onchange="updateProp('${block.id}','verticalAlign',this.value)">
+        ${[
+          ['top', 'Top'],
+          ['center', 'Center'],
+          ['bottom', 'Bottom']
+        ].map(([value, label]) => `<option value="${value}" ${(p.verticalAlign||'top')===value?'selected':''}>${label}</option>`).join('')}
+      </select></div>`;
       (p.columns || []).forEach((columnBlocks, columnIndex) => {
         html += `<details class="props-advanced" open style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
           <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
             <span>Column ${columnIndex + 1}</span>
             <span style="float:right;display:inline-flex;gap:4px;">
+              <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();selectColumn('${block.id}',${columnIndex},true)" title="Edit this column">Edit</button>
               <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveColumn('${block.id}',${columnIndex},-1)" title="Move column left">←</button>
               <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveColumn('${block.id}',${columnIndex},1)" title="Move column right">→</button>
             </span>
@@ -1014,11 +1097,13 @@ function buildPropsForm(block) {
     </div>
   </details>`;
 
-  html += `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
-    <button class="btn btn-secondary btn-sm" onclick="saveBlockAsTemplate()" title="Save this block's configuration as a reusable template"><span style="color:var(--green);">▣</span> Save Template</button>
-    <button class="btn btn-secondary btn-sm" onclick="saveSelectedBlockToLibrary()" title="Save this block into the global custom block library">⬆ Save To Library</button>
-    <button class="btn btn-danger btn-sm" onclick="window.removeBlock('${block.id}')">⌫ Delete Block</button>
-  </div>`;
+  if (!embedded) {
+    html += `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-sm" onclick="saveBlockAsTemplate()" title="Save this block's configuration as a reusable template"><span style="color:var(--green);">▣</span> Save Template</button>
+      <button class="btn btn-secondary btn-sm" onclick="saveSelectedBlockToLibrary()" title="Save this block into the global custom block library">⬆ Save To Library</button>
+      <button class="btn btn-danger btn-sm" onclick="window.removeBlock('${block.id}')">⌫ Delete Block</button>
+    </div>`;
+  }
 
   return html;
 }
