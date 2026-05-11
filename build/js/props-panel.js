@@ -635,11 +635,11 @@ function nestedBlockList(blocks = []) {
 
 function nestedBlockEditorList(blocks = []) {
   if (!blocks.length) return `<div class="text-muted text-sm" style="padding:8px 0;">No nested blocks yet.</div>`;
-  return blocks.map((child, index) => `<details class="props-advanced" open style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
-    <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
-      <span>${index + 1}. ${child.type}</span>
-      <span style="float:right;display:inline-flex;gap:4px;">
-        <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();selectBlock('${child.id}', true)" title="Edit only this block">Edit</button>
+  return blocks.map((child, index) => `<details class="props-advanced" style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+    <summary style="padding:10px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <span class="props-accordion-label"><span class="props-accordion-arrow">▸</span><span>${child.type}</span></span>
+      <span style="display:inline-flex;gap:4px;align-items:center;">
+        <button class="btn btn-ghost btn-sm layout-block-action" style="min-width:48px;" onclick="event.preventDefault();event.stopPropagation();selectBlock('${child.id}', true)" title="Edit only this block">Edit</button>
         <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveBlock('${child.id}',-1)" title="Move up" aria-label="Move up">↑</button>
         <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveBlock('${child.id}',1)" title="Move down" aria-label="Move down">↓</button>
         <button class="btn btn-danger btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();removeBlock('${child.id}')" title="Delete" aria-label="Delete">×</button>
@@ -667,12 +667,22 @@ function buildColumnPropsForm(block, columnIndex) {
   </div>`;
 }
 
+function getContainingColumnContext(blockId) {
+  const context = findBlockContext(blockId);
+  if (!context?.parentBlock || !['columns2', 'columns3'].includes(context.parentBlock.type)) return null;
+  return {
+    parentId: context.parentBlock.id,
+    index: Number(context.groupIndex)
+  };
+}
+
 function buildPropsForm(block, options = {}) {
   const p = block.props;
   const type = block.type;
   const embedded = Boolean(options.embedded);
+  const containingColumn = embedded ? null : getContainingColumnContext(block.id);
 
-  let html = `<div class="props-section"><div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">${type.charAt(0).toUpperCase()+type.slice(1)}${embedded ? '' : `<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="deselectBlock()" title="Back to Page / Site settings">← Page / Site</button>`}</div>
+  let html = `<div class="props-section"><div class="props-section-title" style="display:flex;align-items:center;justify-content:space-between;">${type.charAt(0).toUpperCase()+type.slice(1)}${embedded ? '' : `<span style="display:inline-flex;gap:6px;align-items:center;">${containingColumn ? `<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);min-width:58px;" onclick="selectColumn('${containingColumn.parentId}',${containingColumn.index},true)" title="Back to containing column">← Column</button>` : ''}<button class="btn btn-ghost btn-sm d-only" style="font-size:11px;padding:2px 8px;color:var(--text2);" onclick="deselectBlock()" title="Back to Page / Site settings">← Page / Site</button></span>`}</div>
     <button class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:12px;" onclick="resetBlockStyle('${block.id}')">Reset Block Style</button>`;
 
   const field = (label, key, inputType = 'text', extra = '') => {
@@ -922,11 +932,11 @@ function buildPropsForm(block, options = {}) {
         ].map(([value, label]) => `<option value="${value}" ${(p.verticalAlign||'top')===value?'selected':''}>${label}</option>`).join('')}
       </select></div>`;
       (p.columns || []).forEach((columnBlocks, columnIndex) => {
-        html += `<details class="props-advanced" open style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
-          <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
-            <span>Column ${columnIndex + 1}</span>
-            <span style="float:right;display:inline-flex;gap:4px;">
-              <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();selectColumn('${block.id}',${columnIndex},true)" title="Edit this column">Edit</button>
+        html += `<details class="props-advanced" style="margin-top:10px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+          <summary style="padding:10px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <span class="props-accordion-label"><span class="props-accordion-arrow">▸</span><span>Col ${columnIndex + 1}</span></span>
+            <span style="display:inline-flex;gap:4px;align-items:center;">
+              <button class="btn btn-ghost btn-sm layout-block-action" style="min-width:48px;" onclick="event.preventDefault();event.stopPropagation();selectColumn('${block.id}',${columnIndex},true)" title="Edit this column">Edit</button>
               <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveColumn('${block.id}',${columnIndex},-1)" title="Move column left">←</button>
               <button class="btn btn-ghost btn-sm layout-block-action" onclick="event.preventDefault();event.stopPropagation();moveColumn('${block.id}',${columnIndex},1)" title="Move column right">→</button>
             </span>

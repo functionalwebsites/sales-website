@@ -347,6 +347,27 @@ body.command-drag .layout-item:active { cursor: grabbing; }
   transform: translate(1px, 1px) !important;
   box-shadow: 1px 1px 0 var(--shadow-color) !important;
 }
+.props-advanced > summary {
+  list-style: none;
+}
+.props-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+.props-accordion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.props-accordion-arrow {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  transition: transform .15s ease;
+}
+.props-advanced[open] > summary .props-accordion-arrow {
+  transform: rotate(90deg);
+}
 
 /* Publish bar */
 .publish-bar { background: var(--bg2); border-top: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }

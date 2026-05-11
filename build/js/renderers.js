@@ -37,7 +37,13 @@ function _renderBlockInner(block, editing = false, ctx = null) {
   const renderColumn = (parentBlock, columns, index) => {
     const content = renderNestedBlocks(columns[index]) || editingEmpty(`Column ${index + 1} is empty.`);
     if (!editing) return `<div>${content}</div>`;
-    return `<div class="fw-builder-column" data-column-parent="${parentBlock.id}" data-column-index="${index}" onclick="event.stopPropagation();window.parent.selectColumn('${parentBlock.id}',${index})">${content}</div>`;
+    return `<div class="fw-builder-column" data-column-parent="${parentBlock.id}" data-column-index="${index}" onclick="event.stopPropagation();window.parent.selectColumn('${parentBlock.id}',${index})">
+      ${content}
+      <div class="column-controls">
+        <button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveColumn('${parentBlock.id}',${index},-1)" title="Move column left" aria-label="Move column left">←</button>
+        <button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveColumn('${parentBlock.id}',${index},1)" title="Move column right" aria-label="Move column right">→</button>
+      </div>
+    </div>`;
   };
 
   switch(block.type) {

@@ -210,6 +210,8 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 .fw-builder-column { min-height: 44px; position: relative; }
 .fw-builder-column:hover { outline: 2px dashed #b9482e; outline-offset: -2px; }
 .fw-builder-column.selected-column { outline: 3px solid #b9482e; outline-offset: -3px; }
+.column-controls { position: absolute; top: 8px; left: 8px; display: none; gap: 6px; z-index: 998; padding: 5px; background: #f5efe0; border: 3px solid #10100d; box-shadow: 4px 4px 0 #10100d; }
+.fw-builder-column.selected-column > .column-controls { display: flex; }
 .block-controls { position: absolute; top: 8px; right: 8px; display: none; gap: 6px; z-index: 999; padding: 5px; background: #f5efe0; border: 3px solid #10100d; box-shadow: 4px 4px 0 #10100d; }
 .block-wrapper:hover > .block-controls { display: flex; }
 .block-ctrl-btn { width: 28px; height: 28px; border-radius: 4px; background: #f5efe0; color: #10100d; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; font-size: 14px; font-weight: 900; cursor: pointer; border: 3px solid #10100d; box-shadow: 2px 2px 0 #10100d; line-height: 1; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease; }
