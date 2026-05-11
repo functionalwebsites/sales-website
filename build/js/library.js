@@ -86,6 +86,7 @@ function addTemplateBlock(templateId) {
   STATE.selectedBlockId = newBlock.id;
   STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = newBlock.id;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -112,6 +113,7 @@ function addLibraryBlock(libraryBlockId) {
   STATE.selectedBlockId = newBlock.id;
   STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = newBlock.id;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();

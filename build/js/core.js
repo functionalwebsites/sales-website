@@ -27,6 +27,7 @@ const STATE = {
   imgLibSelectedId: null,
   imgLibCallback: null,
   pendingScrollBlockId: null,
+  pendingScrollColumn: null,
 };
 
 const BUILDER_MANIFEST_FILE = 'functional-websites-manifest.json';
@@ -34,6 +35,8 @@ const BUILDER_PROJECT_FILE = 'functional-websites-project.json';
 const LIBRARY_PACK_VERSION = 1;
 const BUILDER_PROJECT_QUERY_PARAM = 'project';
 const BUILDER_PAGE_QUERY_PARAM = 'page';
+const BUILDER_BLOCK_QUERY_PARAM = 'block';
+const BUILDER_COLUMN_QUERY_PARAM = 'column';
 
 // ============================================================
 // UNDO / REDO  (max 50 states, snapshots everything except images)
@@ -86,6 +89,8 @@ function _restore(snap) {
 function clearBuilderSelection() {
   STATE.selectedBlockId = null;
   STATE.selectedColumn = null;
+  STATE.pendingScrollBlockId = null;
+  STATE.pendingScrollColumn = null;
 }
 
 function pushUndo() {
@@ -109,6 +114,7 @@ function undo() {
   _redoStack.push(_snapshot());
   _restore(_undoStack.pop());
   clearBuilderSelection();
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderPagesList();
   renderCanvas();
   renderProps();
@@ -122,6 +128,7 @@ function redo() {
   _undoStack.push(_snapshot());
   _restore(_redoStack.pop());
   clearBuilderSelection();
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderPagesList();
   renderCanvas();
   renderProps();
@@ -256,11 +263,51 @@ function getPageIndexFromUrl(maxPages = 1) {
   }
 }
 
+function getBuilderSelectionFromUrl() {
+  try {
+    const params = new URL(window.location.href).searchParams;
+    const blockId = params.get(BUILDER_BLOCK_QUERY_PARAM);
+    if (blockId) return { type: 'block', id: blockId };
+    const columnValue = params.get(BUILDER_COLUMN_QUERY_PARAM);
+    if (columnValue) {
+      const [parentId, indexValue] = columnValue.split(':');
+      const index = Number.parseInt(indexValue, 10);
+      if (parentId && Number.isFinite(index)) return { type: 'column', parentId, index };
+    }
+  } catch(e) {}
+  return null;
+}
+
+function applyBuilderSelectionFromUrl(selection) {
+  if (!selection) return;
+  if (selection.type === 'block' && findBlockById(selection.id)) {
+    STATE.selectedBlockId = selection.id;
+    STATE.selectedColumn = null;
+    STATE.pendingScrollBlockId = selection.id;
+    return;
+  }
+  if (selection.type === 'column') {
+    const block = findBlockById(selection.parentId);
+    if (block && Array.isArray(block.props?.columns) && Array.isArray(block.props.columns[selection.index])) {
+      STATE.selectedBlockId = null;
+      STATE.selectedColumn = { parentId: selection.parentId, index: selection.index };
+      STATE.pendingScrollColumn = { parentId: selection.parentId, index: selection.index };
+    }
+  }
+}
+
 function setProjectIdInUrl(projectId, pageIndex = STATE.currentPageIndex) {
   if (!window.history || !projectId) return;
   const url = new URL(window.location.href);
   url.searchParams.set(BUILDER_PROJECT_QUERY_PARAM, projectId);
   url.searchParams.set(BUILDER_PAGE_QUERY_PARAM, String(Math.max(Number(pageIndex) || 0, 0)));
+  url.searchParams.delete(BUILDER_BLOCK_QUERY_PARAM);
+  url.searchParams.delete(BUILDER_COLUMN_QUERY_PARAM);
+  if (STATE.selectedBlockId) {
+    url.searchParams.set(BUILDER_BLOCK_QUERY_PARAM, STATE.selectedBlockId);
+  } else if (STATE.selectedColumn) {
+    url.searchParams.set(BUILDER_COLUMN_QUERY_PARAM, `${STATE.selectedColumn.parentId}:${STATE.selectedColumn.index}`);
+  }
   window.history.replaceState({ view: 'editor', projectId, pageIndex }, '', url);
 }
 
@@ -270,6 +317,8 @@ function clearProjectIdFromUrl() {
   if (!url.searchParams.has(BUILDER_PROJECT_QUERY_PARAM) && !url.searchParams.has(BUILDER_PAGE_QUERY_PARAM)) return;
   url.searchParams.delete(BUILDER_PROJECT_QUERY_PARAM);
   url.searchParams.delete(BUILDER_PAGE_QUERY_PARAM);
+  url.searchParams.delete(BUILDER_BLOCK_QUERY_PARAM);
+  url.searchParams.delete(BUILDER_COLUMN_QUERY_PARAM);
   window.history.replaceState({ view: 'dashboard' }, '', url);
 }
 
@@ -283,7 +332,10 @@ function restoreProjectFromUrl() {
     return false;
   }
   const projectData = LS.get('proj_' + projectId);
-  openEditor(projectId, { pageIndex: getPageIndexFromUrl(projectData?.pages?.length || 1) });
+  openEditor(projectId, {
+    pageIndex: getPageIndexFromUrl(projectData?.pages?.length || 1),
+    selection: getBuilderSelectionFromUrl()
+  });
   return true;
 }
 

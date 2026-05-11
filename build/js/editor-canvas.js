@@ -8,6 +8,7 @@ function openEditor(id, options = {}) {
   _projectData = getProjectData(id);
   const maxPageIndex = Math.max((_projectData.pages || []).length - 1, 0);
   STATE.currentPageIndex = Math.min(Math.max(Number(options.pageIndex) || 0, 0), maxPageIndex);
+  applyBuilderSelectionFromUrl(options.selection);
   setProjectIdInUrl(id, STATE.currentPageIndex);
   _resetUndo();
   setSaveStatus('saved');
@@ -389,6 +390,11 @@ function renderCanvas() {
       STATE.pendingScrollBlockId = null;
       setTimeout(() => scrollCanvasToBlock(id), 50);
     }
+    if (STATE.pendingScrollColumn) {
+      const column = STATE.pendingScrollColumn;
+      STATE.pendingScrollColumn = null;
+      setTimeout(() => scrollCanvasToColumn(column.parentId, column.index), 50);
+    }
   };
 }
 
@@ -397,6 +403,22 @@ function scrollCanvasToBlock(id) {
   const iframe = document.getElementById('canvas-iframe');
   const doc = iframe?.contentDocument;
   const target = doc?.querySelector(`[data-block-id="${id}"]`);
+  if (!wrap || !iframe || !target) return;
+  const wrapRect = wrap.getBoundingClientRect();
+  const iframeRect = iframe.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const targetTop = iframeRect.top + targetRect.top;
+  const targetBottom = targetTop + targetRect.height;
+  if (targetTop >= wrapRect.top + 16 && targetBottom <= wrapRect.bottom - 16) return;
+  const top = wrap.scrollTop + (iframeRect.top - wrapRect.top) + targetRect.top - 24;
+  wrap.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function scrollCanvasToColumn(parentId, index) {
+  const wrap = document.querySelector('.canvas-wrap');
+  const iframe = document.getElementById('canvas-iframe');
+  const doc = iframe?.contentDocument;
+  const target = doc?.querySelector(`[data-column-parent="${parentId}"][data-column-index="${index}"]`);
   if (!wrap || !iframe || !target) return;
   const wrapRect = wrap.getBoundingClientRect();
   const iframeRect = iframe.getBoundingClientRect();
@@ -541,6 +563,7 @@ function moveBlockToIndex(id, toIndex) {
   STATE.selectedBlockId = id;
   STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = id;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -632,6 +655,7 @@ document.addEventListener('click', () => closeMobileOverflow());
 
 window.deselectBlock = function(e) {
   clearBuilderSelection();
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   try {
     const doc = document.getElementById('canvas-iframe').contentDocument;
     doc.querySelectorAll('.block-wrapper').forEach(el => el.classList.remove('selected'));
@@ -646,6 +670,7 @@ window.deselectBlock = function(e) {
 window.selectBlock = function(id, scrollToBlock = false) {
   STATE.selectedBlockId = id;
   STATE.selectedColumn = null;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   // Highlight in iframe
   try {
     const iframe = document.getElementById('canvas-iframe');
@@ -668,6 +693,7 @@ window.selectColumn = function(parentId, index, scrollToColumn = false) {
   if (!parent || !Array.isArray(parent.props?.columns) || !Array.isArray(parent.props.columns[columnIndex])) return;
   STATE.selectedBlockId = null;
   STATE.selectedColumn = { parentId, index: columnIndex };
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   try {
     const iframe = document.getElementById('canvas-iframe');
     const doc = iframe.contentDocument;
@@ -695,6 +721,7 @@ window.moveBlock = function(id, dir) {
   const tmp = blocks[idx];
   blocks[idx] = blocks[newIdx];
   blocks[newIdx] = tmp;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -707,6 +734,7 @@ window.removeBlock = function(id) {
   ctx.blocks.splice(ctx.index, 1);
   if (STATE.selectedBlockId === id) STATE.selectedBlockId = null;
   if (STATE.selectedColumn?.parentId === id) STATE.selectedColumn = null;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();

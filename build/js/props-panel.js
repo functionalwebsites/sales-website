@@ -23,6 +23,7 @@ function addBlock(type) {
     STATE.selectedColumn = null;
     STATE.pendingScrollBlockId = block.id;
   }
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -58,6 +59,7 @@ function addNestedBlock(parentId, type, groupIndex = 0) {
     STATE.selectedColumn = null;
     STATE.pendingScrollBlockId = block.id;
   }
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();
@@ -76,6 +78,7 @@ function moveColumn(parentId, columnIndex, dir) {
     if (STATE.selectedColumn.index === columnIndex) STATE.selectedColumn.index = nextIndex;
     else if (STATE.selectedColumn.index === nextIndex) STATE.selectedColumn.index = columnIndex;
   }
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderProps();
 }
@@ -157,6 +160,7 @@ function insertSectionRecipe(kind) {
   STATE.selectedBlockId = firstBlock?.id || null;
   STATE.selectedColumn = null;
   STATE.pendingScrollBlockId = firstBlock?.id || null;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
   renderCanvas();
   renderLayoutList();
   renderProps();
