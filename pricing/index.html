@@ -83,7 +83,7 @@
     .pricing-grid {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 24px 80px;
+      padding: 48px 24px 80px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 32px;
@@ -308,7 +308,19 @@
       }
 
       .pricing-grid {
-        grid-template-columns: 1fr;
+        display: flex;
+        grid-template-columns: none;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 48px 28px 80px;
+        margin: 0;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .pricing-card {
+        flex: 0 0 min(82vw, 360px);
+        scroll-snap-align: center;
       }
     }
   </style>

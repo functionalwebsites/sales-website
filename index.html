@@ -42,6 +42,13 @@
       font-weight: 700;
       margin-bottom: 24px;
       line-height: 1.2;
+      width: fit-content;
+      max-width: min(900px, 100%);
+      padding: 16px 24px;
+      background: var(--bg2);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow-sm);
     }
 
     .hero h1 span {
@@ -171,19 +178,16 @@
       text-align: center;
     }
 
-    .feature-card:hover {
-      border-color: var(--accent2);
-    }
-
-    .feature-card:focus {
+    .feature-card:focus-visible {
       outline: none;
       border-color: var(--fw-rust);
       box-shadow: var(--fw-shadow-sm);
     }
 
-    .feature-card.is-active {
+    .feature-card.is-active,
+    .feature-card.is-scroll-active {
       border-color: var(--fw-rust);
-      box-shadow: var(--fw-shadow);
+      box-shadow: var(--fw-shadow) !important;
     }
 
     .feature-icon {
@@ -494,6 +498,39 @@
       margin-bottom: 16px;
     }
 
+    .features-title,
+    .comparison h2,
+    .pricing-title,
+    .services-title,
+    .cta h2 {
+      display: table;
+      width: fit-content;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 12px 18px;
+      background: var(--bg2);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow-sm);
+      color: var(--fw-rust);
+      line-height: 1.1;
+    }
+
+    .features-title,
+    .services-title {
+      margin-bottom: 20px;
+    }
+
+    .comparison h2,
+    .pricing-title {
+      margin-bottom: 60px;
+    }
+
+    .cta h2 {
+      margin-bottom: 18px;
+    }
+
     .cta p {
       color: var(--text2);
       margin-bottom: 32px;
@@ -577,6 +614,14 @@
         margin-bottom: 28px;
       }
 
+      .features-title,
+      .comparison h2,
+      .pricing-title,
+      .services-title,
+      .cta h2 {
+        padding: 10px 14px;
+      }
+
       .comparison-table-wrap {
         overflow: visible;
       }
@@ -638,7 +683,7 @@
       }
 
       .feature-card:not(:first-child) {
-        margin-top: -54px;
+        margin-top: -20px;
       }
 
       .feature-icon {
@@ -663,15 +708,41 @@
       .feature-card:nth-child(5) { z-index: 5; transform: rotate(-1.9deg) translateX(clamp(-38px, -10vw, -24px)); }
       .feature-card:nth-child(6) { z-index: 6; transform: rotate(1.1deg) translateX(clamp(12px, 5vw, 24px)); }
 
-      .feature-card:hover,
-      .feature-card:focus {
-        z-index: 20;
-        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02);
+      .feature-card:nth-child(1):hover { transform: rotate(-2.4deg) translateX(clamp(-34px, -9vw, -22px)) !important; }
+      .feature-card:nth-child(2):hover { transform: rotate(1.6deg) translateX(clamp(18px, 7vw, 30px)) !important; }
+      .feature-card:nth-child(3):hover { transform: rotate(-1.2deg) translateX(clamp(-26px, -6vw, -14px)) !important; }
+      .feature-card:nth-child(4):hover { transform: rotate(2.5deg) translateX(clamp(24px, 8vw, 36px)) !important; }
+      .feature-card:nth-child(5):hover { transform: rotate(-1.9deg) translateX(clamp(-38px, -10vw, -24px)) !important; }
+      .feature-card:nth-child(6):hover { transform: rotate(1.1deg) translateX(clamp(12px, 5vw, 24px)) !important; }
+
+      .feature-card:hover {
+        border-color: var(--border) !important;
+        box-shadow: none !important;
+        background: var(--bg2) !important;
       }
 
-      .feature-card.is-active {
+      .feature-card:focus-visible {
+        z-index: 20;
+        border-color: var(--fw-rust) !important;
+        box-shadow: var(--fw-shadow-sm) !important;
+        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02) !important;
+      }
+
+      .feature-card.is-active,
+      .feature-card.is-scroll-active {
         z-index: 30;
-        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02);
+        border-color: var(--fw-rust) !important;
+        box-shadow: var(--fw-shadow) !important;
+        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02) !important;
+      }
+
+      .feature-card.is-active:hover,
+      .feature-card.is-scroll-active:hover {
+        z-index: 30;
+        border-color: var(--fw-rust) !important;
+        box-shadow: var(--fw-shadow) !important;
+        background: var(--bg2) !important;
+        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02) !important;
       }
 
       .pricing-grid {
@@ -912,25 +983,78 @@
     (() => {
       const featureCards = Array.from(document.querySelectorAll('.feature-card'));
       if (!featureCards.length) return;
+      const mobileFeatureQuery = window.matchMedia('(max-width: 768px)');
+      let scrollFrame = 0;
 
       const clearActiveCard = () => {
         featureCards.forEach(card => card.classList.remove('is-active'));
       };
 
-      const setActiveCard = card => {
-        featureCards.forEach(item => item.classList.toggle('is-active', item === card));
+      const clearScrollCard = () => {
+        featureCards.forEach(card => card.classList.remove('is-scroll-active'));
+      };
+
+      const clearFeatureCardState = () => {
+        clearActiveCard();
+        clearScrollCard();
+      };
+
+      const setScrollCard = card => {
+        clearActiveCard();
+        featureCards.forEach(item => item.classList.toggle('is-scroll-active', item === card));
+      };
+
+      const centerFeatureCard = card => {
+        clearFeatureCardState();
+        if (!mobileFeatureQuery.matches) return;
+        card.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+        window.setTimeout(updateScrollCard, 280);
+      };
+
+      const updateScrollCard = () => {
+        if (!mobileFeatureQuery.matches) {
+          clearScrollCard();
+          return;
+        }
+
+        const viewportCenter = window.innerHeight / 2;
+        let closestCard = null;
+        let closestDistance = Infinity;
+
+        featureCards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+          const cardCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(cardCenter - viewportCenter);
+          if (distance < closestDistance) {
+            closestCard = card;
+            closestDistance = distance;
+          }
+        });
+
+        setScrollCard(closestCard);
+      };
+
+      const handleScroll = () => {
+        if (scrollFrame) return;
+        scrollFrame = window.requestAnimationFrame(() => {
+          scrollFrame = 0;
+          updateScrollCard();
+        });
       };
 
       featureCards.forEach(card => {
-        card.addEventListener('click', () => setActiveCard(card));
+        card.addEventListener('click', () => centerFeatureCard(card));
         card.addEventListener('keydown', event => {
           if (event.key !== 'Enter' && event.key !== ' ') return;
           event.preventDefault();
-          setActiveCard(card);
+          centerFeatureCard(card);
         });
       });
 
-      window.addEventListener('scroll', clearActiveCard, { passive: true });
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('resize', updateScrollCard);
+      updateScrollCard();
     })();
   </script>
 </body>

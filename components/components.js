@@ -478,6 +478,22 @@ footer {
   margin-top: 100px;
 }
 
+.footer-brand {
+  max-width: 1200px;
+  margin: 0 auto 28px;
+  display: block;
+  color: var(--text);
+  font-size: clamp(24px, 5vw, 42px);
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.footer-brand strong {
+  color: var(--fw-rust, var(--red));
+  font-weight: 800;
+}
+
 .footer-content {
   max-width: 1200px;
   margin: 0 auto 40px;
@@ -624,7 +640,7 @@ footer {
   }
 
   footer {
-    padding: 24px 16px;
+    padding: 24px;
     margin-top: 60px;
   }
 
@@ -831,6 +847,9 @@ footer {
   </div>
 </header>`,
     footer: `<footer>
+  <a class="footer-brand" href="https://functionalwebsites.com/" aria-label="Functional Websites home">
+    <span>functional</span> <strong>(Websites)</strong>
+  </a>
   <div class="footer-content">
     <div class="footer-section">
       <h4>Product</h4>
