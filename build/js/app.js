@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function init() {
   console.log('DOM loaded, initializing app');
   applyBuilderTheme(getBuilderTheme());
   applyBuilderPanelState();
+  initBuilderPanelResizers();
   initProFeatures();
   loadProjects();
   importContactFormFromUrlParam();

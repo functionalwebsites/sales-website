@@ -105,6 +105,13 @@ body.builder-dark {
     var(--bg);
 }
 body.editor-mode { overflow: hidden; height: 100vh; height: 100dvh; }
+body.panel-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+body.panel-resizing iframe {
+  pointer-events: none;
+}
 button { cursor: pointer; border: none; outline: none; font-family: inherit; font-size: 13px; }
 input, textarea, select { font-family: inherit; font-size: 13px; outline: none; }
 a { color: var(--accent); text-decoration: none; }
@@ -231,7 +238,7 @@ select.input { appearance: none; }
 .editor-layout { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
 /* Left panel - blocks */
-.editor-left { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; }
+.editor-left { width: var(--builder-left-width, 220px); background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; position: relative; }
 .panel-title { padding: 10px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .panel-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .panel-collapse-btn { width: 26px; height: 24px; padding: 0 !important; justify-content: center; line-height: 1; flex-shrink: 0; }
@@ -305,7 +312,49 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .panel-restore-btn[data-panel="right"] { right: 12px; }
 
 /* Right panel - properties */
-.editor-right { width: 260px; background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; }
+.editor-right { width: var(--builder-right-width, 260px); background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; position: relative; }
+.panel-resize-handle {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  z-index: 15;
+  cursor: col-resize;
+  touch-action: none;
+  background: transparent;
+}
+.panel-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background-color .12s ease;
+}
+.panel-resize-handle:hover::after,
+.panel-resize-handle:focus-visible::after,
+body.panel-resizing .panel-resize-handle::after {
+  background: var(--rust);
+}
+.panel-resize-handle[data-panel="left"] {
+  right: 0;
+}
+.panel-resize-handle[data-panel="left"]::after {
+  right: 0;
+}
+.panel-resize-handle[data-panel="right"] {
+  left: 0;
+}
+.panel-resize-handle[data-panel="right"]::after {
+  left: 0;
+}
+@media (min-width: 768px) {
+  .panel-resize-handle {
+    display: block;
+  }
+}
 .props-panel { padding: 12px; }
 .props-section { margin-bottom: 16px; }
 .props-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); margin-bottom: 8px; }
@@ -486,6 +535,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
   .canvas-wrap { padding: 0; }
   .canvas-frame { border-radius: 0; box-shadow: none; }
   .panel-restore-btn { display: none !important; }
+  .panel-resize-handle { display: none !important; }
 
   /* Block lib buttons slightly bigger tap targets */
   .block-btn { padding: 10px 12px; }
@@ -1370,6 +1420,7 @@ select:hover {
   <div id="mode-visual" class="editor-layout" style="flex:1;overflow:hidden;">
     <!-- Left: blocks + pages -->
     <div class="editor-left">
+      <div class="panel-resize-handle" data-panel="left" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize left panel"></div>
       <div class="panel-title panel-title-row">
         <span>Pages</span>
         <button class="btn btn-ghost btn-sm panel-collapse-btn d-only" type="button" onclick="toggleBuilderPanel('left')" title="Collapse left panel" aria-label="Collapse left panel">‹</button>
@@ -1440,6 +1491,7 @@ select:hover {
 
     <!-- Right: properties -->
     <div class="editor-right">
+      <div class="panel-resize-handle" data-panel="right" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Resize properties panel"></div>
       <div class="panel-title panel-title-row">
         <span>Properties</span>
         <button class="btn btn-ghost btn-sm panel-collapse-btn d-only" type="button" onclick="toggleBuilderPanel('right')" title="Collapse right panel" aria-label="Collapse right panel">›</button>

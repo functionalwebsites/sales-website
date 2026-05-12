@@ -204,9 +204,16 @@ function toggleBuilderTheme() {
 
 function getBuilderPanelState() {
   const saved = LS.get('builderPanelState') || {};
+  const normalizeWidth = (value, fallback, min, max) => {
+    const width = Number.parseInt(value, 10);
+    if (!Number.isFinite(width)) return fallback;
+    return Math.min(Math.max(width, min), max);
+  };
   return {
     leftCollapsed: !!saved.leftCollapsed,
-    rightCollapsed: !!saved.rightCollapsed
+    rightCollapsed: !!saved.rightCollapsed,
+    leftWidth: normalizeWidth(saved.leftWidth, 220, 180, 420),
+    rightWidth: normalizeWidth(saved.rightWidth, 260, 220, 520)
   };
 }
 
@@ -215,11 +222,26 @@ function applyBuilderPanelState(state = getBuilderPanelState()) {
   if (!layout) return;
   layout.classList.toggle('panel-left-collapsed', !!state.leftCollapsed);
   layout.classList.toggle('panel-right-collapsed', !!state.rightCollapsed);
+  layout.style.setProperty('--builder-left-width', `${state.leftWidth}px`);
+  layout.style.setProperty('--builder-right-width', `${state.rightWidth}px`);
 
   const leftBtn = layout.querySelector('.panel-collapse-btn[aria-label="Collapse left panel"]');
   const rightBtn = layout.querySelector('.panel-collapse-btn[aria-label="Collapse right panel"]');
   if (leftBtn) leftBtn.setAttribute('aria-expanded', state.leftCollapsed ? 'false' : 'true');
   if (rightBtn) rightBtn.setAttribute('aria-expanded', state.rightCollapsed ? 'false' : 'true');
+
+  const leftHandle = layout.querySelector('.panel-resize-handle[data-panel="left"]');
+  const rightHandle = layout.querySelector('.panel-resize-handle[data-panel="right"]');
+  if (leftHandle) {
+    leftHandle.setAttribute('aria-valuemin', '180');
+    leftHandle.setAttribute('aria-valuemax', '420');
+    leftHandle.setAttribute('aria-valuenow', String(state.leftWidth));
+  }
+  if (rightHandle) {
+    rightHandle.setAttribute('aria-valuemin', '220');
+    rightHandle.setAttribute('aria-valuemax', '520');
+    rightHandle.setAttribute('aria-valuenow', String(state.rightWidth));
+  }
 }
 
 function setBuilderPanelState(nextState) {
@@ -243,6 +265,87 @@ function toggleBuilderPanel(panel, forceCollapsed) {
       rightCollapsed: typeof forceCollapsed === 'boolean' ? forceCollapsed : !state.rightCollapsed
     });
   }
+}
+
+function initBuilderPanelResizers() {
+  const layout = document.getElementById('mode-visual');
+  if (!layout || layout.dataset.resizersReady === 'true') return;
+  layout.dataset.resizersReady = 'true';
+
+  const limits = {
+    left: { min: 180, max: 420, fallback: 220 },
+    right: { min: 220, max: 520, fallback: 260 }
+  };
+  const clamp = (value, panel) => {
+    const limit = limits[panel];
+    return Math.min(Math.max(Math.round(value), limit.min), limit.max);
+  };
+  const applyLiveWidth = (panel, width) => {
+    const clamped = clamp(width, panel);
+    layout.style.setProperty(panel === 'left' ? '--builder-left-width' : '--builder-right-width', `${clamped}px`);
+    const handle = layout.querySelector(`.panel-resize-handle[data-panel="${panel}"]`);
+    if (handle) handle.setAttribute('aria-valuenow', String(clamped));
+    return clamped;
+  };
+  const saveWidth = (panel, width) => {
+    if (panel === 'left') {
+      setBuilderPanelState({ leftWidth: clamp(width, panel) });
+    } else {
+      setBuilderPanelState({ rightWidth: clamp(width, panel) });
+    }
+  };
+
+  layout.querySelectorAll('.panel-resize-handle').forEach(handle => {
+    const panel = handle.dataset.panel;
+    if (!limits[panel]) return;
+
+    handle.addEventListener('pointerdown', event => {
+      if (!window.matchMedia('(min-width: 768px)').matches) return;
+      const panelEl = panel === 'left' ? document.querySelector('.editor-left') : document.querySelector('.editor-right');
+      if (!panelEl) return;
+
+      event.preventDefault();
+      handle.setPointerCapture?.(event.pointerId);
+      document.body.classList.add('panel-resizing');
+      const startX = event.clientX;
+      const startWidth = panelEl.getBoundingClientRect().width || limits[panel].fallback;
+      let nextWidth = startWidth;
+
+      const onMove = moveEvent => {
+        const delta = moveEvent.clientX - startX;
+        nextWidth = panel === 'left' ? startWidth + delta : startWidth - delta;
+        nextWidth = applyLiveWidth(panel, nextWidth);
+      };
+      const onEnd = () => {
+        document.body.classList.remove('panel-resizing');
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onEnd);
+        document.removeEventListener('pointercancel', onEnd);
+        saveWidth(panel, nextWidth);
+      };
+
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onEnd);
+      document.addEventListener('pointercancel', onEnd);
+    });
+
+    handle.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const state = getBuilderPanelState();
+      const current = panel === 'left' ? state.leftWidth : state.rightWidth;
+      let next = current;
+      if (event.key === 'Home') next = limits[panel].min;
+      if (event.key === 'End') next = limits[panel].max;
+      if (event.key === 'ArrowLeft') next = panel === 'left' ? current - 10 : current + 10;
+      if (event.key === 'ArrowRight') next = panel === 'left' ? current + 10 : current - 10;
+      saveWidth(panel, next);
+    });
+
+    handle.addEventListener('dblclick', () => {
+      saveWidth(panel, limits[panel].fallback);
+    });
+  });
 }
 
 function getProjectIdFromUrl() {
