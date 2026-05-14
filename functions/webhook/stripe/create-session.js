@@ -1,7 +1,7 @@
 import { handleOptions, json } from '../../_utils/http.js';
 import { createCheckoutSession } from '../../_utils/stripe.js';
 
-const PRO_PRICE_ID = 'price_1TMd9XQtO2WgU350cTZRFc4y';
+const DEFAULT_PRO_PRICE_ID = 'price_1TMd9XQtO2WgU350cTZRFc4y';
 
 export async function onRequestPost(context) {
   const optionsResponse = handleOptions(context.request);
@@ -20,7 +20,7 @@ export async function onRequestPost(context) {
     }
 
     const session = await createCheckoutSession(context.env.STRIPE_SECRET_KEY, {
-      priceId: PRO_PRICE_ID,
+      priceId: context.env.STRIPE_PRO_PRICE_ID || DEFAULT_PRO_PRICE_ID,
       successUrl,
       cancelUrl,
     });
