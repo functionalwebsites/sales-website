@@ -873,6 +873,7 @@ footer {
         <a href="https://functionalwebsites.com/services">Services</a>
         <a href="https://functionalwebsites.com/hosting">Hosting</a>
         <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
+        <a href="https://functionalwebsites.com/blog">Blog</a>
         <a href="https://build.functionalwebsites.com/tools/">Tools</a>
         <a href="https://docs.functionalwebsites.com/">Docs</a>
       </div>
@@ -911,6 +912,7 @@ footer {
       <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
       <a href="https://build.functionalwebsites.com/tools/contact-form/">Contact Form Builder</a>
       <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>
+      <a href="https://functionalwebsites.com/blog">Blog</a>
       <a href="https://docs.functionalwebsites.com/">Docs</a>
     </div>
     <div class="footer-section">
@@ -956,8 +958,9 @@ footer {
       const isDocsLink = hrefUrl.hostname === 'docs.functionalwebsites.com' || hrefPath === '/docs';
       const isDocsPage = hostname === 'docs.functionalwebsites.com' || pathname.startsWith('/docs');
       const isDocsMatch = isDocsLink && isDocsPage;
+      const isBlogMatch = hrefPath === '/blog' && pathname.startsWith('/blog');
       const isExactMatch = hrefUrl.hostname === hostname && hrefPath === pathname;
-      link.toggleAttribute('aria-current', isDocsMatch || isExactMatch);
+      link.toggleAttribute('aria-current', isDocsMatch || isBlogMatch || isExactMatch);
     });
   }
 

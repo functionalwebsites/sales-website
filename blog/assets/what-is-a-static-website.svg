@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Abstract static website symbol</title>
+  <desc id="desc">A decorative symbolic image showing prebuilt page files moving through a simple hosting grid.</desc>
+  <rect width="1200" height="630" fill="#f5efe0"/>
+  <rect x="54" y="54" width="1092" height="522" fill="#ebe2ce" stroke="#10100d" stroke-width="8"/>
+  <g opacity="0.22" stroke="#10100d" stroke-width="3">
+    <path d="M112 142h976M112 222h976M112 302h976M112 382h976M112 462h976"/>
+    <path d="M180 96v438M300 96v438M420 96v438M540 96v438M660 96v438M780 96v438M900 96v438M1020 96v438"/>
+  </g>
+  <g fill="#f5efe0" stroke="#10100d" stroke-width="7">
+    <rect x="170" y="150" width="210" height="150"/>
+    <rect x="430" y="150" width="210" height="150"/>
+    <rect x="690" y="150" width="210" height="150"/>
+  </g>
+  <g stroke="#10100d" stroke-width="8">
+    <path d="M208 198h128M208 234h92M208 270h148"/>
+    <path d="M468 198h128M468 234h92M468 270h148"/>
+    <path d="M728 198h128M728 234h92M728 270h148"/>
+  </g>
+  <g fill="none" stroke="#b9482e" stroke-width="10" stroke-linecap="square">
+    <path d="M270 340h220v80h220"/>
+    <path d="M710 420h160"/>
+  </g>
+  <g fill="#7cff6b" stroke="#10100d" stroke-width="8">
+    <rect x="798" y="358" width="192" height="124"/>
+    <circle cx="894" cy="420" r="28"/>
+  </g>
+  <g fill="#10100d">
+    <rect x="832" y="392" width="124" height="8"/>
+    <rect x="832" y="438" width="124" height="8"/>
+  </g>
+</svg>

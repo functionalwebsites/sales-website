@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dynamic vs static websites: compare speed, hosting, security, maintenance, editing, and when each type of website makes sense.">
+  <link rel="canonical" href="https://functionalwebsites.com/blog/dynamic-vs-static-websites/">
+  <meta property="og:title" content="Dynamic vs Static Websites">
+  <meta property="og:description" content="The practical differences between dynamic and static websites.">
+  <meta property="og:url" content="https://functionalwebsites.com/blog/dynamic-vs-static-websites/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://functionalwebsites.com/blog/assets/dynamic-vs-static-websites.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dynamic vs Static Websites - Functional Websites">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dynamic vs Static Websites">
+  <meta name="twitter:description" content="The practical differences between dynamic and static websites.">
+  <meta name="twitter:image" content="https://functionalwebsites.com/blog/assets/dynamic-vs-static-websites.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#10100d">
+  <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
+  <meta name="theme-color" content="#0f0f13">
+  <title>Dynamic vs Static Websites - Functional Websites</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/blog/blog.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Dynamic vs Static Websites",
+      "description": "The practical differences between dynamic and static websites.",
+      "author": { "@type": "Person", "name": "Cooper Carrasco" },
+      "publisher": { "@type": "Organization", "name": "Functional Websites" },
+      "image": "https://functionalwebsites.com/blog/assets/dynamic-vs-static-websites.png",
+      "datePublished": "2026-05-14",
+      "dateModified": "2026-05-14",
+      "mainEntityOfPage": "https://functionalwebsites.com/blog/dynamic-vs-static-websites/"
+    }
+  </script>
+</head>
+<body>
+  <div class="blog-progress" aria-hidden="true"><span class="blog-progress-bar" data-blog-progress></span></div>
+  <div id="header-placeholder"></div>
+  <header class="blog-hero">
+    <img class="blog-hero-art" src="/blog/assets/dynamic-vs-static-websites.png" alt="" width="1200" height="630" fetchpriority="high">
+    <div class="blog-hero-inner">
+      <div class="blog-kicker">Website Decisions</div>
+      <h1>Dynamic vs Static Websites</h1>
+      <p class="blog-deck">Static and dynamic websites can both be good. The right choice depends on what the site has to do, how often it changes, and who needs to manage it.</p>
+      <div class="blog-meta">
+        <span>May 14, 2026</span>
+        <span>By Cooper Carrasco</span>
+        <span>8 min read</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="blog-page">
+    <article class="blog-article" data-blog-article>
+      <p>The static versus dynamic website decision is not about old versus new. It is about how much live server-side behavior your site actually needs.</p>
+      <p>A static website serves prebuilt files. A dynamic website generates pages or data in response to each visitor, often using a database, backend code, user accounts, or a content management system.</p>
+
+      <h2 id="quick-comparison">Quick comparison</h2>
+      <p>Static sites are usually best when the public pages are mostly the same for every visitor. Dynamic sites are usually best when the experience depends on user data, live inventory, login state, or frequently changing database content.</p>
+      <div class="blog-callout">
+        <strong>Rule of thumb</strong>
+        <p>If visitors mostly read the same pages, static is probably enough. If visitors need accounts, saved data, or personalized views, dynamic parts are probably necessary.</p>
+      </div>
+
+      <h2 id="speed-and-hosting">Speed and hosting</h2>
+      <p>Static websites are easy to serve from a CDN because the files already exist. That can make pages load quickly and keep hosting simple. There is no server rendering step required for each visit.</p>
+      <p>Dynamic websites can also be fast, but they have more moving parts: application servers, databases, caching layers, and often more JavaScript. Those parts can be worth it, but they need to be managed.</p>
+
+      <h2 id="security-and-maintenance">Security and maintenance</h2>
+      <p>A static site has a smaller attack surface. There is usually no public admin panel, no database credentials involved in serving public pages, and fewer plugin updates to monitor.</p>
+      <p>A dynamic site can be secure, but it requires more discipline: patching, backups, access control, dependency updates, database protection, and monitoring. If a site does not need those dynamic features, the extra maintenance may not be justified.</p>
+
+      <h2 id="editing-and-content">Editing and content</h2>
+      <p>Dynamic platforms often win when non-technical teams need to publish content every day from a browser. A CMS can be the right tool for newsrooms, large content teams, ecommerce catalogs, and membership sites.</p>
+      <p>Static sites can still be edited with a builder, a Git workflow, or a simple content system. For a small business site that changes occasionally, publishing static files can be simpler than maintaining a CMS.</p>
+
+      <h2 id="features-that-need-dynamic-behavior">Features that need dynamic behavior</h2>
+      <p>You probably need a dynamic system, or at least dynamic services, if the site includes:</p>
+      <ul>
+        <li>User accounts and logins.</li>
+        <li>Dashboards with saved customer data.</li>
+        <li>Live inventory or booking availability.</li>
+        <li>Comments, forums, or user-generated content.</li>
+        <li>Internal business workflows.</li>
+        <li>Personalized pages for each visitor.</li>
+      </ul>
+      <p>But those features do not always mean the whole website needs to be dynamic. You can keep the marketing pages static and connect to specialized tools for payments, forms, scheduling, or client portals.</p>
+
+      <h2 id="which-should-you-choose">Which should you choose?</h2>
+      <p>Choose static when the goal is a fast, reliable public website that explains your business, services, pricing, portfolio, location, and contact options. Choose dynamic when the website itself needs to behave like a software product.</p>
+      <p>For many small businesses, the best setup is a static public site with a few focused integrations. That keeps the front door fast and durable while still letting the business take payments, receive form submissions, and book calls.</p>
+
+      <h2 id="bottom-line">Bottom line</h2>
+      <p>Static websites are not a downgrade. They are a practical default for many business websites. Dynamic websites are powerful when you need them, but they should earn their complexity.</p>
+    </article>
+    <aside class="blog-toc" data-blog-toc aria-labelledby="toc-heading">
+      <h2 id="toc-heading">Table of Contents</h2>
+    </aside>
+  </main>
+
+  <section class="blog-next">
+    <div class="blog-next-inner">
+      <strong>Start with the basics: What is a static website?</strong>
+      <a class="btn btn-secondary" href="/blog/what-is-a-static-website/">Read the guide</a>
+    </div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js" defer></script>
+  <script src="/blog/blog.js" defer></script>
+</body>
+</html>

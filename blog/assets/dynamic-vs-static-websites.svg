@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Abstract dynamic and static website comparison</title>
+  <desc id="desc">A decorative symbolic image comparing a simple static file path with a dynamic database path.</desc>
+  <rect width="1200" height="630" fill="#f5efe0"/>
+  <rect x="54" y="54" width="1092" height="522" fill="#ebe2ce" stroke="#10100d" stroke-width="8"/>
+  <g fill="#f5efe0" stroke="#10100d" stroke-width="7">
+    <rect x="120" y="168" width="330" height="250"/>
+    <rect x="750" y="168" width="330" height="250"/>
+  </g>
+  <rect x="120" y="168" width="330" height="62" fill="#b9482e" stroke="#10100d" stroke-width="7"/>
+  <rect x="750" y="168" width="330" height="62" fill="#244d67" stroke="#10100d" stroke-width="7"/>
+  <g stroke="#10100d" stroke-width="8">
+    <path d="M165 286h222M165 334h170M165 382h246"/>
+    <path d="M795 286h222M795 334h170M795 382h246"/>
+  </g>
+  <g fill="none" stroke="#b9482e" stroke-width="10" stroke-linecap="square">
+    <path d="M450 293h112"/>
+    <path d="M530 260l36 33-36 33"/>
+  </g>
+  <g fill="none" stroke="#244d67" stroke-width="10" stroke-linecap="square">
+    <path d="M750 458H585V338"/>
+    <path d="M615 368l-30-30-30 30"/>
+  </g>
+  <g fill="#7cff6b" stroke="#10100d" stroke-width="8">
+    <circle cx="600" cy="212" r="40"/>
+    <circle cx="600" cy="458" r="40"/>
+    <circle cx="600" cy="335" r="40"/>
+  </g>
+  <g stroke="#10100d" stroke-width="7">
+    <path d="M600 252v43"/>
+    <path d="M600 375v43"/>
+  </g>
+</svg>
