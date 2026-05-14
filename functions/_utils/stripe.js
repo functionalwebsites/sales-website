@@ -39,6 +39,58 @@ export async function createCheckoutSession(secretKey, { priceId, successUrl, ca
   return data;
 }
 
+export async function createCustomPaymentSession(secretKey, {
+  amount,
+  currency = 'usd',
+  description,
+  customerEmail,
+  payerName,
+  note,
+  successUrl,
+  cancelUrl,
+}) {
+  const paymentDescription = description || 'Functional Websites payment';
+  const body = new URLSearchParams({
+    mode: 'payment',
+    submit_type: 'pay',
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    'line_items[0][quantity]': '1',
+    'line_items[0][price_data][currency]': currency,
+    'line_items[0][price_data][unit_amount]': String(amount),
+    'line_items[0][price_data][product_data][name]': 'Functional Websites Payment',
+    'line_items[0][price_data][product_data][description]': paymentDescription,
+    'payment_intent_data[description]': paymentDescription,
+    'payment_intent_data[metadata][source]': 'pay_page',
+  });
+
+  if (payerName) {
+    body.set('payment_intent_data[metadata][payer_name]', payerName);
+  }
+  if (note) {
+    body.set('payment_intent_data[metadata][note]', note);
+  }
+  if (customerEmail) {
+    body.set('customer_email', customerEmail);
+  }
+
+  const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body,
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message || 'Failed to create Stripe Checkout session');
+  }
+
+  return data;
+}
+
 export async function verifyStripeSignature(payload, signatureHeader, webhookSecret) {
   if (!signatureHeader || !webhookSecret) return false;
 

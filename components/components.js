@@ -521,6 +521,46 @@ footer {
   color: var(--text);
 }
 
+.footer-section a.footer-action-button {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0 12px;
+  padding: 8px 14px;
+  border: var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.footer-section a.footer-email-button {
+  background: var(--bg);
+  color: var(--text) !important;
+}
+
+.footer-section a.footer-email-button:hover {
+  background: var(--rust);
+  color: #ffffff !important;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+
+.footer-section a.footer-pay-button {
+  background: var(--rust);
+  color: #ffffff !important;
+}
+
+.footer-section a.footer-pay-button:hover {
+  background: #d35a3d;
+  color: #ffffff !important;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+
 .footer-bottom {
   max-width: 1200px;
   margin: 0 auto;
@@ -875,7 +915,8 @@ footer {
     </div>
     <div class="footer-section">
       <h4>Company</h4>
-      <a href="mailto:cooper@functionalwebsites.com">Email</a>
+      <a class="footer-action-button footer-email-button" href="mailto:cooper@functionalwebsites.com">Email</a>
+      <a class="footer-action-button footer-pay-button" href="https://functionalwebsites.com/pay">Pay</a>
     </div>
   </div>
   <div class="footer-bottom">

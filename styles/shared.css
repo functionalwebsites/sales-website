@@ -669,6 +669,51 @@ footer {
   color: var(--text);
 }
 
+.footer-section a.footer-action-button,
+.site-component .footer-section a.footer-action-button {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0 12px;
+  padding: 8px 14px;
+  border: var(--fw-border-width) solid var(--fw-ink);
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow-sm);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.footer-section a.footer-email-button,
+.site-component .footer-section a.footer-email-button {
+  background: var(--fw-paper);
+  color: var(--fw-ink) !important;
+}
+
+.footer-section a.footer-email-button:hover,
+.site-component .footer-section a.footer-email-button:hover {
+  background: var(--fw-rust) !important;
+  color: var(--fw-paper) !important;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--fw-shadow-color);
+}
+
+.footer-section a.footer-pay-button,
+.site-component .footer-section a.footer-pay-button {
+  background: var(--fw-rust);
+  color: var(--fw-paper) !important;
+}
+
+.footer-section a.footer-pay-button:hover,
+.site-component .footer-section a.footer-pay-button:hover {
+  background: #d35a3d;
+  color: #ffffff !important;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--fw-shadow-color);
+}
+
 :root[data-theme="dark"] footer,
 :root[data-theme="dark"] .footer-section a,
 :root[data-theme="dark"] .footer-bottom,
