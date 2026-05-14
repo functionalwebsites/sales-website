@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Go static to save on hosting, or build your own fast, fully-owned static website with Functional Websites.">
-  <meta name="og:title" content="Functional Websites — Go Static or Build Static Sites">
-  <meta name="og:description" content="Go static, save money on hosting, and build fast websites without the bloat.">
+  <meta name="description" content="America's Best Web Design & Site Builder from Functional Websites: mom-and-pop business charm, trades-grade static sites, and practical web tools.">
+  <meta name="og:title" content="Functional Websites — America's Best Web Design & Site Builder">
+  <meta name="og:description" content="Mom-and-pop business charm, trades-grade static sites, and practical web tools from Functional Websites.">
   <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
@@ -15,44 +15,181 @@
   <meta name="msapplication-TileColor" content="#f5efe0">
   <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
   <meta name="theme-color" content="#0f0f13">
-  <meta name="stripe-publishable-key" content="pk_live_51TMcnyQtO2WgU350JugpY9hj7CyLSpUvbmeCy0O3tAIBYLUhmpTi3K0KN6P4cOZOUWEE5TPijrJsoahKsucvNVEy003YrtNiBQ">
-  <meta name="stripe-price-id" content="price_1TMd9XQtO2WgU350cTZRFc4y">
-  <title>Functional Websites — Go Static or Build Static Sites</title>
+  <title>Functional Websites — America's Best Web Design & Site Builder</title>
   <link rel="stylesheet" href="/styles/shared.css">
-  <link rel="stylesheet" href="/components/hero-gear.css">
   <style>
 
     /* HERO */
-    .hero {
-      /* max-width: 1200px; */
+    .home-hero {
       margin: 0 auto;
-      min-height: 100svh;
-      padding: 80px 24px;
+      min-height: calc(100svh - 72px);
+      padding: clamp(24px, 4.5vw, 56px) 24px clamp(28px, 4vw, 44px);
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       text-align: center;
-      background: var(--hero-gradient);
+      background:
+        radial-gradient(circle at 18% 14%, rgba(74, 222, 128, 0.18), transparent 28%),
+        linear-gradient(180deg, rgba(245, 239, 224, 0.88), rgba(233, 222, 196, 0.72)),
+        var(--hero-gradient) !important;
+      border-bottom: var(--fw-border-width) solid var(--fw-ink);
     }
 
-    .hero h1 {
-      font-size: 56px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      line-height: 1.2;
-      width: fit-content;
-      max-width: min(900px, 100%);
-      padding: 16px 24px;
-      background: var(--bg2);
+    .home-hero::after {
+      display: none;
+    }
+
+    .letterboard {
+      width: min(1040px, 100%);
+      padding: clamp(14px, 2vw, 24px);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 38%),
+        var(--fw-paper);
       border: var(--fw-border-width) solid var(--fw-ink);
-      border-radius: var(--fw-radius);
+      border-radius: 8px;
+      box-shadow: var(--fw-shadow);
+      position: relative;
+    }
+
+    .letterboard::before,
+    .letterboard::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .letterboard::before {
+      inset: 10px;
+      border: 2px solid rgba(16, 16, 13, 0.16);
+      border-radius: 5px;
+    }
+
+    .letterboard::after {
+      width: clamp(82px, 11vw, 132px);
+      aspect-ratio: 1;
+      right: clamp(12px, 2vw, 22px);
+      top: clamp(12px, 2vw, 22px);
+      background: url("/img/minigear-gear.svg") center / contain no-repeat;
+      opacity: 0.14;
+    }
+
+    .letterboard-kicker,
+    .letterboard-date,
+    .letterboard-subtitle {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
+      background: transparent;
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: 5px;
+      box-shadow: 4px 4px 0 rgba(16, 16, 13, 0.22);
+      color: var(--fw-ink) !important;
+      font-weight: 900;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .letterboard-kicker {
+      padding: 7px 14px;
+      font-size: clamp(12px, 1.5vw, 17px);
+      letter-spacing: 0.18em;
+      margin-bottom: clamp(10px, 1.4vw, 16px);
+      background: var(--fw-panel);
+    }
+
+    .home-hero h1.letterboard-title {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      background: transparent !important;
+      border: 0;
+      box-shadow: none;
+      border-radius: 0;
+      color: var(--fw-ink) !important;
+      font-size: clamp(46px, 10vw, 128px) !important;
+      font-weight: 900 !important;
+      line-height: 0.84 !important;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .letterboard-title span {
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0.02em 0.1em 0.08em;
+      background: transparent !important;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      color: var(--fw-ink) !important;
+      box-decoration-break: initial;
+      -webkit-box-decoration-break: initial;
+      position: relative;
+      z-index: 1;
+    }
+
+    .letterboard-title .title-small {
+      font-size: 0.43em;
+      line-height: 0.98;
+      letter-spacing: 0.03em;
+      color: var(--fw-rust) !important;
+    }
+
+    .letterboard-title .title-design {
+      color: var(--fw-black) !important;
+      background: var(--fw-green) !important;
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: 6px;
+      box-shadow: var(--fw-shadow-sm);
+      font-size: 1.02em;
+      margin-top: clamp(6px, 0.9vw, 12px);
+      margin-bottom: clamp(8px, 1vw, 14px);
+    }
+
+    .letterboard-subtitle {
+      padding: 7px 16px;
+      font-size: clamp(18px, 3.2vw, 42px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: var(--fw-rust) !important;
+      background: var(--fw-panel);
+    }
+
+    .letterboard-date {
+      padding: 7px 13px;
+      margin-top: clamp(10px, 1.4vw, 16px);
+      font-size: clamp(12px, 1.4vw, 15px);
+      letter-spacing: 0.16em;
+      background: var(--fw-panel);
+    }
+
+    .home-hero .home-hero-note {
+      max-width: 720px;
+      margin: clamp(16px, 2vw, 24px) auto 0;
+      color: var(--fw-ink) !important;
+      font-size: clamp(14px, 1.55vw, 18px);
+      font-weight: 800;
+      line-height: 1.45;
+      text-transform: uppercase;
+    }
+
+    .home-hero .hero-buttons {
+      margin: clamp(18px, 3vw, 34px) 0 0;
+      padding: 12px;
+      background: var(--fw-paper);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: 6px;
       box-shadow: var(--fw-shadow-sm);
     }
 
-    .hero h1 span {
-      color: var(--fw-rust);
+    .home-hero > :last-child {
+      margin-bottom: 0;
     }
 
     .hero p {
@@ -589,6 +726,25 @@
         padding: 40px 24px;
       }
 
+      .home-hero {
+        padding: 22px 16px 32px;
+        min-height: auto;
+      }
+
+      .letterboard {
+        padding: 14px;
+      }
+
+      .letterboard::after {
+        width: 72px;
+        opacity: 0.1;
+      }
+
+      .home-hero .hero-buttons {
+        width: min(100%, 420px);
+        margin-top: 18px;
+      }
+
       .hero h1 {
         font-size: 36px;
       }
@@ -771,29 +927,27 @@
       }
     }
   </style>
-  <script src="https://js.stripe.com/v3/"></script>
-  <script src="/stripe-checkout.js"></script>
+  <script src="/stripe-checkout.js" defer></script>
 </head>
 <body>
   <div id="header-placeholder"></div>
 
   <!-- HERO -->
-  <section class="hero gear-hero">
-    <h1>Go static. <span>Build static.</span></h1>
-    <p>Functional Websites helps two kinds of people: owners who want cheaper, simpler websites, and builders who want to make fast static sites themselves.</p>
-    <div class="hero-paths">
-      <div class="hero-path">
-        <div class="hero-path-kicker">Option 1</div>
-        <h2>Go Static</h2>
-        <p>Turn a bloated or expensive site into fast HTML files. Save on hosting, reduce maintenance, and serve leaner pages that transfer less data.</p>
-        <button class="btn btn-secondary btn-large" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Explore Static Services</button>
-      </div>
-      <div class="hero-path">
-        <div class="hero-path-kicker">Option 2</div>
-        <h2>Build Now</h2>
-        <p>Use the free builder to make a static website yourself. Export the HTML, host it anywhere, and keep ownership of the files.</p>
-        <button class="btn btn-primary btn-large" onclick="window.location.href='https://build.functionalwebsites.com/'">Start Building Free</button>
-      </div>
+  <section class="hero home-hero">
+    <div class="letterboard" aria-labelledby="home-heading">
+      <div class="letterboard-kicker">Functional Websites</div>
+      <h1 id="home-heading" class="letterboard-title">
+        <span class="title-small">America's Best</span>
+        <span>Web</span>
+        <span class="title-design">Design</span>
+      </h1>
+      <div class="letterboard-subtitle">&amp; Site Builder</div>
+      <div class="letterboard-date">Est. 2024</div>
+      <p class="home-hero-note">Mom and pop business charm, trades-grade pages, and static-site tools that feel a little hand-painted and a little high-tech.</p>
+    </div>
+    <div class="hero-buttons" aria-label="Next steps">
+      <button class="btn btn-secondary btn-large" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Explore Static Services</button>
+      <button class="btn btn-primary btn-large" onclick="window.location.href='https://build.functionalwebsites.com/'">Start Building Free</button>
     </div>
   </section>
 
@@ -934,7 +1088,7 @@
           <li>Create your own templates</li>
           <li>Upload your own templates</li>
         </ul>
-        <button class="btn btn-large btn-primary" style="width: 100%; background: var(--green); color: #000;" onclick="startStripeCheckout()">Buy Pro — $9.99</button>
+        <button class="btn btn-large btn-primary" style="width: 100%; background: var(--green); color: #000;" onclick="startStripeCheckout(event)">Buy Pro — $9.99</button>
       </div>
 
       <!-- BUSINESS -->

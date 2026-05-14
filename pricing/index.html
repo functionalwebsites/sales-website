@@ -13,8 +13,6 @@
   <meta name="msapplication-TileColor" content="#f5efe0">
   <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
   <meta name="theme-color" content="#0f0f13">
-  <meta name="stripe-publishable-key" content="pk_live_51TMcnyQtO2WgU350JugpY9hj7CyLSpUvbmeCy0O3tAIBYLUhmpTi3K0KN6P4cOZOUWEE5TPijrJsoahKsucvNVEy003YrtNiBQ">
-  <meta name="stripe-price-id" content="price_1TMd9XQtO2WgU350cTZRFc4y">
   <title>Pricing — Functional Websites</title>
   <link rel="stylesheet" href="/styles/shared.css">
   <link rel="stylesheet" href="/components/hero-gear.css">
@@ -324,8 +322,7 @@
       }
     }
   </style>
-  <script src="https://js.stripe.com/v3/"></script>
-  <script src="/stripe-checkout.js"></script>
+  <script src="/stripe-checkout.js" defer></script>
 </head>
 <body>
   <div id="header-placeholder"></div>
@@ -391,7 +388,7 @@
         <li>Upload your own templates</li>
       </ul>
 
-      <button class="pricing-cta primary" onclick="startStripeCheckout()">Get Pro — $9.99</button>
+      <button class="pricing-cta primary" onclick="startStripeCheckout(event)">Get Pro — $9.99</button>
     </div>
 
     <!-- BUSINESS -->

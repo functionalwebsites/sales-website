@@ -1,39 +1,4 @@
-let stripe;
-let STRIPE_PUBLISHABLE_KEY;
-let PRO_PRICE_ID;
-
-// Get Stripe configuration from meta tags (injected by server)
-const getStripeConfig = () => {
-  const pubKeyMeta = document.querySelector('meta[name="stripe-publishable-key"]');
-  const priceIdMeta = document.querySelector('meta[name="stripe-price-id"]');
-  
-  if (!pubKeyMeta?.getAttribute('content')) {
-    console.error('Stripe publishable key not found in meta tags. Check server configuration.');
-  }
-  if (!priceIdMeta?.getAttribute('content')) {
-    console.error('Stripe price ID not found in meta tags. Check server configuration.');
-  }
-  
-  return {
-    publishableKey: pubKeyMeta?.getAttribute('content') || '',
-    priceId: priceIdMeta?.getAttribute('content') || ''
-  };
-};
-
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-  const config = getStripeConfig();
-  STRIPE_PUBLISHABLE_KEY = config.publishableKey;
-  PRO_PRICE_ID = config.priceId;
-  
-  // Only initialize Stripe if we have a key
-  if (STRIPE_PUBLISHABLE_KEY) {
-    stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-  } else {
-    console.error('Cannot initialize Stripe: no publishable key found');
-  }
-  
-  // Check for checkout success/cancel
   const params = new URLSearchParams(window.location.search);
   if (params.get('success') === 'true') {
     alert('Success! Check your email for your Pro token.');
@@ -44,60 +9,54 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Start Stripe Checkout
- * Call this when "Buy Pro" button is clicked
+ * Start Stripe Checkout.
  */
 
-async function startStripeCheckout() {
+async function startStripeCheckout(event) {
+  const btn = event?.currentTarget || event?.target;
+  const originalText = btn?.textContent || 'Buy Pro — $9.99';
+
   try {
-    if (!stripe) {
-      alert('Stripe is not initialized. Please refresh the page.');
-      return;
+    if (btn) {
+      btn.textContent = 'Loading...';
+      btn.disabled = true;
     }
-    
-    // Show loading state
-    const btn = event.target;
-    const originalText = btn.textContent;
-    btn.textContent = 'Loading...';
-    btn.disabled = true;
-    
-    // Create checkout session on your backend
+
     const response = await fetch('/webhook/stripe/create-session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        priceId: PRO_PRICE_ID,
         successUrl: window.location.origin + '/pricing/?success=true',
         cancelUrl: window.location.origin + '/pricing/?canceled=true',
       })
     });
     
     if (!response.ok) {
-      throw new Error('Failed to create checkout session');
+      let message = 'Failed to create checkout session';
+      try {
+        const data = await response.json();
+        message = data.error || message;
+      } catch {
+        message = `${message} (${response.status})`;
+      }
+      throw new Error(message);
     }
-    
-    const { sessionId } = await response.json();
-    
-    // Redirect to Stripe Checkout
-    const { error } = await stripe.redirectToCheckout({ sessionId });
-    
-    if (error) {
-      console.error('Stripe error:', error);
-      alert('Error: ' + error.message);
+
+    const { checkoutUrl } = await response.json();
+
+    if (!checkoutUrl) {
+      throw new Error('Checkout URL missing from session response');
     }
-    
-    // Restore button if checkout was canceled
-    btn.textContent = originalText;
-    btn.disabled = false;
-    
+
+    window.location.assign(checkoutUrl);
   } catch (error) {
     console.error('Checkout error:', error);
-    alert('Error starting checkout. Please try again.');
-    if (event?.target) {
-      event.target.textContent = 'Buy Pro — $9.99';
-      event.target.disabled = false;
+    alert(`Error starting checkout: ${error.message}`);
+    if (btn) {
+      btn.textContent = originalText;
+      btn.disabled = false;
     }
   }
 }
