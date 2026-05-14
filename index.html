@@ -21,175 +21,93 @@
 
     /* HERO */
     .home-hero {
-      margin: 0 auto;
       min-height: calc(100svh - 72px);
-      padding: clamp(24px, 4.5vw, 56px) 24px clamp(28px, 4vw, 44px);
+      padding: clamp(56px, 8vw, 104px) 24px clamp(48px, 7vw, 88px);
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
       text-align: center;
-      background:
-        radial-gradient(circle at 18% 14%, rgba(74, 222, 128, 0.18), transparent 28%),
-        linear-gradient(180deg, rgba(245, 239, 224, 0.88), rgba(233, 222, 196, 0.72)),
-        var(--hero-gradient) !important;
+      background: var(--fw-paper);
       border-bottom: var(--fw-border-width) solid var(--fw-ink);
     }
 
+    .home-hero::before,
     .home-hero::after {
       display: none;
     }
 
-    .letterboard {
-      width: min(1040px, 100%);
-      padding: clamp(14px, 2vw, 24px);
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 38%),
-        var(--fw-paper);
-      border: var(--fw-border-width) solid var(--fw-ink);
-      border-radius: 8px;
-      box-shadow: var(--fw-shadow);
-      position: relative;
-    }
-
-    .letterboard::before,
-    .letterboard::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-    }
-
-    .letterboard::before {
-      inset: 10px;
-      border: 2px solid rgba(16, 16, 13, 0.16);
-      border-radius: 5px;
-    }
-
-    .letterboard::after {
-      width: clamp(82px, 11vw, 132px);
-      aspect-ratio: 1;
-      right: clamp(12px, 2vw, 22px);
-      top: clamp(12px, 2vw, 22px);
-      background: url("/img/minigear-gear.svg") center / contain no-repeat;
-      opacity: 0.14;
-    }
-
-    .letterboard-kicker,
-    .letterboard-date,
-    .letterboard-subtitle {
-      width: fit-content;
-      max-width: 100%;
-      margin: 0 auto;
-      background: transparent;
-      border: var(--fw-border-width) solid var(--fw-ink);
-      border-radius: 5px;
-      box-shadow: 4px 4px 0 rgba(16, 16, 13, 0.22);
-      color: var(--fw-ink) !important;
-      font-weight: 900;
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
-    }
-
-    .letterboard-kicker {
-      padding: 7px 14px;
-      font-size: clamp(12px, 1.5vw, 17px);
-      letter-spacing: 0.18em;
-      margin-bottom: clamp(10px, 1.4vw, 16px);
+    .shop-hero-inner {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 22px;
+      justify-items: center;
+      padding: clamp(28px, 5vw, 52px);
       background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow);
     }
 
-    .home-hero h1.letterboard-title {
+    .shop-kicker {
+      color: var(--fw-rust);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .shop-kicker::before,
+    .shop-kicker::after {
+      display: none;
+    }
+
+    .shop-title-wrap {
       width: 100%;
-      max-width: none;
+      padding-bottom: 22px;
+      border-bottom: var(--fw-border-width) solid var(--fw-ink);
+    }
+
+    .home-hero h1.shop-title {
       margin: 0;
-      padding: 0;
-      background: transparent !important;
-      border: 0;
-      box-shadow: none;
-      border-radius: 0;
       color: var(--fw-ink) !important;
-      font-size: clamp(46px, 10vw, 128px) !important;
+      font-size: clamp(38px, 7vw, 86px) !important;
       font-weight: 900 !important;
-      line-height: 0.84 !important;
+      line-height: 0.96 !important;
       letter-spacing: 0;
       text-transform: uppercase;
     }
 
-    .letterboard-title span {
+    .shop-title span {
       display: block;
-      width: fit-content;
-      max-width: 100%;
-      margin: 0 auto;
-      padding: 0.02em 0.1em 0.08em;
-      background: transparent !important;
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-      color: var(--fw-ink) !important;
-      box-decoration-break: initial;
-      -webkit-box-decoration-break: initial;
-      position: relative;
-      z-index: 1;
-    }
-
-    .letterboard-title .title-small {
-      font-size: 0.43em;
-      line-height: 0.98;
-      letter-spacing: 0.03em;
-      color: var(--fw-rust) !important;
-    }
-
-    .letterboard-title .title-design {
-      color: var(--fw-black) !important;
-      background: var(--fw-green) !important;
-      border: var(--fw-border-width) solid var(--fw-ink);
-      border-radius: 6px;
-      box-shadow: var(--fw-shadow-sm);
-      font-size: 1.02em;
-      margin-top: clamp(6px, 0.9vw, 12px);
-      margin-bottom: clamp(8px, 1vw, 14px);
-    }
-
-    .letterboard-subtitle {
-      padding: 7px 16px;
-      font-size: clamp(18px, 3.2vw, 42px);
-      line-height: 1;
-      letter-spacing: 0.02em;
-      color: var(--fw-rust) !important;
-      background: var(--fw-panel);
-    }
-
-    .letterboard-date {
-      padding: 7px 13px;
-      margin-top: clamp(10px, 1.4vw, 16px);
-      font-size: clamp(12px, 1.4vw, 15px);
-      letter-spacing: 0.16em;
-      background: var(--fw-panel);
     }
 
     .home-hero .home-hero-note {
-      max-width: 720px;
-      margin: clamp(16px, 2vw, 24px) auto 0;
-      color: var(--fw-ink) !important;
-      font-size: clamp(14px, 1.55vw, 18px);
-      font-weight: 800;
-      line-height: 1.45;
-      text-transform: uppercase;
+      width: min(660px, 100%);
+      max-width: 660px;
+      margin: 0;
+      color: var(--text2) !important;
+      font-size: clamp(15px, 1.7vw, 18px);
+      font-weight: 700;
+      line-height: 1.55;
     }
 
     .home-hero .hero-buttons {
-      margin: clamp(18px, 3vw, 34px) 0 0;
-      padding: 12px;
-      background: var(--fw-paper);
-      border: var(--fw-border-width) solid var(--fw-ink);
-      border-radius: 6px;
-      box-shadow: var(--fw-shadow-sm);
+      width: min(560px, 100%);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0;
     }
 
-    .home-hero > :last-child {
-      margin-bottom: 0;
+    .home-hero .hero-buttons .btn {
+      width: 100%;
+      min-height: 56px;
+      justify-content: center;
+      border-radius: var(--fw-radius);
+      white-space: normal;
+      line-height: 1.1;
     }
 
     .hero p {
@@ -319,12 +237,6 @@
       outline: none;
       border-color: var(--fw-rust);
       box-shadow: var(--fw-shadow-sm);
-    }
-
-    .feature-card.is-active,
-    .feature-card.is-scroll-active {
-      border-color: var(--fw-rust);
-      box-shadow: var(--fw-shadow) !important;
     }
 
     .feature-icon {
@@ -727,29 +639,31 @@
       }
 
       .home-hero {
-        padding: 22px 16px 32px;
-        min-height: auto;
+        min-height: calc(100svh - 64px);
+        padding: 36px 16px;
       }
 
-      .letterboard {
-        padding: 14px;
-      }
-
-      .letterboard::after {
-        width: 72px;
-        opacity: 0.1;
+      .shop-hero-inner {
+        gap: 18px;
+        padding: 24px 16px;
       }
 
       .home-hero .hero-buttons {
-        width: min(100%, 420px);
-        margin-top: 18px;
+        width: 100%;
+        gap: 8px;
+      }
+
+      .home-hero .hero-buttons .btn {
+        min-height: 52px;
+        padding-inline: 10px;
+        font-size: 13px;
       }
 
       .hero h1 {
         font-size: 36px;
       }
 
-      .hero-buttons {
+      .hero:not(.home-hero) .hero-buttons {
         flex-direction: column;
       }
 
@@ -822,24 +736,18 @@
       }
 
       .features-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        width: min(76vw, 390px);
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        width: min(100%, 420px);
         max-width: none;
-        margin: 0 auto 88px;
+        margin: 0 auto 56px;
         overflow: visible;
       }
 
       .feature-card {
-        min-height: 164px;
+        min-height: 0;
         padding: 18px;
-        position: relative;
-        transform-origin: center center;
-      }
-
-      .feature-card:not(:first-child) {
-        margin-top: -20px;
       }
 
       .feature-icon {
@@ -857,48 +765,14 @@
         line-height: 1.45;
       }
 
-      .feature-card:nth-child(1) { z-index: 1; transform: rotate(-2.4deg) translateX(clamp(-34px, -9vw, -22px)); }
-      .feature-card:nth-child(2) { z-index: 2; transform: rotate(1.6deg) translateX(clamp(18px, 7vw, 30px)); }
-      .feature-card:nth-child(3) { z-index: 3; transform: rotate(-1.2deg) translateX(clamp(-26px, -6vw, -14px)); }
-      .feature-card:nth-child(4) { z-index: 4; transform: rotate(2.5deg) translateX(clamp(24px, 8vw, 36px)); }
-      .feature-card:nth-child(5) { z-index: 5; transform: rotate(-1.9deg) translateX(clamp(-38px, -10vw, -24px)); }
-      .feature-card:nth-child(6) { z-index: 6; transform: rotate(1.1deg) translateX(clamp(12px, 5vw, 24px)); }
-
-      .feature-card:nth-child(1):hover { transform: rotate(-2.4deg) translateX(clamp(-34px, -9vw, -22px)) !important; }
-      .feature-card:nth-child(2):hover { transform: rotate(1.6deg) translateX(clamp(18px, 7vw, 30px)) !important; }
-      .feature-card:nth-child(3):hover { transform: rotate(-1.2deg) translateX(clamp(-26px, -6vw, -14px)) !important; }
-      .feature-card:nth-child(4):hover { transform: rotate(2.5deg) translateX(clamp(24px, 8vw, 36px)) !important; }
-      .feature-card:nth-child(5):hover { transform: rotate(-1.9deg) translateX(clamp(-38px, -10vw, -24px)) !important; }
-      .feature-card:nth-child(6):hover { transform: rotate(1.1deg) translateX(clamp(12px, 5vw, 24px)) !important; }
-
       .feature-card:hover {
-        border-color: var(--border) !important;
-        box-shadow: none !important;
-        background: var(--bg2) !important;
+        border-color: var(--fw-rust) !important;
+        box-shadow: var(--fw-shadow-sm) !important;
       }
 
       .feature-card:focus-visible {
-        z-index: 20;
         border-color: var(--fw-rust) !important;
         box-shadow: var(--fw-shadow-sm) !important;
-        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02) !important;
-      }
-
-      .feature-card.is-active,
-      .feature-card.is-scroll-active {
-        z-index: 30;
-        border-color: var(--fw-rust) !important;
-        box-shadow: var(--fw-shadow) !important;
-        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02) !important;
-      }
-
-      .feature-card.is-active:hover,
-      .feature-card.is-scroll-active:hover {
-        z-index: 30;
-        border-color: var(--fw-rust) !important;
-        box-shadow: var(--fw-shadow) !important;
-        background: var(--bg2) !important;
-        transform: translateY(-36px) translateX(0) rotate(0deg) scale(1.02) !important;
       }
 
       .pricing-grid {
@@ -934,20 +808,20 @@
 
   <!-- HERO -->
   <section class="hero home-hero">
-    <div class="letterboard" aria-labelledby="home-heading">
-      <div class="letterboard-kicker">Functional Websites</div>
-      <h1 id="home-heading" class="letterboard-title">
-        <span class="title-small">America's Best</span>
-        <span>Web</span>
-        <span class="title-design">Design</span>
-      </h1>
-      <div class="letterboard-subtitle">&amp; Site Builder</div>
-      <div class="letterboard-date">Est. 2024</div>
-      <p class="home-hero-note">Mom and pop business charm, trades-grade pages, and static-site tools that feel a little hand-painted and a little high-tech.</p>
-    </div>
-    <div class="hero-buttons" aria-label="Next steps">
-      <button class="btn btn-secondary btn-large" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Explore Static Services</button>
-      <button class="btn btn-primary btn-large" onclick="window.location.href='https://build.functionalwebsites.com/'">Start Building Free</button>
+    <div class="shop-hero-inner" aria-labelledby="home-heading">
+      <div class="shop-kicker">Est. 2024</div>
+      <div class="shop-title-wrap">
+        <h1 id="home-heading" class="shop-title">
+          <span>America's Best</span>
+          <span>Web Design</span>
+          <span>&amp; Site Builder</span>
+        </h1>
+      </div>
+      <p class="home-hero-note">Static website services, a free site builder, hosting help, and practical docs for owners who want fast pages they can keep.</p>
+      <div class="hero-buttons" aria-label="Next steps">
+        <button class="btn btn-secondary btn-large" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Services</button>
+        <button class="btn btn-primary btn-large" onclick="window.location.href='https://build.functionalwebsites.com/'">Start Building</button>
+      </div>
     </div>
   </section>
 
@@ -1132,84 +1006,6 @@
         <button class="btn btn-primary btn-large" onclick="window.location.href='https://build.functionalwebsites.com/'">Open the Builder</button>
   </section>
   <div id="footer-placeholder"></div>
-  <script src="/components/components.js"></script>
-  <script>
-    (() => {
-      const featureCards = Array.from(document.querySelectorAll('.feature-card'));
-      if (!featureCards.length) return;
-      const mobileFeatureQuery = window.matchMedia('(max-width: 768px)');
-      let scrollFrame = 0;
-
-      const clearActiveCard = () => {
-        featureCards.forEach(card => card.classList.remove('is-active'));
-      };
-
-      const clearScrollCard = () => {
-        featureCards.forEach(card => card.classList.remove('is-scroll-active'));
-      };
-
-      const clearFeatureCardState = () => {
-        clearActiveCard();
-        clearScrollCard();
-      };
-
-      const setScrollCard = card => {
-        clearActiveCard();
-        featureCards.forEach(item => item.classList.toggle('is-scroll-active', item === card));
-      };
-
-      const centerFeatureCard = card => {
-        clearFeatureCardState();
-        if (!mobileFeatureQuery.matches) return;
-        card.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-        window.setTimeout(updateScrollCard, 280);
-      };
-
-      const updateScrollCard = () => {
-        if (!mobileFeatureQuery.matches) {
-          clearScrollCard();
-          return;
-        }
-
-        const viewportCenter = window.innerHeight / 2;
-        let closestCard = null;
-        let closestDistance = Infinity;
-
-        featureCards.forEach(card => {
-          const rect = card.getBoundingClientRect();
-          if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-          const cardCenter = rect.top + rect.height / 2;
-          const distance = Math.abs(cardCenter - viewportCenter);
-          if (distance < closestDistance) {
-            closestCard = card;
-            closestDistance = distance;
-          }
-        });
-
-        setScrollCard(closestCard);
-      };
-
-      const handleScroll = () => {
-        if (scrollFrame) return;
-        scrollFrame = window.requestAnimationFrame(() => {
-          scrollFrame = 0;
-          updateScrollCard();
-        });
-      };
-
-      featureCards.forEach(card => {
-        card.addEventListener('click', () => centerFeatureCard(card));
-        card.addEventListener('keydown', event => {
-          if (event.key !== 'Enter' && event.key !== ' ') return;
-          event.preventDefault();
-          centerFeatureCard(card);
-        });
-      });
-
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      window.addEventListener('resize', updateScrollCard);
-      updateScrollCard();
-    })();
-  </script>
+  <script src="/components/components.js" defer></script>
 </body>
 </html>

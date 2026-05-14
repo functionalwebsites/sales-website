@@ -5,6 +5,7 @@
   src: url('/styles/fonts/JetBrainsMono-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 :host {
@@ -971,8 +972,9 @@ footer {
       }
 
       logoMark.dataset.spin = 'false';
-      void logoMark.offsetWidth;
-      logoMark.dataset.spin = 'true';
+      requestAnimationFrame(() => {
+        logoMark.dataset.spin = 'true';
+      });
     };
     const onMediaQueryChange = (query, handler) => {
       if (typeof query.addEventListener === 'function') {
