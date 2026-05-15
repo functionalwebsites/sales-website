@@ -8,6 +8,7 @@ function loadSettingsForm() {
   document.getElementById('cf-account-id').value = cf.accountId || '';
   setBuilderTheme(getBuilderTheme());
   updateIntegrationBadges();
+  updateOfflineStatus();
 }
 
 function updateIntegrationBadges() {
@@ -92,6 +93,71 @@ function updateStorageInfo() {
   });
   const kb = (total / 1024).toFixed(1);
   document.getElementById('storage-info').textContent = `${count} website${count!==1?'s':''} stored · ~${kb} KB used`;
+}
+
+async function updateOfflineStatus() {
+  const badge = document.getElementById('offline-status-badge');
+  const detail = document.getElementById('offline-status-detail');
+  if (!badge || !detail) return;
+
+  const setStatus = (state, label, message) => {
+    badge.className = `status-badge ${state}`;
+    badge.textContent = `● ${label}`;
+    detail.textContent = message;
+  };
+
+  const proActive = isProUnlocked();
+  const proText = proActive ? 'Pro token found.' : 'Pro token not found.';
+
+  if (!('serviceWorker' in navigator)) {
+    setStatus('disconnected', 'Unavailable', `${proText} This browser does not support service workers, so offline builder caching is unavailable here.`);
+    return;
+  }
+
+  if (!('caches' in window)) {
+    setStatus('disconnected', 'Unavailable', `${proText} This browser does not expose Cache Storage, so the builder cannot confirm offline files are saved.`);
+    return;
+  }
+
+  setStatus('pending', 'Checking', `${proText} Checking the installed offline builder cache...`);
+
+  try {
+    const isBuilderHost = window.location.hostname === 'build.functionalwebsites.com';
+    const workerUrl = isBuilderHost ? '/sw.js' : '/build/sw.js';
+    const scope = isBuilderHost ? '/' : '/build/';
+    const registration = await navigator.serviceWorker.register(workerUrl, { scope });
+    await navigator.serviceWorker.ready;
+    await registration.update().catch(() => {});
+
+    const cacheNames = await caches.keys();
+    const builderCacheName = cacheNames.find(name => name.startsWith('fw-builder-offline-'));
+    const cache = builderCacheName ? await caches.open(builderCacheName) : null;
+    const cachedApp = cache ? await cache.match(isBuilderHost ? '/' : '/build/') || await cache.match('/build/index.html') : null;
+    const cachedZip = cache ? await cache.match('/build/vendor/jszip.min.js') : null;
+    const controlled = Boolean(navigator.serviceWorker.controller);
+
+    if (cachedApp && cachedZip) {
+      const controlText = controlled ? 'This page is controlled by the offline worker.' : 'Reload once if offline fallback does not start immediately.';
+      setStatus(
+        'connected',
+        'Available',
+        `${proText} Offline builder files are cached. ${controlText} Current network state: ${navigator.onLine ? 'online' : 'offline'}.`
+      );
+      return;
+    }
+
+    setStatus(
+      'pending',
+      'Installing',
+      `${proText} The offline worker is registered, but the full builder cache is not confirmed yet. Stay online on this page for a moment, then recheck or reload.`
+    );
+  } catch (error) {
+    setStatus(
+      'disconnected',
+      'Unavailable',
+      `${proText} Offline setup failed: ${error.message || 'service worker registration error'}. Make sure /sw.js is reachable on build.functionalwebsites.com.`
+    );
+  }
 }
 
 async function clearAllData() {

@@ -387,6 +387,8 @@ body.panel-resizing .panel-resize-handle::after {
 .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
 .status-badge.connected { background: rgba(74,222,128,.15); color: var(--green); border: 1px solid rgba(74,222,128,.3); }
 .status-badge.disconnected { background: rgba(248,113,113,.15); color: var(--red); border: 1px solid rgba(248,113,113,.3); }
+.status-badge.pending { background: rgba(226,173,48,.16); color: var(--yellow); border: 1px solid rgba(226,173,48,.34); }
+.offline-status-detail { color: var(--text2); font-size: 12px; line-height: 1.55; margin: 8px 0 12px; }
 
 /* Deploy modal */
 .deploy-step { padding: 12px; background: var(--bg3); border-radius: 8px; margin-bottom: 8px; }
@@ -1227,7 +1229,6 @@ select:hover {
       </div>
     </a>
       <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-        <button class="btn btn-secondary btn-sm builder-theme-toggle" id="btn-builder-theme-toggle" onclick="toggleBuilderTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">Dark</button>
         <button class="btn btn-ghost btn-sm" id="btn-settings" onclick="showSettings()" style="display: none;">⚙ Settings</button>
         <button class="btn btn-primary" id="btn-unlock-pro" onclick="showProTokenModal()" style="display: none;"><span style="color:var(--green);">◇</span> Unlock Pro</button>
       </div>
@@ -1307,13 +1308,15 @@ select:hover {
         <button class="btn btn-secondary btn-sm" onclick="openGithubImportModal()"><span style="color:var(--green);">⌘</span> Import From GitHub</button>
       </div>
     </div>
-    <!-- GitHub -->
     <div class="settings-section">
-      <div class="settings-section-title">Builder Appearance</div>
-      <div class="settings-section-desc">Switch the editor UI between dark and light mode.</div>
+      <div class="flex items-center gap-2" style="margin-bottom:4px">
+        <div class="settings-section-title">Offline Builder</div>
+        <span id="offline-status-badge" class="status-badge pending">● Checking</span>
+      </div>
+      <div class="settings-section-desc">The builder should use the live version when online and the cached version if the internet is unavailable.</div>
+      <div id="offline-status-detail" class="offline-status-detail">Checking offline support...</div>
       <div class="flex gap-2" style="flex-wrap:wrap;">
-        <button class="btn btn-secondary btn-sm" id="btn-builder-theme-dark" onclick="setBuilderTheme('dark')">Dark</button>
-        <button class="btn btn-secondary btn-sm" id="btn-builder-theme-light" onclick="setBuilderTheme('light')">Light</button>
+        <button class="btn btn-secondary btn-sm" onclick="updateOfflineStatus()">Recheck Offline Status</button>
       </div>
     </div>
     <!-- GitHub -->
@@ -1394,7 +1397,6 @@ select:hover {
     <button class="btn btn-secondary btn-sm d-only" onclick="openDesignHealthModal()">◇ Health</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
     <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
-    <button class="btn btn-secondary btn-sm d-only builder-theme-toggle" onclick="toggleBuilderTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">Dark</button>
     <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
     <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
     <!-- Mobile overflow trigger -->

@@ -166,7 +166,7 @@ const LS = {
 };
 
 function getBuilderTheme() {
-  return LS.get('builderTheme') || localStorage.getItem('fw_site_theme') || 'light';
+  return 'light';
 }
 
 function applyBuilderTheme(theme) {

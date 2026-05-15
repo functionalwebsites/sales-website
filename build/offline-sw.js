@@ -1,4 +1,4 @@
-const FW_BUILDER_CACHE = 'fw-builder-offline-2026-05-15-1';
+const FW_BUILDER_CACHE = 'fw-builder-offline-2026-05-15-2';
 const FW_IS_ROOT_WORKER = new URL(self.location.href).pathname === '/sw.js';
 
 const FW_BUILDER_ASSETS = [
@@ -19,9 +19,6 @@ const FW_BUILDER_ASSETS = [
   '/build/js/deploy/github.js',
   '/build/js/deploy/cloudflare.js',
   '/build/js/app.js',
-  '/build/blocks/testimonial-wall-block.json',
-  '/build/blocks/youtube-embed-block.json',
-  '/build/templates/plumber-website-template.json',
   '/styles/shared.css',
   '/styles/fonts/JetBrainsMono-Regular.woff2',
   '/styles/fonts/JetBrainsMono-Bold.woff2',
@@ -55,10 +52,19 @@ const cacheResponse = async (request, response) => {
   return response;
 };
 
+const precacheAsset = async (cache, asset) => {
+  try {
+    const response = await fetch(asset);
+    if (response.ok) await cache.put(asset, response);
+  } catch {
+    // Optional offline assets should not block service worker installation.
+  }
+};
+
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(FW_BUILDER_CACHE)
-      .then(cache => cache.addAll(FW_BUILDER_ASSETS))
+      .then(cache => Promise.all(FW_BUILDER_ASSETS.map(asset => precacheAsset(cache, asset))))
       .then(() => self.skipWaiting())
   );
 });
