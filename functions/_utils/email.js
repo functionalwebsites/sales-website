@@ -280,3 +280,37 @@ export async function sendProTokenEmail(env, email, token) {
     throw error;
   }
 }
+
+export async function sendEmail(env, { to, subject, text, html }) {
+  if (!env.EMAIL_FROM || !env.CLOUDFLARE_ACCOUNT_ID || !env.CLOUDFLARE_API_TOKEN) {
+    throw new Error('Missing EMAIL_FROM, CLOUDFLARE_ACCOUNT_ID, or CLOUDFLARE_API_TOKEN');
+  }
+
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/email/sending/send`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to,
+        from: env.EMAIL_FROM,
+        subject,
+        text,
+        html,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Email API failed: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  const result = await response.json();
+  return { sent: true, id: result.result?.id || null };
+}
+
+export { escapeHtml };
