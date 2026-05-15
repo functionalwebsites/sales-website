@@ -17,7 +17,7 @@
 <meta name="theme-color" content="#0f0f13">
 <title>Functional Websites — Static Website Builder</title>
 <link rel="stylesheet" href="/styles/shared.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="/build/vendor/jszip.min.js"></script>
 <style>
 :root {
   --builder-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
@@ -1964,5 +1964,18 @@ select:hover {
 <script src="/build/js/deploy/github.js"></script>
 <script src="/build/js/deploy/cloudflare.js"></script>
 <script src="/build/js/app.js"></script>
+<script>
+  (() => {
+    if (!('serviceWorker' in navigator)) return;
+
+    const isBuilderHost = window.location.hostname === 'build.functionalwebsites.com';
+    const workerUrl = isBuilderHost ? '/sw.js' : '/build/sw.js';
+    const scope = isBuilderHost ? '/' : '/build/';
+
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register(workerUrl, { scope }).catch(() => {});
+    });
+  })();
+</script>
 </body>
 </html>
