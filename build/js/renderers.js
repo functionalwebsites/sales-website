@@ -1,4 +1,14 @@
 // Site builder renderers. Loaded by build/index.html in dependency order.
+function inlineEditAttrs(block, prop, mode = 'text') {
+  if (!block?.id || !prop) return '';
+  return ` data-inline-edit="true" data-inline-prop="${escAttr(prop)}" data-inline-mode="${escAttr(mode)}" title="Double-click to edit text"`;
+}
+
+function inlineItemEditAttrs(block, list, index, key, mode = 'text') {
+  if (!block?.id || !list || !key) return '';
+  return ` data-inline-edit="true" data-inline-list="${escAttr(list)}" data-inline-index="${Number(index)}" data-inline-key="${escAttr(key)}" data-inline-mode="${escAttr(mode)}" title="Double-click to edit text"`;
+}
+
 function renderBlock(block, editing = false, ctx = null) {
   const html = _renderBlockInner(block, editing, ctx);
   const responsiveCSS = buildBlockResponsiveCSS(block);
@@ -226,19 +236,19 @@ function _renderBlockInner(block, editing = false, ctx = null) {
         : (p.bgColor||'#7c6af7');
       return `<section ${sel} style="background:${heroBg};color:${p.textColor||'#fff'};padding:${p.padding || 'calc(var(--site-section-padding-y, 72px) + 28px) 24px'};min-height:${p.minHeight||'auto'};display:flex;align-items:center;justify-content:center;">
   <div style="width:100%;max-width:${p.contentWidth||siteSectionWidth};text-align:${heroAlign};display:flex;flex-direction:column;align-items:${heroFlexAlign};margin:0 auto;position:relative;z-index:1;">
-    <h1 style="font-family:${siteHeadingFont};font-size:calc(clamp(28px,5vw,56px) * var(--site-heading-scale, 1));font-weight:800;margin:0 0 16px;">${p.heading||'Welcome'}</h1>
-    <p style="font-size:clamp(14px,2vw,20px);margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
-    ${p.buttonText ? `<a href="${p.buttonHref||'#'}" style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 32px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText}</a>` : ''}
+    <h1${editing ? inlineEditAttrs(block, 'heading') : ''} style="font-family:${siteHeadingFont};font-size:calc(clamp(28px,5vw,56px) * var(--site-heading-scale, 1));font-weight:800;margin:0 0 16px;">${p.heading||'Welcome'}</h1>
+    <p${editing ? inlineEditAttrs(block, 'subheading') : ''} style="font-size:clamp(14px,2vw,20px);margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
+    ${p.buttonText ? `<a href="${p.buttonHref||'#'}"${editing ? inlineEditAttrs(block, 'buttonText') : ''} style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 32px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText}</a>` : ''}
   </div>
 </section>`;
     }
     case 'heading': {
       const tag = p.level || 'h2';
       const sizes = { h1:'2.4em', h2:'1.8em', h3:'1.4em', h4:'1.1em' };
-      return `<${tag} ${sel} style="font-family:${siteHeadingFont};text-align:${p.align||'left'};color:${p.color||'#111'};font-size:calc(${sizes[tag]||'1.8em'} * var(--site-heading-scale, 1));padding:12px 24px;margin:0;">${p.text||'Title'}</${tag}>`;
+      return `<${tag} ${sel}${editing ? inlineEditAttrs(block, 'text') : ''} style="font-family:${siteHeadingFont};text-align:${p.align||'left'};color:${p.color||'#111'};font-size:calc(${sizes[tag]||'1.8em'} * var(--site-heading-scale, 1));padding:12px 24px;margin:0;">${p.text||'Title'}</${tag}>`;
     }
     case 'text': {
-      return `<div ${sel} style="padding:8px 24px;color:${p.color||'#333'};text-align:${p.align||'left'};font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);">${p.content||''}</div>`;
+      return `<div ${sel}${editing ? inlineEditAttrs(block, 'content', 'html') : ''} style="padding:8px 24px;color:${p.color||'#333'};text-align:${p.align||'left'};font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);">${p.content||''}</div>`;
     }
     case 'image': {
       const rounded = p.rounded ? 'border-radius:8px;' : '';
@@ -269,7 +279,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const pad = sizes[p.size||'medium'];
       const radius = p.rounded ? siteButtonRadius : '0';
       return `<div ${sel} style="padding:12px 24px;text-align:${p.align||'center'};">
-  <a href="${p.href||'#'}" style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${pad};border-radius:${radius};font-weight:600;text-decoration:none;display:inline-block;font-size:${siteBodySize};">${p.text||'Button'}</a>
+  <a href="${p.href||'#'}"${editing ? inlineEditAttrs(block, 'text') : ''} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${pad};border-radius:${radius};font-weight:600;text-decoration:none;display:inline-block;font-size:${siteBodySize};">${p.text||'Button'}</a>
 </div>`;
     }
     case 'section': {
@@ -313,31 +323,31 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       return `<div ${sel} style="height:${p.height||'40px'};"></div>`;
     }
     case 'cards': {
-      const cards = (p.cards||[]).map(c=>{
+      const cards = (p.cards||[]).map((c, i)=>{
         const cardImage = resolveImageAsset(c.img, pd);
         return `
   <div class="fw-card" style="border-radius:${siteCardRadius};">
   ${cardImage ? `<img class="fw-card-image" src="${cardImage}" alt="">` : `<div class="fw-card-image-placeholder">▧</div>`}
     <div class="fw-card-body">
-      <h3 style="margin:0 0 8px;font-size:16px;">${c.title||'Card Title'}</h3>
-      <p style="margin:0;color:#666;font-size:14px;">${c.desc||''}</p>
+      <h3${editing ? inlineItemEditAttrs(block, 'cards', i, 'title') : ''} style="margin:0 0 8px;font-size:16px;">${c.title||'Card Title'}</h3>
+      <p${editing ? inlineItemEditAttrs(block, 'cards', i, 'desc') : ''} style="margin:0;color:#666;font-size:14px;">${c.desc||''}</p>
     </div>
   </div>`;
       }).join('');
       return `<section ${sel} style="background:${p.bgColor||'#f8f8f8'};padding:${p.padding||siteSectionPadding};">
-  <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 32px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Our Work'}</h2>
+  <h2${editing ? inlineEditAttrs(block, 'title') : ''} style="font-family:${siteHeadingFont};text-align:center;margin:0 0 32px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Our Work'}</h2>
   <div class="fw-grid fw-card-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${cards}</div>
 </section>`;
     }
     case 'features': {
-      const feats = (p.features||[]).map(f=>`
+      const feats = (p.features||[]).map((f, i)=>`
   <div class="fw-feature">
     <div class="fw-feature-icon">${f.icon||'✦'}</div>
-    <h3 style="margin:0 0 8px;font-size:18px;">${f.title||'Feature'}</h3>
-    <p style="margin:0;color:#666;">${f.desc||''}</p>
+    <h3${editing ? inlineItemEditAttrs(block, 'features', i, 'title') : ''} style="margin:0 0 8px;font-size:18px;">${f.title||'Feature'}</h3>
+    <p${editing ? inlineItemEditAttrs(block, 'features', i, 'desc') : ''} style="margin:0;color:#666;">${f.desc||''}</p>
   </div>`).join('');
       return `<section ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <h2 style="font-family:${siteHeadingFont};text-align:center;margin:0 0 40px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Features'}</h2>
+  <h2${editing ? inlineEditAttrs(block, 'title') : ''} style="font-family:${siteHeadingFont};text-align:center;margin:0 0 40px;font-size:calc(2em * var(--site-heading-scale, 1));">${p.title||'Features'}</h2>
   <div class="fw-grid fw-feature-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:${siteContentGap};max-width:${siteSectionWidth};margin:0 auto;">${feats}</div>
 </section>`;
     }
@@ -361,8 +371,8 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       return `<section ${sel} style="padding:${p.padding||siteSectionPadding};background:${p.bgColor||'#f5f8fc'};">
   <div style="max-width:${p.maxWidth||siteSectionWidth};margin:0 auto;">
     <div style="text-align:center;margin-bottom:28px;">
-      ${p.title ? `<h2 style="font-family:${siteHeadingFont};margin:0 0 10px;font-size:calc(clamp(28px,4vw,42px) * var(--site-heading-scale, 1));color:#13293d;">${p.title}</h2>` : ''}
-      ${p.intro ? `<p style="margin:0 auto;max-width:720px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:#5a6b7d;">${p.intro}</p>` : ''}
+      ${p.title ? `<h2${editing ? inlineEditAttrs(block, 'title') : ''} style="font-family:${siteHeadingFont};margin:0 0 10px;font-size:calc(clamp(28px,4vw,42px) * var(--site-heading-scale, 1));color:#13293d;">${p.title}</h2>` : ''}
+      ${p.intro ? `<p${editing ? inlineEditAttrs(block, 'intro') : ''} style="margin:0 auto;max-width:720px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:#5a6b7d;">${p.intro}</p>` : ''}
     </div>
     <div class="fw-grid fw-testimonial-grid" style="grid-template-columns:repeat(${cols},minmax(0,1fr));gap:18px;">${cards}</div>
   </div>
@@ -370,17 +380,17 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     }
     case 'cta': {
       return `<section ${sel} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${p.padding||siteSectionPadding};text-align:center;">
-  <h2 style="font-family:${siteHeadingFont};font-size:calc(2.2em * var(--site-heading-scale, 1));margin:0 0 12px;">${p.heading||'Ready to get started?'}</h2>
-  <p style="font-size:1.1em;margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
-  <a href="${p.buttonHref||'#'}" style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 36px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText||'Get Started'}</a>
+  <h2${editing ? inlineEditAttrs(block, 'heading') : ''} style="font-family:${siteHeadingFont};font-size:calc(2.2em * var(--site-heading-scale, 1));margin:0 0 12px;">${p.heading||'Ready to get started?'}</h2>
+  <p${editing ? inlineEditAttrs(block, 'subheading') : ''} style="font-size:1.1em;margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
+  <a href="${p.buttonHref||'#'}"${editing ? inlineEditAttrs(block, 'buttonText') : ''} style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 36px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText||'Get Started'}</a>
 </section>`;
     }
     case 'footer': {
       return `<footer ${sel} style="background:${p.bgColor||'#1a1a1a'};color:${p.textColor||'#aaa'};padding:40px 24px 24px;">
   <div style="max-width:1100px;margin:0 auto;">
-    <div style="font-weight:700;font-size:18px;color:${p.linkColor||'#ccc'};margin-bottom:8px;">${p.brand||'My Site'}</div>
-    <p style="margin:0 0 24px;">${p.tagline||''}</p>
-    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;font-size:13px;">${p.copyright||'© 2025 My Site'}</div>
+    <div${editing ? inlineEditAttrs(block, 'brand') : ''} style="font-weight:700;font-size:18px;color:${p.linkColor||'#ccc'};margin-bottom:8px;">${p.brand||'My Site'}</div>
+    <p${editing ? inlineEditAttrs(block, 'tagline') : ''} style="margin:0 0 24px;">${p.tagline||''}</p>
+    <div${editing ? inlineEditAttrs(block, 'copyright') : ''} style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;font-size:13px;">${p.copyright||'© 2025 My Site'}</div>
   </div>
 </footer>`;
     }

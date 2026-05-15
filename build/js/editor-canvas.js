@@ -226,6 +226,9 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 .block-ctrl-btn { width: 28px; height: 28px; border-radius: 4px; background: #f5efe0; color: #10100d; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace; font-size: 14px; font-weight: 900; cursor: pointer; border: 3px solid #10100d; box-shadow: 2px 2px 0 #10100d; line-height: 1; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease; }
 .block-ctrl-btn:hover { background: #b9482e; color: #f5efe0; transform: translate(1px, 1px); box-shadow: 1px 1px 0 #10100d; }
 .block-ctrl-danger { background: #b9482e; color: #f5efe0; }
+[data-inline-edit] { cursor: text; }
+[data-inline-edit]:hover { box-shadow: inset 0 -3px 0 rgba(185,72,46,.45); }
+[data-inline-edit][contenteditable="true"] { outline: 3px solid #4b7f52; outline-offset: 3px; box-shadow: 4px 4px 0 rgba(16,16,13,.25); }
 ${buildBrandCSS(_projectData)}
 ${buildStyleSystemCSS(_projectData)}
 ${buildSiteThemeCSS(_projectData)}
@@ -355,6 +358,74 @@ document.addEventListener('dragend', function() {
   dragSourceId = null;
   clearDropMarkers();
 });
+
+function selectEditableText(el) {
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function getInlineEditValue(el) {
+  return el.dataset.inlineMode === 'html' ? el.innerHTML : el.textContent;
+}
+
+function commitInlineEdit(el) {
+  const wrapper = el.closest('[data-block-id]');
+  if (!wrapper || !window.parent || typeof window.parent.updateInlineText !== 'function') return;
+  window.parent.updateInlineText(wrapper.getAttribute('data-block-id'), {
+    prop: el.dataset.inlineProp || '',
+    list: el.dataset.inlineList || '',
+    index: el.dataset.inlineIndex || '',
+    key: el.dataset.inlineKey || '',
+    mode: el.dataset.inlineMode || 'text',
+    value: getInlineEditValue(el)
+  });
+}
+
+document.addEventListener('dblclick', function(event) {
+  const editable = event.target.closest('[data-inline-edit]');
+  if (!editable) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const wrapper = editable.closest('[data-block-id]');
+  if (wrapper && window.parent && typeof window.parent.selectBlock === 'function') {
+    window.parent.selectBlock(wrapper.getAttribute('data-block-id'), false, true);
+  }
+  editable.setAttribute('contenteditable', 'true');
+  editable.focus();
+  selectEditableText(editable);
+}, true);
+
+document.addEventListener('input', function(event) {
+  const editable = event.target.closest('[data-inline-edit][contenteditable="true"]');
+  if (!editable) return;
+  commitInlineEdit(editable);
+}, true);
+
+document.addEventListener('keydown', function(event) {
+  const editable = event.target.closest('[data-inline-edit][contenteditable="true"]');
+  if (!editable) return;
+  if (event.key === 'Escape') {
+    editable.blur();
+    return;
+  }
+  if (event.key === 'Enter' && editable.dataset.inlineMode !== 'html') {
+    event.preventDefault();
+    editable.blur();
+  }
+}, true);
+
+document.addEventListener('blur', function(event) {
+  const editable = event.target.closest('[data-inline-edit][contenteditable="true"]');
+  if (!editable) return;
+  commitInlineEdit(editable);
+  editable.removeAttribute('contenteditable');
+  if (window.parent && typeof window.parent.finishInlineTextEdit === 'function') {
+    window.parent.finishInlineTextEdit();
+  }
+}, true);
 
 document.addEventListener('click', function(event) {
   const link = event.target.closest('a');
@@ -692,7 +763,7 @@ window.deselectBlock = function(e) {
   if (isMobile() && STATE.mobileTab === 'props') switchMobileTab('canvas');
 };
 
-window.selectBlock = function(id, scrollToBlock = false) {
+window.selectBlock = function(id, scrollToBlock = false, stayOnCanvas = false) {
   STATE.selectedBlockId = id;
   STATE.selectedColumn = null;
   setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
@@ -709,7 +780,37 @@ window.selectBlock = function(id, scrollToBlock = false) {
   renderLayoutList();
   if (scrollToBlock) scrollCanvasToBlock(id);
   // On mobile, automatically jump to the props panel
-  if (isMobile()) switchMobileTab('props');
+  if (isMobile() && !stayOnCanvas) switchMobileTab('props');
+};
+
+window.updateInlineText = function(blockId, edit) {
+  const block = findBlockById(blockId);
+  if (!block || !edit) return;
+  pushUndoDebounced();
+  if (!block.props) block.props = {};
+
+  if (edit.list) {
+    const list = block.props[edit.list];
+    const index = Number(edit.index);
+    if (!Array.isArray(list) || !list[index] || !edit.key) return;
+    list[index][edit.key] = edit.value;
+    if (block.brandLinks && block.brandLinks[edit.list]) delete block.brandLinks[edit.list];
+  } else if (edit.prop) {
+    block.props[edit.prop] = edit.value;
+    if (block.brandLinks && block.brandLinks[edit.prop]) delete block.brandLinks[edit.prop];
+  }
+
+  STATE.selectedBlockId = blockId;
+  STATE.selectedColumn = null;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
+  renderProps();
+  renderLayoutList();
+};
+
+window.finishInlineTextEdit = function() {
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
 };
 
 window.selectColumn = function(parentId, index, scrollToColumn = false) {
