@@ -267,6 +267,15 @@ function toggleBuilderPanel(panel, forceCollapsed) {
   }
 }
 
+function toggleCanvasFocusMode() {
+  const state = getBuilderPanelState();
+  const focused = state.leftCollapsed && state.rightCollapsed;
+  setBuilderPanelState({
+    leftCollapsed: !focused,
+    rightCollapsed: !focused
+  });
+}
+
 function initBuilderPanelResizers() {
   const layout = document.getElementById('mode-visual');
   if (!layout || layout.dataset.resizersReady === 'true') return;

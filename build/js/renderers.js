@@ -9,12 +9,47 @@ function inlineItemEditAttrs(block, list, index, key, mode = 'text') {
   return ` data-inline-edit="true" data-inline-list="${escAttr(list)}" data-inline-index="${Number(index)}" data-inline-key="${escAttr(key)}" data-inline-mode="${escAttr(mode)}" title="Double-click to edit text"`;
 }
 
+function blockResizeHandles(block) {
+  const type = block?.type || '';
+  const heightTypes = new Set(['hero', 'section', 'columns2', 'columns3', 'spacer', 'image', 'cards', 'features', 'testimonialWall', 'cta', 'form', 'youtubeEmbed']);
+  const widthTypes = new Set(['hero', 'section', 'image', 'youtubeEmbed', 'testimonialWall']);
+  return [
+    heightTypes.has(type) ? '<div class="block-resize-handle block-resize-y" data-resize-axis="y" title="Drag to resize height"></div>' : '',
+    widthTypes.has(type) ? '<div class="block-resize-handle block-resize-x" data-resize-axis="x" title="Drag to resize width"></div>' : '',
+  ].join('');
+}
+
+function getColumnRatios(block, count) {
+  const fallback = Array.from({ length: count }, () => 1);
+  const raw = String(block?.props?.columnTemplate || '').trim();
+  if (!raw) return fallback;
+  const values = raw.split(/\s+/).map(part => Number.parseFloat(part));
+  if (values.length !== count || values.some(value => !Number.isFinite(value) || value <= 0)) return fallback;
+  return values;
+}
+
+function columnTemplateFromRatios(ratios) {
+  return ratios.map(value => `${Math.max(0.5, Number(value) || 1).toFixed(2)}fr`).join(' ');
+}
+
+function columnResizeHandles(block, count, editing) {
+  if (!editing || count < 2) return '';
+  const ratios = getColumnRatios(block, count);
+  const total = ratios.reduce((sum, value) => sum + value, 0) || count;
+  let running = 0;
+  return ratios.slice(0, -1).map((value, index) => {
+    running += value;
+    const left = (running / total) * 100;
+    return `<div class="column-width-handle" data-column-resize-index="${index}" data-column-ratios="${escAttr(ratios.join(','))}" style="left:${left}%;" title="Drag to resize columns"></div>`;
+  }).join('');
+}
+
 function renderBlock(block, editing = false, ctx = null) {
   const html = _renderBlockInner(block, editing, ctx);
   const responsiveCSS = buildBlockResponsiveCSS(block);
   const outWithResponsiveCSS = responsiveCSS ? `<style>\n${responsiveCSS}\n</style>\n${html}` : html;
   if (editing) {
-    return `<div data-block-id="${block.id}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${block.id}')">${outWithResponsiveCSS}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',-1)" title="Move up" aria-label="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',1)" title="Move down" aria-label="Move down">↓</button><button class="block-ctrl-btn block-ctrl-danger" onclick="event.stopPropagation();window.parent.removeBlock('${block.id}')" title="Delete" aria-label="Delete">✕</button></div></div>`;
+    return `<div data-block-id="${block.id}" data-block-type="${escAttr(block.type)}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${block.id}')">${outWithResponsiveCSS}${blockResizeHandles(block)}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',-1)" title="Move up" aria-label="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',1)" title="Move down" aria-label="Move down">↓</button><button class="block-ctrl-btn block-ctrl-danger" onclick="event.stopPropagation();window.parent.removeBlock('${block.id}')" title="Delete" aria-label="Delete">✕</button></div></div>`;
   }
   if (!editing) {
     const p = block.props;
@@ -290,29 +325,33 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     }
     case 'columns2': {
       const alignItems = p.verticalAlign === 'bottom' ? 'end' : p.verticalAlign === 'center' ? 'center' : 'start';
+      const columnTemplate = p.columnTemplate || columnTemplateFromRatios(getColumnRatios(block, 2));
       const columns = Array.isArray(p.columns) ? p.columns : [
         p.col1 ? [{ id: `${block.id}-legacy-1`, type: 'html', props: { code: p.col1 } }] : [],
         p.col2 ? [{ id: `${block.id}-legacy-2`, type: 'html', props: { code: p.col2 } }] : []
       ];
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div class="fw-grid fw-grid-2" style="grid-template-columns:1fr 1fr;gap:${p.gap||siteContentGap};align-items:${alignItems};max-width:${siteSectionWidth};margin:0 auto;">
+  <div class="fw-grid fw-grid-2" style="grid-template-columns:${columnTemplate};gap:${p.gap||siteContentGap};align-items:${alignItems};max-width:${siteSectionWidth};margin:0 auto;position:relative;">
     ${renderColumn(block, columns, 0)}
     ${renderColumn(block, columns, 1)}
+    ${columnResizeHandles(block, 2, editing)}
   </div>
 </div>`;
     }
     case 'columns3': {
       const alignItems = p.verticalAlign === 'bottom' ? 'end' : p.verticalAlign === 'center' ? 'center' : 'start';
+      const columnTemplate = p.columnTemplate || columnTemplateFromRatios(getColumnRatios(block, 3));
       const columns = Array.isArray(p.columns) ? p.columns : [
         p.col1 ? [{ id: `${block.id}-legacy-1`, type: 'html', props: { code: p.col1 } }] : [],
         p.col2 ? [{ id: `${block.id}-legacy-2`, type: 'html', props: { code: p.col2 } }] : [],
         p.col3 ? [{ id: `${block.id}-legacy-3`, type: 'html', props: { code: p.col3 } }] : []
       ];
       return `<div ${sel} style="background:${p.bgColor||'#fff'};padding:${p.padding||siteSectionPadding};">
-  <div class="fw-grid fw-grid-3" style="grid-template-columns:1fr 1fr 1fr;gap:${p.gap||siteContentGap};align-items:${alignItems};max-width:${siteSectionWidth};margin:0 auto;">
+  <div class="fw-grid fw-grid-3" style="grid-template-columns:${columnTemplate};gap:${p.gap||siteContentGap};align-items:${alignItems};max-width:${siteSectionWidth};margin:0 auto;position:relative;">
     ${renderColumn(block, columns, 0)}
     ${renderColumn(block, columns, 1)}
     ${renderColumn(block, columns, 2)}
+    ${columnResizeHandles(block, 3, editing)}
   </div>
 </div>`;
     }
@@ -363,9 +402,9 @@ function _renderBlockInner(block, editing = false, ctx = null) {
         const stars = '★★★★★'.slice(0, Math.min(5, Math.max(0, Number(item.rating || 5) || 5)));
         return `<div class="fw-testimonial" style="background:${bg};border-color:${border};border-radius:${siteCardRadius};">
   ${p.showStars ? `<div style="font-size:18px;margin-bottom:10px;color:${highlighted ? '#fbbf24' : '#f59e0b'};">${stars || '★★★★★'}</div>` : ''}
-  <p style="margin:0 0 14px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:${text};">"${item.quote||''}"</p>
-  <strong style="display:block;color:${strong};">${item.name||'Customer Name'}</strong>
-  <span style="color:${muted};font-size:13px;">${item.role||''}</span>
+  <p style="margin:0 0 14px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:${text};">"<span${editing ? inlineItemEditAttrs(block, 'testimonials', index, 'quote') : ''}>${item.quote||''}</span>"</p>
+  <strong${editing ? inlineItemEditAttrs(block, 'testimonials', index, 'name') : ''} style="display:block;color:${strong};">${item.name||'Customer Name'}</strong>
+  <span${editing ? inlineItemEditAttrs(block, 'testimonials', index, 'role') : ''} style="color:${muted};font-size:13px;">${item.role||''}</span>
 </div>`;
       }).join('');
       return `<section ${sel} style="padding:${p.padding||siteSectionPadding};background:${p.bgColor||'#f5f8fc'};">

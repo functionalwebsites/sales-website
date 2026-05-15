@@ -1018,6 +1018,7 @@ function buildPropsForm(block, options = {}) {
       html += field('Background Color', 'bgColor', 'color');
       html += field('Padding', 'padding');
       html += field('Gap', 'gap');
+      html += field('Column Widths', 'columnTemplate');
       html += `<div class="field"><label class="label">Vertical Align</label><select class="input" onchange="updateProp('${block.id}','verticalAlign',this.value)">
         ${[
           ['top', 'Top'],
@@ -1437,7 +1438,7 @@ function saveContactFormToLibrary(blockId) {
 const BLOCK_STYLE_KEYS = [
   'bgColor', 'textColor', 'linkColor', 'btnBg', 'btnColor', 'color',
   'sectionBg', 'padding', 'maxWidth', 'contentWidth', 'gap',
-  'minHeight', 'bgSize', 'bgPosition', 'overlayColor', 'overlayOpacity',
+  'columnTemplate', 'minHeight', 'bgSize', 'bgPosition', 'overlayColor', 'overlayOpacity',
   'width', 'height', 'aspectRatio', 'fit', 'align', 'rounded', 'size',
   'columns', 'showStars', 'highlightFirst', 'mobileBreakpoint', 'mobilePadding',
   'mobileMinHeight', 'mobileTextAlign', 'mobileGrid', 'hideOnMobile'

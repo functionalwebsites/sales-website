@@ -229,6 +229,17 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 [data-inline-edit] { cursor: text; }
 [data-inline-edit]:hover { box-shadow: inset 0 -3px 0 rgba(185,72,46,.45); }
 [data-inline-edit][contenteditable="true"] { outline: 3px solid #4b7f52; outline-offset: 3px; box-shadow: 4px 4px 0 rgba(16,16,13,.25); }
+.block-resize-handle { position: absolute; z-index: 1000; background: #7cff6b; border: 3px solid #10100d; box-shadow: 3px 3px 0 #10100d; opacity: 0; transition: opacity .12s ease, transform .12s ease; }
+.block-wrapper:hover > .block-resize-handle,
+.block-wrapper.selected > .block-resize-handle,
+.block-wrapper.resizing > .block-resize-handle { opacity: 1; }
+.block-resize-y { left: 50%; bottom: 8px; width: 54px; height: 14px; transform: translateX(-50%); cursor: ns-resize; }
+.block-resize-x { right: 8px; top: 50%; width: 14px; height: 54px; transform: translateY(-50%); cursor: ew-resize; }
+.column-width-handle { position: absolute; top: 0; bottom: 0; width: 12px; transform: translateX(-50%); cursor: ew-resize; z-index: 997; }
+.column-width-handle::after { content: ""; position: absolute; top: 14px; bottom: 14px; left: 3px; width: 6px; background: #7cff6b; border: 2px solid #10100d; box-shadow: 2px 2px 0 #10100d; opacity: 0; transition: opacity .12s ease; }
+.fw-grid:hover > .column-width-handle::after,
+.column-width-handle.resizing::after { opacity: 1; }
+body.canvas-resizing, body.canvas-resizing * { user-select: none !important; }
 ${buildBrandCSS(_projectData)}
 ${buildStyleSystemCSS(_projectData)}
 ${buildSiteThemeCSS(_projectData)}
@@ -359,6 +370,199 @@ document.addEventListener('dragend', function() {
   clearDropMarkers();
 });
 
+let activeCanvasResize = null;
+
+function px(value, fallback) {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function splitPadding(value) {
+  const parts = String(value || '').trim().split(/\\s+/).filter(Boolean);
+  return {
+    y: px(parts[0], 72),
+    x: px(parts[1] || parts[0], 20),
+  };
+}
+
+function getResizeTarget(wrapper) {
+  return wrapper ? wrapper.querySelector('[data-fw-block]') : null;
+}
+
+function getInnerMaxWidthTarget(blockEl) {
+  if (!blockEl) return null;
+  return blockEl.querySelector('div[style*="max-width"]') || blockEl;
+}
+
+function applyCanvasResizePreview(active, next) {
+  const blockEl = getResizeTarget(active.wrapper);
+  if (!blockEl) return;
+  const type = active.type;
+  if (active.axis === 'y') {
+    if (type === 'spacer') {
+      blockEl.style.height = next.value;
+      return;
+    }
+    if (type === 'hero') {
+      blockEl.style.minHeight = next.value;
+      return;
+    }
+    if (type === 'image') {
+      const img = blockEl.querySelector('img');
+      if (img) img.style.height = next.value;
+      return;
+    }
+    blockEl.style.padding = next.value;
+    return;
+  }
+  if (active.axis === 'x') {
+    if (type === 'image') {
+      const img = blockEl.querySelector('img');
+      if (img) img.style.width = next.value;
+      return;
+    }
+    const inner = getInnerMaxWidthTarget(blockEl);
+    inner.style.maxWidth = next.value;
+  }
+}
+
+function calculateCanvasResize(active, event) {
+  const minHeight = active.type === 'spacer' ? 8 : 60;
+  if (active.axis === 'y') {
+    if (['section', 'columns2', 'columns3', 'cards', 'features', 'testimonialWall', 'cta', 'form', 'youtubeEmbed'].includes(active.type)) {
+      const nextY = Math.max(16, Math.min(220, Math.round(active.startPaddingY + event.clientY - active.startY)));
+      return { prop: 'padding', value: nextY + 'px ' + active.startPaddingX + 'px' };
+    }
+    const nextHeight = Math.max(minHeight, Math.min(1200, Math.round(active.startHeight + event.clientY - active.startY)));
+    return { prop: active.type === 'hero' ? 'minHeight' : 'height', value: nextHeight + 'px' };
+  }
+
+  const nextWidth = Math.max(120, Math.min(1600, Math.round(active.startWidth + event.clientX - active.startX)));
+  const prop = active.type === 'hero' ? 'contentWidth' : active.type === 'image' ? 'width' : 'maxWidth';
+  return { prop, value: nextWidth + 'px' };
+}
+
+document.addEventListener('mousedown', function(event) {
+  const handle = event.target.closest('.block-resize-handle');
+  if (!handle) return;
+  const wrapper = handle.closest('.block-wrapper');
+  const blockEl = getResizeTarget(wrapper);
+  if (!wrapper || !blockEl) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const type = wrapper.dataset.blockType || '';
+  const axis = handle.dataset.resizeAxis || 'y';
+  const rect = blockEl.getBoundingClientRect();
+  const padding = splitPadding(blockEl.style.padding);
+  activeCanvasResize = {
+    wrapper,
+    type,
+    axis,
+    startX: event.clientX,
+    startY: event.clientY,
+    startWidth: axis === 'x' && type !== 'image' ? getInnerMaxWidthTarget(blockEl).getBoundingClientRect().width : rect.width,
+    startHeight: rect.height,
+    startPaddingY: padding.y,
+    startPaddingX: padding.x
+  };
+  wrapper.classList.add('resizing');
+  document.body.classList.add('canvas-resizing');
+  if (window.parent && typeof window.parent.selectBlock === 'function') {
+    window.parent.selectBlock(wrapper.getAttribute('data-block-id'), false, true);
+  }
+}, true);
+
+document.addEventListener('mousemove', function(event) {
+  if (!activeCanvasResize) return;
+  event.preventDefault();
+  const next = calculateCanvasResize(activeCanvasResize, event);
+  applyCanvasResizePreview(activeCanvasResize, next);
+  if (window.parent && typeof window.parent.updateCanvasResize === 'function') {
+    window.parent.updateCanvasResize(activeCanvasResize.wrapper.getAttribute('data-block-id'), next);
+  }
+}, true);
+
+document.addEventListener('mouseup', function() {
+  if (!activeCanvasResize) return;
+  activeCanvasResize.wrapper.classList.remove('resizing');
+  activeCanvasResize = null;
+  document.body.classList.remove('canvas-resizing');
+  if (window.parent && typeof window.parent.finishCanvasResize === 'function') window.parent.finishCanvasResize();
+}, true);
+
+let activeColumnResize = null;
+
+function parseRatios(value) {
+  return String(value || '').split(',').map(part => Number.parseFloat(part)).filter(value => Number.isFinite(value) && value > 0);
+}
+
+function ratiosToTemplate(ratios) {
+  return ratios.map(value => Math.max(0.5, value).toFixed(2) + 'fr').join(' ');
+}
+
+function positionColumnHandles(grid, ratios) {
+  const total = ratios.reduce((sum, value) => sum + value, 0) || ratios.length;
+  let running = 0;
+  grid.querySelectorAll('.column-width-handle').forEach((handle, index) => {
+    running += ratios[index] || 1;
+    handle.style.left = ((running / total) * 100) + '%';
+    handle.dataset.columnRatios = ratios.join(',');
+  });
+}
+
+document.addEventListener('mousedown', function(event) {
+  const handle = event.target.closest('.column-width-handle');
+  if (!handle) return;
+  const wrapper = handle.closest('.block-wrapper');
+  const grid = handle.closest('.fw-grid');
+  if (!wrapper || !grid) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const ratios = parseRatios(handle.dataset.columnRatios);
+  const index = Number(handle.dataset.columnResizeIndex);
+  if (!ratios.length || index < 0 || index >= ratios.length - 1) return;
+  activeColumnResize = {
+    wrapper,
+    grid,
+    handle,
+    index,
+    ratios,
+    startX: event.clientX,
+    width: grid.getBoundingClientRect().width,
+  };
+  handle.classList.add('resizing');
+  document.body.classList.add('canvas-resizing');
+  if (window.parent && typeof window.parent.selectBlock === 'function') {
+    window.parent.selectBlock(wrapper.getAttribute('data-block-id'), false, true);
+  }
+}, true);
+
+document.addEventListener('mousemove', function(event) {
+  if (!activeColumnResize) return;
+  event.preventDefault();
+  const total = activeColumnResize.ratios.reduce((sum, value) => sum + value, 0) || activeColumnResize.ratios.length;
+  const deltaRatio = ((event.clientX - activeColumnResize.startX) / Math.max(1, activeColumnResize.width)) * total;
+  const ratios = activeColumnResize.ratios.slice();
+  const left = Math.max(0.5, activeColumnResize.ratios[activeColumnResize.index] + deltaRatio);
+  const right = Math.max(0.5, activeColumnResize.ratios[activeColumnResize.index + 1] - deltaRatio);
+  ratios[activeColumnResize.index] = left;
+  ratios[activeColumnResize.index + 1] = right;
+  const template = ratiosToTemplate(ratios);
+  activeColumnResize.grid.style.gridTemplateColumns = template;
+  positionColumnHandles(activeColumnResize.grid, ratios);
+  if (window.parent && typeof window.parent.updateColumnWidths === 'function') {
+    window.parent.updateColumnWidths(activeColumnResize.wrapper.getAttribute('data-block-id'), template);
+  }
+}, true);
+
+document.addEventListener('mouseup', function() {
+  if (!activeColumnResize) return;
+  activeColumnResize.handle.classList.remove('resizing');
+  activeColumnResize = null;
+  document.body.classList.remove('canvas-resizing');
+  if (window.parent && typeof window.parent.finishCanvasResize === 'function') window.parent.finishCanvasResize();
+}, true);
+
 function selectEditableText(el) {
   const range = document.createRange();
   range.selectNodeContents(el);
@@ -374,13 +578,17 @@ function getInlineEditValue(el) {
 function commitInlineEdit(el) {
   const wrapper = el.closest('[data-block-id]');
   if (!wrapper || !window.parent || typeof window.parent.updateInlineText !== 'function') return;
+  let value = getInlineEditValue(el);
+  if (el.dataset.inlineList === 'testimonials' && el.dataset.inlineKey === 'quote') {
+    value = value.replace(/^[\\s"“”'‘’]+|[\\s"“”'‘’]+$/g, '');
+  }
   window.parent.updateInlineText(wrapper.getAttribute('data-block-id'), {
     prop: el.dataset.inlineProp || '',
     list: el.dataset.inlineList || '',
     index: el.dataset.inlineIndex || '',
     key: el.dataset.inlineKey || '',
     mode: el.dataset.inlineMode || 'text',
-    value: getInlineEditValue(el)
+    value
   });
 }
 
@@ -808,6 +1016,39 @@ window.updateInlineText = function(blockId, edit) {
 };
 
 window.finishInlineTextEdit = function() {
+  renderCanvas();
+  renderLayoutList();
+  renderProps();
+};
+
+window.updateCanvasResize = function(blockId, next) {
+  const block = findBlockById(blockId);
+  if (!block || !next?.prop) return;
+  pushUndoDebounced();
+  if (!block.props) block.props = {};
+  block.props[next.prop] = next.value;
+  if (block.brandLinks && block.brandLinks[next.prop]) delete block.brandLinks[next.prop];
+  STATE.selectedBlockId = blockId;
+  STATE.selectedColumn = null;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
+  renderProps();
+  renderLayoutList();
+};
+
+window.updateColumnWidths = function(blockId, template) {
+  const block = findBlockById(blockId);
+  if (!block || !['columns2', 'columns3'].includes(block.type)) return;
+  pushUndoDebounced();
+  if (!block.props) block.props = {};
+  block.props.columnTemplate = template;
+  STATE.selectedBlockId = blockId;
+  STATE.selectedColumn = null;
+  setProjectIdInUrl(STATE.currentProjectId, STATE.currentPageIndex);
+  renderProps();
+  renderLayoutList();
+};
+
+window.finishCanvasResize = function() {
   renderCanvas();
   renderLayoutList();
   renderProps();
