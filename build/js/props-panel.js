@@ -959,6 +959,10 @@ function buildPropsForm(block, options = {}) {
       html += `<div class="field"><label class="label">Level</label><select class="input" onchange="updateProp('${block.id}','level',this.value)">
         ${['h1','h2','h3','h4'].map(v=>`<option value="${v}" ${p.level===v?'selected':''}>${v.toUpperCase()}</option>`).join('')}
       </select></div>`;
+      html += `<div class="field"><label class="label">Text Style</label><div style="display:flex;gap:6px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;${(p.fontWeight||'700')==='700'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontWeight','${(p.fontWeight||'700')==='700'?'400':'700'}');renderProps()">B</button>
+        <button class="btn btn-secondary btn-sm" style="flex:1;${p.fontStyle==='italic'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontStyle','${p.fontStyle==='italic'?'normal':'italic'}');renderProps()">I</button>
+      </div></div>`;
       html += `<div class="field"><label class="label">Align</label><select class="input" onchange="updateProp('${block.id}','align',this.value)">
         ${['left','center','right'].map(v=>`<option value="${v}" ${p.align===v?'selected':''}>${v}</option>`).join('')}
       </select></div>`;
@@ -966,6 +970,10 @@ function buildPropsForm(block, options = {}) {
       break;
     case 'text':
       html += `<div class="field"><label class="label">Content (HTML)</label><textarea class="input" rows="6" oninput="updateProp('${block.id}','content',this.value)">${(p.content||'').replace(/</g,'&lt;')}</textarea></div>`;
+      html += `<div class="field"><label class="label">Text Style</label><div style="display:flex;gap:6px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;${p.fontWeight==='700'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontWeight','${p.fontWeight==='700'?'400':'700'}');renderProps()">B</button>
+        <button class="btn btn-secondary btn-sm" style="flex:1;${p.fontStyle==='italic'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontStyle','${p.fontStyle==='italic'?'normal':'italic'}');renderProps()">I</button>
+      </div></div>`;
       html += `<div class="field"><label class="label">Align</label><select class="input" onchange="updateProp('${block.id}','align',this.value)">
         ${['left','center','right'].map(v=>`<option value="${v}" ${p.align===v?'selected':''}>${v}</option>`).join('')}
       </select></div>`;
@@ -993,6 +1001,10 @@ function buildPropsForm(block, options = {}) {
       html += field('Link (href)', 'href');
       html += field('Background', 'bgColor', 'color');
       html += field('Text Color', 'textColor', 'color');
+      html += `<div class="field"><label class="label">Text Style</label><div style="display:flex;gap:6px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;${(p.fontWeight||'600')==='700'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontWeight','${(p.fontWeight||'600')==='700'?'600':'700'}');renderProps()">B</button>
+        <button class="btn btn-secondary btn-sm" style="flex:1;${p.fontStyle==='italic'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontStyle','${p.fontStyle==='italic'?'normal':'italic'}');renderProps()">I</button>
+      </div></div>`;
       html += `<div class="field"><label class="label">Size</label><select class="input" onchange="updateProp('${block.id}','size',this.value)">
         ${['small','medium','large'].map(v=>`<option value="${v}" ${p.size===v?'selected':''}>${v}</option>`).join('')}
       </select></div>`;
@@ -1053,6 +1065,13 @@ function buildPropsForm(block, options = {}) {
       html += field('Subheading', 'subheading');
       html += field('Button Text', 'buttonText');
       html += field('Button Link', 'buttonHref');
+      html += `<div class="field"><label class="label">Text Style</label><div style="display:flex;gap:6px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;${(p.fontWeight||'700')==='700'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontWeight','${(p.fontWeight||'700')==='700'?'400':'700'}');renderProps()">B</button>
+        <button class="btn btn-secondary btn-sm" style="flex:1;${p.fontStyle==='italic'?'background:var(--green);color:#000;':''}" onclick="updateProp('${block.id}','fontStyle','${p.fontStyle==='italic'?'normal':'italic'}');renderProps()">I</button>
+      </div></div>`;
+      html += `<div class="field"><label class="label">Align</label><select class="input" onchange="updateProp('${block.id}','align',this.value)">
+        ${['left','center','right'].map(v=>`<option value="${v}" ${(p.align||'center')===v?'selected':''}>${v}</option>`).join('')}
+      </select></div>`;
       html += field('Background Color', 'bgColor', 'color');
       html += field('Text Color', 'textColor', 'color');
       html += field('Button Background', 'btnBg', 'color');
@@ -1440,7 +1459,7 @@ const BLOCK_STYLE_KEYS = [
   'sectionBg', 'padding', 'maxWidth', 'contentWidth', 'gap',
   'columnTemplate', 'minHeight', 'bgSize', 'bgPosition', 'overlayColor', 'overlayOpacity',
   'width', 'height', 'aspectRatio', 'fit', 'align', 'rounded', 'size',
-  'columns', 'showStars', 'highlightFirst', 'mobileBreakpoint', 'mobilePadding',
+  'fontWeight', 'fontStyle', 'columns', 'showStars', 'highlightFirst', 'mobileBreakpoint', 'mobilePadding',
   'mobileMinHeight', 'mobileTextAlign', 'mobileGrid', 'hideOnMobile'
 ];
 

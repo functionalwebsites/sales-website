@@ -280,10 +280,10 @@ function _renderBlockInner(block, editing = false, ctx = null) {
     case 'heading': {
       const tag = p.level || 'h2';
       const sizes = { h1:'2.4em', h2:'1.8em', h3:'1.4em', h4:'1.1em' };
-      return `<${tag} ${sel}${editing ? inlineEditAttrs(block, 'text') : ''} style="font-family:${siteHeadingFont};text-align:${p.align||'left'};color:${p.color||'#111'};font-size:calc(${sizes[tag]||'1.8em'} * var(--site-heading-scale, 1));padding:12px 24px;margin:0;">${p.text||'Title'}</${tag}>`;
+      return `<${tag} ${sel}${editing ? inlineEditAttrs(block, 'text') : ''} style="font-family:${siteHeadingFont};text-align:${p.align||'left'};color:${p.color||'#111'};font-size:calc(${sizes[tag]||'1.8em'} * var(--site-heading-scale, 1));font-weight:${p.fontWeight||'700'};font-style:${p.fontStyle||'normal'};padding:12px 24px;margin:0;">${p.text||'Title'}</${tag}>`;
     }
     case 'text': {
-      return `<div ${sel}${editing ? inlineEditAttrs(block, 'content', 'html') : ''} style="padding:8px 24px;color:${p.color||'#333'};text-align:${p.align||'left'};font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);">${p.content||''}</div>`;
+      return `<div ${sel}${editing ? inlineEditAttrs(block, 'content', 'html') : ''} style="padding:8px 24px;color:${p.color||'#333'};text-align:${p.align||'left'};font-size:${siteBodySize};font-weight:${p.fontWeight||'400'};font-style:${p.fontStyle||'normal'};line-height:var(--site-line-height, 1.7);">${p.content||''}</div>`;
     }
     case 'image': {
       const rounded = p.rounded ? 'border-radius:8px;' : '';
@@ -314,7 +314,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       const pad = sizes[p.size||'medium'];
       const radius = p.rounded ? siteButtonRadius : '0';
       return `<div ${sel} style="padding:12px 24px;text-align:${p.align||'center'};">
-  <a href="${p.href||'#'}"${editing ? inlineEditAttrs(block, 'text') : ''} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${pad};border-radius:${radius};font-weight:600;text-decoration:none;display:inline-block;font-size:${siteBodySize};">${p.text||'Button'}</a>
+  <a href="${p.href||'#'}"${editing ? inlineEditAttrs(block, 'text') : ''} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${pad};border-radius:${radius};font-weight:${p.fontWeight||'600'};font-style:${p.fontStyle||'normal'};text-decoration:none;display:inline-block;font-size:${siteBodySize};">${p.text||'Button'}</a>
 </div>`;
     }
     case 'section': {
@@ -418,8 +418,8 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 </section>`;
     }
     case 'cta': {
-      return `<section ${sel} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${p.padding||siteSectionPadding};text-align:center;">
-  <h2${editing ? inlineEditAttrs(block, 'heading') : ''} style="font-family:${siteHeadingFont};font-size:calc(2.2em * var(--site-heading-scale, 1));margin:0 0 12px;">${p.heading||'Ready to get started?'}</h2>
+      return `<section ${sel} style="background:${p.bgColor||'#7c6af7'};color:${p.textColor||'#fff'};padding:${p.padding||siteSectionPadding};text-align:${p.align||'center'};">
+  <h2${editing ? inlineEditAttrs(block, 'heading') : ''} style="font-family:${siteHeadingFont};font-size:calc(2.2em * var(--site-heading-scale, 1));font-weight:${p.fontWeight||'700'};font-style:${p.fontStyle||'normal'};margin:0 0 12px;">${p.heading||'Ready to get started?'}</h2>
   <p${editing ? inlineEditAttrs(block, 'subheading') : ''} style="font-size:1.1em;margin:0 0 32px;opacity:0.85;">${p.subheading||''}</p>
   <a href="${p.buttonHref||'#'}"${editing ? inlineEditAttrs(block, 'buttonText') : ''} style="background:${p.btnBg||'#fff'};color:${p.btnColor||'#7c6af7'};padding:14px 36px;border-radius:${siteButtonRadius};font-weight:600;font-size:${siteBodySize};text-decoration:none;display:inline-block;">${p.buttonText||'Get Started'}</a>
 </section>`;
