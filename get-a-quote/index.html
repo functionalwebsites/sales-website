@@ -305,9 +305,11 @@
 
     .quote-result.locked .quote-hours {
       width: min(100%, 340px);
+      margin: 0 auto;
       color: var(--fw-paper);
       font-size: clamp(18px, 1.6vw, 24px);
       line-height: 1.15;
+      text-align: center;
     }
 
     .quote-result.unlocked .quote-meter {
@@ -402,7 +404,7 @@
                   <label for="service">Service</label>
                   <select id="service" name="service" required>
                     <option value="" selected disabled>Choose a service</option>
-                    <option value="simple-clone">Simple clone - copy my website exactly ($500)</option>
+                    <option value="simple-clone">Simple clone - copy my website exactly</option>
                     <option value="new-static-site">New static website</option>
                     <option value="rebuild-existing-site">Rebuild or clone an existing site</option>
                     <option value="custom-templates-blocks">Custom builder templates or blocks</option>
