@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <base href="https://functionalwebsites.com/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="description" content="Internal Functional Websites blog article composer.">
+  <title>Blog Article Composer - Functional Websites</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/blog/blog.css">
+  <style>
+    .composer-shell {
+      width: min(1400px, 100%);
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+
+    .composer-hero {
+      margin-bottom: 28px;
+      padding: clamp(24px, 4vw, 42px);
+      background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow);
+    }
+
+    .composer-hero h1 {
+      max-width: 980px;
+      font-size: clamp(36px, 6vw, 74px);
+      line-height: 0.96;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .composer-hero p {
+      max-width: 760px;
+      color: var(--text2);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .composer-grid {
+      display: grid;
+      grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .composer-panel,
+    .output-panel {
+      background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow-sm);
+      padding: 22px;
+    }
+
+    .composer-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .composer-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .composer-field label {
+      color: var(--fw-ink);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .composer-field input,
+    .composer-field select,
+    .composer-field textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 11px 12px;
+      background: var(--fw-paper);
+      color: var(--fw-ink);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      font: inherit;
+      box-shadow: inset 3px 3px 0 rgba(16, 16, 13, 0.08);
+    }
+
+    .composer-field select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--fw-ink) 50%), linear-gradient(135deg, var(--fw-ink) 50%, transparent 50%);
+      background-position: calc(100% - 18px) 20px, calc(100% - 12px) 20px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    .composer-field textarea {
+      min-height: 340px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .composer-field input:focus,
+    .composer-field select:focus,
+    .composer-field textarea:focus {
+      outline: none;
+      border-color: var(--fw-rust);
+      box-shadow: var(--fw-shadow-sm);
+    }
+
+    .composer-help {
+      color: var(--text2);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .composer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .composer-status {
+      min-height: 20px;
+      color: var(--fw-rust);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .draft-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      padding-bottom: 6px;
+    }
+
+    .output-tools {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .snippet-box {
+      margin-top: 18px;
+    }
+
+    .snippet-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .snippet-box textarea {
+      min-height: 120px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .composer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .draft-toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main class="composer-shell">
+    <section class="composer-hero">
+      <div class="blog-kicker">Noindex Blog Tool</div>
+      <h1>Blog Article Composer</h1>
+      <p>Write an article, save browser drafts, then export a ZIP containing the post folder and optional featured image. The generated article references <code>/blog/assets/{slug}.png</code>.</p>
+    </section>
+
+    <div class="composer-grid">
+      <section class="composer-panel">
+        <form class="composer-form" id="composer-form">
+          <div class="draft-toolbar">
+            <div class="composer-field">
+              <label for="draft-select">Saved drafts</label>
+              <select id="draft-select">
+                <option value="">No saved drafts</option>
+              </select>
+            </div>
+            <div class="composer-actions">
+              <button class="btn btn-secondary" type="button" id="load-draft-button">Load</button>
+              <button class="btn btn-secondary" type="button" id="delete-draft-button">Delete</button>
+              <button class="btn btn-secondary" type="button" id="new-draft-button">New</button>
+            </div>
+          </div>
+          <div class="composer-help">Draft text is saved in this browser. Uploaded image files are not stored, so reselect the PNG before ZIP export.</div>
+          <div class="composer-field">
+            <label for="title">Title</label>
+            <input id="title" name="title" value="New Static Website Guide" required>
+          </div>
+          <div class="field-row">
+            <div class="composer-field">
+              <label for="slug">Slug</label>
+              <input id="slug" name="slug" value="new-static-website-guide" required>
+            </div>
+            <div class="composer-field">
+              <label for="category">Kicker / Category</label>
+              <input id="category" name="category" value="Website Guide">
+            </div>
+          </div>
+          <div class="composer-field">
+            <label for="description">Meta description</label>
+            <input id="description" name="description" value="A practical guide from Functional Websites." maxlength="180">
+            <div class="composer-help">Used for the meta description, Open Graph description, Twitter description, and blog index snippet.</div>
+          </div>
+          <div class="composer-field">
+            <label for="deck">Header summary</label>
+            <input id="deck" name="deck" value="A short plain-English intro for the top of the article.">
+          </div>
+          <div class="field-row">
+            <div class="composer-field">
+              <label for="author">Author</label>
+              <input id="author" name="author" value="Cooper Carrasco">
+            </div>
+            <div class="composer-field">
+              <label for="date">Date</label>
+              <input id="date" name="date" type="date">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="composer-field">
+              <label for="read-time">Read time</label>
+              <input id="read-time" name="readTime" value="6 min read">
+            </div>
+            <div class="composer-field">
+              <label for="featured-image">Featured image PNG</label>
+              <input id="featured-image" name="featuredImage" type="file" accept="image/png">
+            </div>
+          </div>
+          <div class="composer-field">
+            <label for="content">Article content</label>
+            <textarea id="content" name="content">Start with a short intro paragraph.
+
+## First section heading
+Write paragraphs normally. Use blank lines between paragraphs.
+
+- Bulleted lists work too.
+- Keep each idea clear.
+
+## Another section
+Add as many H2 sections as you need. The table of contents will be generated automatically.</textarea>
+            <div class="composer-help">Supported: paragraphs, <code>## H2</code>, <code>### H3</code>, and <code>- list items</code>. Basic HTML is escaped for safety.</div>
+          </div>
+
+          <div class="composer-actions">
+            <button class="btn btn-secondary" type="button" id="save-draft-button">Save Draft</button>
+            <button class="btn btn-primary" type="button" id="download-html-button">Download HTML</button>
+            <button class="btn btn-primary" type="button" id="download-zip-button">Download ZIP</button>
+          </div>
+          <div class="composer-status" id="composer-status" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="output-panel">
+        <div class="output-tools">
+          <div>
+            <div class="blog-kicker">Generated Output</div>
+            <p class="composer-help">Copy these snippets after exporting the article folder and featured image.</p>
+          </div>
+        </div>
+        <div class="composer-field snippet-box">
+          <div class="snippet-header">
+            <label for="index-snippet">Blog index card snippet</label>
+            <button class="btn btn-secondary" type="button" id="copy-index-snippet">Copy to Clipboard</button>
+          </div>
+          <textarea id="index-snippet" readonly></textarea>
+        </div>
+        <div class="composer-field snippet-box">
+          <div class="snippet-header">
+            <label for="sitemap-snippet">Sitemap snippet</label>
+            <button class="btn btn-secondary" type="button" id="copy-sitemap-snippet">Copy to Clipboard</button>
+          </div>
+          <textarea id="sitemap-snippet" readonly></textarea>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js" defer></script>
+  <script>
+    (() => {
+      const form = document.getElementById('composer-form');
+      const fields = Object.fromEntries(Array.from(form.elements).filter(el => el.name).map(el => [el.name, el]));
+      const status = document.getElementById('composer-status');
+      const draftSelect = document.getElementById('draft-select');
+      const indexSnippet = document.getElementById('index-snippet');
+      const sitemapSnippet = document.getElementById('sitemap-snippet');
+      const DRAFTS_KEY = 'fw_blog_composer_drafts';
+      const CURRENT_KEY = 'fw_blog_composer_current';
+      const draftFieldNames = ['title', 'slug', 'category', 'description', 'deck', 'author', 'date', 'readTime', 'content'];
+      let lastHtml = '';
+
+      fields.date.value = new Date().toISOString().slice(0, 10);
+
+      const escapeHtml = value => String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+      const scriptClose = '</scr' + 'ipt>';
+
+      const slugify = value => String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80);
+
+      const titleCaseDate = value => {
+        const date = value ? new Date(`${value}T12:00:00`) : new Date();
+        return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+      };
+
+      const headingId = (text, used) => {
+        const base = slugify(text) || 'section';
+        let id = base;
+        let index = 2;
+        while (used.has(id)) {
+          id = `${base}-${index}`;
+          index += 1;
+        }
+        used.add(id);
+        return id;
+      };
+
+      const inlineFormat = value => escapeHtml(value).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+      const markdownToHtml = value => {
+        const lines = String(value || '').split(/\r?\n/);
+        const used = new Set();
+        const html = [];
+        let paragraph = [];
+        let list = [];
+
+        const flushParagraph = () => {
+          if (!paragraph.length) return;
+          html.push(`      <p>${inlineFormat(paragraph.join(' '))}</p>`);
+          paragraph = [];
+        };
+
+        const flushList = () => {
+          if (!list.length) return;
+          html.push('      <ul>');
+          list.forEach(item => html.push(`        <li>${inlineFormat(item)}</li>`));
+          html.push('      </ul>');
+          list = [];
+        };
+
+        lines.forEach(rawLine => {
+          const line = rawLine.trim();
+          if (!line) {
+            flushParagraph();
+            flushList();
+            return;
+          }
+
+          const h3 = line.match(/^###\s+(.+)/);
+          const h2 = line.match(/^##\s+(.+)/);
+          const bullet = line.match(/^-\s+(.+)/);
+
+          if (h2 || h3) {
+            flushParagraph();
+            flushList();
+            const text = (h2 || h3)[1].trim();
+            const tag = h2 ? 'h2' : 'h3';
+            html.push(`      <${tag} id="${headingId(text, used)}">${escapeHtml(text)}</${tag}>`);
+            return;
+          }
+
+          if (bullet) {
+            flushParagraph();
+            list.push(bullet[1].trim());
+            return;
+          }
+
+          flushList();
+          paragraph.push(line);
+        });
+
+        flushParagraph();
+        flushList();
+        return html.join('\n') || '      <p>Article content goes here.</p>';
+      };
+
+      const getData = () => {
+        const title = fields.title.value.trim() || 'Untitled Blog Post';
+        const slug = slugify(fields.slug.value || title) || 'untitled-blog-post';
+        fields.slug.value = slug;
+        return {
+          title,
+          slug,
+          category: fields.category.value.trim() || 'Website Guide',
+          description: fields.description.value.trim() || 'A practical guide from Functional Websites.',
+          deck: fields.deck.value.trim() || fields.description.value.trim() || 'A practical guide from Functional Websites.',
+          author: fields.author.value.trim() || 'Cooper Carrasco',
+          date: fields.date.value || new Date().toISOString().slice(0, 10),
+          readTime: fields.readTime.value.trim() || '6 min read',
+          articleHtml: markdownToHtml(fields.content.value),
+        };
+      };
+
+      const buildArticleHtml = () => {
+        const data = getData();
+        const url = `https://functionalwebsites.com/blog/${data.slug}/`;
+        const imageUrl = `https://functionalwebsites.com/blog/assets/${data.slug}.png`;
+        const imagePath = `/blog/assets/${data.slug}.png`;
+        const displayDate = titleCaseDate(data.date);
+
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="${escapeHtml(data.description)}">
+  <link rel="canonical" href="${url}">
+  <meta property="og:title" content="${escapeHtml(data.title)}">
+  <meta property="og:description" content="${escapeHtml(data.description)}">
+  <meta property="og:url" content="${url}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="${imageUrl}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${escapeHtml(data.title)} - Functional Websites">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(data.title)}">
+  <meta name="twitter:description" content="${escapeHtml(data.description)}">
+  <meta name="twitter:image" content="${imageUrl}">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#10100d">
+  <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
+  <meta name="theme-color" content="#0f0f13">
+  <title>${escapeHtml(data.title)} - Functional Websites</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/blog/blog.css">
+  <script type="application/ld+json">
+    ${JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: data.title,
+      description: data.description,
+      author: { '@type': 'Person', name: data.author },
+      publisher: { '@type': 'Organization', name: 'Functional Websites' },
+      image: imageUrl,
+      datePublished: data.date,
+      dateModified: data.date,
+      mainEntityOfPage: url,
+    }, null, 6)}
+  ${scriptClose}
+</head>
+<body>
+  <div class="blog-progress" aria-hidden="true"><span class="blog-progress-bar" data-blog-progress></span></div>
+  <div id="header-placeholder"></div>
+  <header class="blog-hero">
+    <img class="blog-hero-art" src="${imagePath}" alt="" width="1200" height="630" fetchpriority="high">
+    <div class="blog-hero-inner">
+      <div class="blog-kicker">${escapeHtml(data.category)}</div>
+      <h1>${escapeHtml(data.title)}</h1>
+      <p class="blog-deck">${escapeHtml(data.deck)}</p>
+      <div class="blog-meta">
+        <span>${escapeHtml(displayDate)}</span>
+        <span>By ${escapeHtml(data.author)}</span>
+        <span>${escapeHtml(data.readTime)}</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="blog-page">
+    <article class="blog-article" data-blog-article>
+${data.articleHtml}
+    </article>
+    <aside class="blog-toc" data-blog-toc aria-labelledby="toc-heading">
+      <h2 id="toc-heading">Table of Contents</h2>
+    </aside>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js" defer>${scriptClose}
+  <script src="/blog/blog.js" defer>${scriptClose}
+</body>
+</html>`;
+      };
+
+      const buildIndexSnippet = () => {
+        const data = getData();
+        return `<a class="blog-card" href="/blog/${data.slug}/">
+  <img class="blog-card-image" src="/blog/assets/${data.slug}.png" alt="" loading="lazy" width="1200" height="630">
+  <span class="blog-pill">${titleCaseDate(data.date)}</span>
+  <h2>${escapeHtml(data.title)}</h2>
+  <p>${escapeHtml(data.description)}</p>
+</a>`;
+      };
+
+      const buildSitemapSnippet = () => {
+        const data = getData();
+        return `<url>
+  <loc>https://functionalwebsites.com/blog/${data.slug}/</loc>
+  <lastmod>${data.date}</lastmod>
+</url>`;
+      };
+
+      const getDraftState = () => Object.fromEntries(draftFieldNames.map(name => [name, fields[name].value]));
+
+      const setDraftState = draft => {
+        draftFieldNames.forEach(name => {
+          if (draft && Object.prototype.hasOwnProperty.call(draft, name)) fields[name].value = draft[name] || '';
+        });
+        if (!fields.date.value) fields.date.value = new Date().toISOString().slice(0, 10);
+      };
+
+      const readJson = (key, fallback) => {
+        try {
+          return JSON.parse(localStorage.getItem(key)) || fallback;
+        } catch {
+          return fallback;
+        }
+      };
+
+      const readDrafts = () => readJson(DRAFTS_KEY, {});
+
+      const writeDrafts = drafts => {
+        localStorage.setItem(DRAFTS_KEY, JSON.stringify(drafts));
+      };
+
+      const renderDraftSelect = selectedSlug => {
+        const drafts = readDrafts();
+        const entries = Object.values(drafts).sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+        draftSelect.innerHTML = '';
+
+        if (!entries.length) {
+          draftSelect.append(new Option('No saved drafts', ''));
+          return;
+        }
+
+        draftSelect.append(new Option('Choose a saved draft', ''));
+        entries.forEach(draft => {
+          const date = draft.updatedAt ? new Date(draft.updatedAt).toLocaleDateString() : 'saved draft';
+          draftSelect.append(new Option(`${draft.title || draft.slug} - ${date}`, draft.slug));
+        });
+        if (selectedSlug && drafts[selectedSlug]) draftSelect.value = selectedSlug;
+      };
+
+      const saveCurrentDraft = () => {
+        localStorage.setItem(CURRENT_KEY, JSON.stringify(getDraftState()));
+      };
+
+      const restoreCurrentDraft = () => {
+        const current = readJson(CURRENT_KEY, null);
+        if (current) setDraftState(current);
+      };
+
+      const saveNamedDraft = () => {
+        const data = getData();
+        const drafts = readDrafts();
+        drafts[data.slug] = {
+          ...getDraftState(),
+          title: data.title,
+          slug: data.slug,
+          updatedAt: new Date().toISOString(),
+        };
+        writeDrafts(drafts);
+        renderDraftSelect(data.slug);
+        saveCurrentDraft();
+        status.textContent = 'Draft saved in this browser.';
+      };
+
+      const refreshOutputs = () => {
+        lastHtml = buildArticleHtml();
+        indexSnippet.value = buildIndexSnippet();
+        sitemapSnippet.value = buildSitemapSnippet();
+        saveCurrentDraft();
+      };
+
+      const copyTextarea = async (textarea, label) => {
+        try {
+          await navigator.clipboard.writeText(textarea.value);
+        } catch {
+          textarea.focus();
+          textarea.select();
+          document.execCommand('copy');
+          textarea.blur();
+        }
+        status.textContent = `${label} copied.`;
+      };
+
+      const downloadBlob = (blob, filename) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      };
+
+      const makeCrcTable = () => {
+        const table = [];
+        for (let n = 0; n < 256; n += 1) {
+          let c = n;
+          for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+          table[n] = c >>> 0;
+        }
+        return table;
+      };
+
+      const crcTable = makeCrcTable();
+      const crc32 = bytes => {
+        let crc = 0xffffffff;
+        bytes.forEach(byte => {
+          crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+        });
+        return (crc ^ 0xffffffff) >>> 0;
+      };
+
+      const writeUint16 = (array, value) => {
+        array.push(value & 0xff, (value >>> 8) & 0xff);
+      };
+
+      const writeUint32 = (array, value) => {
+        array.push(value & 0xff, (value >>> 8) & 0xff, (value >>> 16) & 0xff, (value >>> 24) & 0xff);
+      };
+
+      const createZip = async files => {
+        const encoder = new TextEncoder();
+        const outputParts = [];
+        const central = [];
+        let offset = 0;
+
+        for (const file of files) {
+          const nameBytes = encoder.encode(file.name);
+          const dataBytes = file.bytes instanceof Uint8Array ? file.bytes : encoder.encode(file.content);
+          const crc = crc32(dataBytes);
+          const compressedBytes = await deflateRaw(dataBytes);
+          const method = compressedBytes === dataBytes ? 0 : 8;
+          const local = [];
+          writeUint32(local, 0x04034b50);
+          writeUint16(local, 20);
+          writeUint16(local, 0);
+          writeUint16(local, method);
+          writeUint16(local, 0);
+          writeUint16(local, 0);
+          writeUint32(local, crc);
+          writeUint32(local, compressedBytes.length);
+          writeUint32(local, dataBytes.length);
+          writeUint16(local, nameBytes.length);
+          writeUint16(local, 0);
+          outputParts.push(new Uint8Array(local), nameBytes, compressedBytes);
+
+          const record = [];
+          writeUint32(record, 0x02014b50);
+          writeUint16(record, 20);
+          writeUint16(record, 20);
+          writeUint16(record, 0);
+          writeUint16(record, method);
+          writeUint16(record, 0);
+          writeUint16(record, 0);
+          writeUint32(record, crc);
+          writeUint32(record, compressedBytes.length);
+          writeUint32(record, dataBytes.length);
+          writeUint16(record, nameBytes.length);
+          writeUint16(record, 0);
+          writeUint16(record, 0);
+          writeUint16(record, 0);
+          writeUint16(record, 0);
+          writeUint32(record, 0);
+          writeUint32(record, offset);
+          central.push(...record, ...nameBytes);
+          offset += local.length + nameBytes.length + compressedBytes.length;
+        }
+
+        const centralOffset = offset;
+        outputParts.push(new Uint8Array(central));
+        const end = [];
+        writeUint32(end, 0x06054b50);
+        writeUint16(end, 0);
+        writeUint16(end, 0);
+        writeUint16(end, files.length);
+        writeUint16(end, files.length);
+        writeUint32(end, central.length);
+        writeUint32(end, centralOffset);
+        writeUint16(end, 0);
+        outputParts.push(new Uint8Array(end));
+        return new Blob(outputParts, { type: 'application/zip' });
+      };
+
+      const deflateRaw = async bytes => {
+        if (typeof CompressionStream !== 'function') return bytes;
+        try {
+          const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+          return new Uint8Array(await new Response(stream).arrayBuffer());
+        } catch {
+          return bytes;
+        }
+      };
+
+      document.getElementById('copy-index-snippet').addEventListener('click', () => copyTextarea(indexSnippet, 'Blog index snippet'));
+      document.getElementById('copy-sitemap-snippet').addEventListener('click', () => copyTextarea(sitemapSnippet, 'Sitemap snippet'));
+      document.getElementById('save-draft-button').addEventListener('click', saveNamedDraft);
+      document.getElementById('load-draft-button').addEventListener('click', () => {
+        const slug = draftSelect.value;
+        const draft = readDrafts()[slug];
+        if (!draft) {
+          status.textContent = 'Choose a saved draft first.';
+          return;
+        }
+        setDraftState(draft);
+        fields.slug.dataset.touched = 'true';
+        refreshOutputs();
+        status.textContent = 'Draft loaded.';
+      });
+      document.getElementById('delete-draft-button').addEventListener('click', () => {
+        const slug = draftSelect.value;
+        const drafts = readDrafts();
+        if (!slug || !drafts[slug]) {
+          status.textContent = 'Choose a saved draft first.';
+          return;
+        }
+        delete drafts[slug];
+        writeDrafts(drafts);
+        renderDraftSelect();
+        status.textContent = 'Draft deleted.';
+      });
+      document.getElementById('new-draft-button').addEventListener('click', () => {
+        form.reset();
+        fields.date.value = new Date().toISOString().slice(0, 10);
+        fields.slug.dataset.touched = '';
+        fields.title.value = 'New Static Website Guide';
+        fields.slug.value = 'new-static-website-guide';
+        refreshOutputs();
+        status.textContent = 'New draft started.';
+      });
+      document.getElementById('download-html-button').addEventListener('click', () => {
+        const data = getData();
+        refreshOutputs();
+        downloadBlob(new Blob([buildArticleHtml()], { type: 'text/html' }), `${data.slug}-index.html`);
+      });
+      document.getElementById('download-zip-button').addEventListener('click', async () => {
+        const data = getData();
+        refreshOutputs();
+        const files = [
+          { name: `${data.slug}/index.html`, content: buildArticleHtml() },
+          { name: `${data.slug}/README.txt`, content: `Move ${data.slug}/ to /blog/${data.slug}/ and move assets/${data.slug}.png to /blog/assets/${data.slug}.png. Then paste the generated snippets into blog/index.html and sitemap.xml.` },
+        ];
+        const imageFile = fields.featuredImage.files[0];
+        if (imageFile) {
+          if (imageFile.type !== 'image/png') {
+            status.textContent = 'Upload a PNG featured image before exporting the ZIP.';
+            return;
+          }
+          files.push({ name: `assets/${data.slug}.png`, bytes: new Uint8Array(await imageFile.arrayBuffer()) });
+        }
+        const zip = await createZip(files);
+        downloadBlob(zip, `${data.slug}-blog-post.zip`);
+        status.textContent = 'ZIP exported.';
+      });
+
+      fields.title.addEventListener('input', () => {
+        if (!fields.slug.dataset.touched) fields.slug.value = slugify(fields.title.value);
+        refreshOutputs();
+      });
+      fields.slug.addEventListener('input', () => {
+        fields.slug.dataset.touched = 'true';
+        fields.slug.value = slugify(fields.slug.value);
+        refreshOutputs();
+      });
+      form.addEventListener('input', () => {
+        status.textContent = '';
+        refreshOutputs();
+      });
+      fields.featuredImage.addEventListener('change', () => {
+        status.textContent = fields.featuredImage.files[0] ? 'Featured image selected for ZIP export.' : '';
+      });
+
+      restoreCurrentDraft();
+      renderDraftSelect(fields.slug.value);
+      refreshOutputs();
+    })();
+  </script>
+</body>
+</html>
