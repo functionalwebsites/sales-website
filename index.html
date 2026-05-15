@@ -44,7 +44,7 @@
       gap: 22px;
       justify-items: center;
       padding: clamp(28px, 5vw, 52px);
-      background: var(--fw-panel);
+      background: var(--fw-paper);
       border: var(--fw-border-width) solid var(--fw-ink);
       border-radius: var(--fw-radius);
       box-shadow: var(--fw-shadow);
@@ -197,7 +197,7 @@
     .features {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 72px 24px 40px;
     }
 
     .features-title {
@@ -211,19 +211,36 @@
       text-align: center;
       color: var(--text2);
       max-width: 760px;
-      margin: 0 auto 48px;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    .section-intro-card {
+      max-width: 860px;
+      margin: 0 auto 36px;
+      padding: 24px;
+      background: var(--bg2);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow-sm);
+      text-align: center;
+    }
+
+    .section-intro-card p {
+      margin: 0;
+      color: var(--text2);
       line-height: 1.7;
     }
 
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 32px;
-      margin-bottom: 80px;
+      gap: 24px;
+      margin-bottom: 0;
     }
 
     .feature-card {
-      background: var(--bg2);
+      background: var(--fw-paper) !important;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 32px;
@@ -233,8 +250,13 @@
 
     .feature-card:focus-visible {
       outline: none;
+      background: var(--fw-paper) !important;
       border-color: var(--fw-rust);
       box-shadow: var(--fw-shadow-sm);
+    }
+
+    .feature-card:hover {
+      background: var(--fw-paper) !important;
     }
 
     .feature-icon {
@@ -259,8 +281,8 @@
     /* COMPARISON */
     .comparison {
       max-width: 1200px;
-      margin: 80px auto;
-      padding: 80px 24px;
+      margin: 0 auto;
+      padding: 40px 24px 32px;
       background: transparent !important;
       border: 0 !important;
       box-shadow: none !important;
@@ -270,12 +292,12 @@
       text-align: center;
       font-size: 32px;
       font-weight: 700;
-      margin-bottom: 60px;
+      margin-bottom: 36px;
     }
 
     .static-note {
       max-width: 1000px;
-      margin: -34px auto 80px;
+      margin: 0 auto 72px;
       padding: 20px 24px;
       background: var(--bg2);
       border: 1px solid var(--border);
@@ -351,7 +373,7 @@
     .pricing {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 72px 24px;
     }
 
     .pricing-title {
@@ -361,18 +383,20 @@
       margin-bottom: 20px;
     }
 
-    .pricing-intro {
-      text-align: center;
-      color: var(--text2);
-      max-width: 760px;
-      margin: 0 auto 48px;
-      line-height: 1.7;
+    .builder-showcase,
+    .services-showcase {
+      width: min(1040px, 100%);
+      margin: 0 auto 36px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
+      gap: 24px;
+      align-items: center;
     }
 
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
+      gap: 24px;
     }
 
     .builder-demo {
@@ -388,6 +412,11 @@
       grid-template-rows: auto 1fr;
       gap: 12px;
       overflow: hidden;
+    }
+
+    .builder-showcase .builder-demo {
+      width: 100%;
+      margin: 0;
     }
 
     .builder-demo-topbar {
@@ -561,7 +590,7 @@
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 40px;
+      padding: 32px;
       position: relative;
       transition: all 0.3s;
     }
@@ -630,7 +659,7 @@
     .services {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 72px 24px;
     }
 
     .services-title {
@@ -644,7 +673,9 @@
       text-align: center;
       color: var(--text2);
       font-size: 16px;
-      margin-bottom: 60px;
+      margin: 0;
+      max-width: 760px;
+      line-height: 1.7;
     }
 
     .services-grid {
@@ -656,12 +687,13 @@
     .services-overview {
       max-width: 860px;
       margin: 0 auto;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      background: var(--fw-paper) !important;
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
       padding: 36px;
-      box-shadow: var(--fw-shadow-sm);
+      box-shadow: var(--fw-shadow);
       text-align: center;
+      position: relative;
     }
 
     .services-overview p {
@@ -670,16 +702,18 @@
       margin-bottom: 18px;
     }
 
-    .services-hit-list {
+    .services-hit-list,
+    .builder-hit-list {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
       max-width: 980px;
-      margin: 0 auto 28px;
+      margin: 0 auto 24px;
       text-align: left;
     }
 
-    .services-hit {
+    .services-hit,
+    .builder-hit {
       display: grid;
       gap: 8px;
       align-content: start;
@@ -691,14 +725,16 @@
       box-shadow: var(--fw-shadow-sm);
     }
 
-    .services-hit strong {
+    .services-hit strong,
+    .builder-hit strong {
       color: var(--fw-rust);
       font-size: clamp(16px, 1.8vw, 22px);
       line-height: 1.05;
       text-transform: uppercase;
     }
 
-    .services-hit span {
+    .services-hit span,
+    .builder-hit span {
       color: var(--text2);
       font-size: 13px;
       line-height: 1.45;
@@ -706,9 +742,9 @@
     }
 
     .services-demo {
-      width: min(760px, 100%);
+      width: min(640px, 100%);
       aspect-ratio: 4 / 3;
-      margin: 0 auto 28px;
+      margin: 0 auto 24px;
       padding: 14px;
       background: var(--fw-panel);
       border: var(--fw-border-width) solid var(--fw-ink);
@@ -718,6 +754,26 @@
       grid-template-columns: 1fr 0.24fr 1fr;
       gap: 14px;
       overflow: hidden;
+    }
+
+    .services-showcase .services-hit-list,
+    .builder-showcase .builder-hit-list {
+      grid-template-columns: 1fr;
+      max-width: none;
+      margin: 0;
+    }
+
+    .services-showcase .services-demo {
+      width: 100%;
+      margin: 0;
+    }
+
+    .builder-showcase .builder-hit-list {
+      order: 1;
+    }
+
+    .builder-showcase .builder-demo {
+      order: 2;
     }
 
     .services-demo-site,
@@ -800,6 +856,95 @@
       box-shadow: var(--fw-shadow-sm);
       animation: serviceScan 4.8s ease-in-out infinite;
       z-index: 4;
+    }
+
+    .questions {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 24px 80px;
+    }
+
+    .questions-panel {
+      background: var(--fw-paper);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow);
+      padding: 32px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .questions-head {
+      display: grid;
+      gap: 10px;
+      text-align: center;
+      justify-items: center;
+    }
+
+    .questions-head h2 {
+      margin: 0;
+      color: var(--fw-rust);
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .questions-head p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--text2);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .question-modules {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .question-module {
+      display: grid;
+      gap: 8px;
+      padding: 20px;
+      background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow-sm);
+      text-align: left;
+    }
+
+    .question-module span {
+      color: var(--fw-rust);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .question-module strong {
+      color: var(--fw-ink);
+      font-size: 19px;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+
+    .question-module p {
+      margin: 0;
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .questions-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 260px));
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .questions-actions .btn {
+      justify-content: center;
     }
 
     .service-card {
@@ -976,12 +1121,12 @@
 
       .comparison {
         width: 100%;
-        margin: 48px 0;
-        padding: 48px 16px;
+        margin: 0;
+        padding: 48px 16px 24px;
       }
 
       .static-note {
-        margin: -24px 16px 64px;
+        margin: 0 16px 56px;
       }
 
       .comparison h2 {
@@ -1034,13 +1179,15 @@
         grid-template-columns: 1fr;
       }
 
-      .services-hit-list {
+      .services-hit-list,
+      .builder-hit-list {
         grid-template-columns: 1fr;
         gap: 14px;
         margin-bottom: 24px;
       }
 
-      .services-hit {
+      .services-hit,
+      .builder-hit {
         min-height: 0;
         padding: 24px 20px;
       }
@@ -1058,10 +1205,36 @@
         gap: 8px;
       }
 
+      .questions {
+        padding: 8px 16px 64px;
+      }
+
+      .questions-panel {
+        padding: 22px;
+      }
+
+      .question-modules,
+      .questions-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .section-intro-card {
+        margin-bottom: 28px;
+        padding: 20px;
+      }
+
+      .services-showcase,
+      .builder-showcase {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
       .features {
         padding-left: 16px;
         padding-right: 16px;
-        padding-bottom: 48px;
+        padding-top: 56px;
+        padding-bottom: 32px;
       }
 
       .features-grid {
@@ -1070,7 +1243,7 @@
         gap: 14px;
         width: 100%;
         max-width: none;
-        margin: 0 auto 56px;
+        margin: 0 auto;
         overflow: visible;
       }
 
@@ -1159,7 +1332,9 @@
   <!-- FEATURES -->
   <section class="features" id="features">
     <h2 class="features-title">Why Static Wins</h2>
-    <p class="features-intro">Most small business websites need clear pages, fast loading, and simple ownership. Static sites keep that job lean: fewer moving parts, cleaner files, and less platform lock-in.</p>
+    <div class="section-intro-card">
+      <p class="features-intro">Most small business websites need clear pages, fast loading, and simple ownership. Static sites keep that job lean: fewer moving parts, cleaner files, and less platform lock-in.</p>
+    </div>
     <div class="features-grid">
       <div class="feature-card" tabindex="0">
         <div class="feature-icon">ϟ</div>
@@ -1257,36 +1432,40 @@
   <!-- SERVICES -->
   <section class="services" id="services">
     <h2 class="services-title">Static Website Services</h2>
-    <p class="services-subtitle">For owners who want a finished site, not another tool to learn.</p>
-
-    <div class="services-hit-list" aria-label="Static website service options">
-      <div class="services-hit">
-        <strong>New Static Sites</strong>
-        <span>Clean business websites built as fast, portable HTML files.</span>
-      </div>
-      <div class="services-hit">
-        <strong>Website Rebuilds</strong>
-        <span>Recreate, simplify, or modernize a site you already own.</span>
-      </div>
-      <div class="services-hit">
-        <strong>Custom Templates</strong>
-        <span>Builder-ready pages, blocks, and systems for repeat use.</span>
-      </div>
+    <div class="section-intro-card">
+      <p class="services-subtitle">For owners who want a finished site, not another tool to learn.</p>
     </div>
 
-    <div class="services-demo" aria-label="Simplified static website service animation">
-      <div class="services-demo-site" aria-hidden="true">
-        <span class="services-demo-row wide"></span>
-        <span class="services-demo-row"></span>
-        <span class="services-demo-row short"></span>
+    <div class="services-showcase">
+      <div class="services-hit-list" aria-label="Static website service options">
+        <div class="services-hit">
+          <strong>New Static Sites</strong>
+          <span>Clean business websites built as fast, portable HTML files.</span>
+        </div>
+        <div class="services-hit">
+          <strong>Website Rebuilds</strong>
+          <span>Recreate, simplify, or modernize a site you already own.</span>
+        </div>
+        <div class="services-hit">
+          <strong>Custom Templates</strong>
+          <span>Builder-ready pages, blocks, and systems for repeat use.</span>
+        </div>
       </div>
-      <div class="services-demo-flow" aria-hidden="true">
-        <span class="services-demo-scan"></span>
-      </div>
-      <div class="services-demo-output" aria-hidden="true">
-        <span class="services-demo-row wide"></span>
-        <span class="services-demo-row"></span>
-        <span class="services-demo-row short"></span>
+
+      <div class="services-demo" aria-label="Simplified static website service animation">
+        <div class="services-demo-site" aria-hidden="true">
+          <span class="services-demo-row wide"></span>
+          <span class="services-demo-row"></span>
+          <span class="services-demo-row short"></span>
+        </div>
+        <div class="services-demo-flow" aria-hidden="true">
+          <span class="services-demo-scan"></span>
+        </div>
+        <div class="services-demo-output" aria-hidden="true">
+          <span class="services-demo-row wide"></span>
+          <span class="services-demo-row"></span>
+          <span class="services-demo-row short"></span>
+        </div>
       </div>
     </div>
 
@@ -1303,27 +1482,45 @@
   <!-- PRICING -->
   <section class="pricing" id="pricing">
     <h2 class="pricing-title">DIY Site Builder</h2>
-    <div class="builder-demo" aria-label="Simplified animated site builder preview">
-      <div class="builder-demo-topbar" aria-hidden="true">
-        <span class="builder-demo-dot"></span>
-        <span class="builder-demo-dot"></span>
-        <span class="builder-demo-dot"></span>
-      </div>
-      <div class="builder-demo-body" aria-hidden="true">
-        <div class="builder-demo-sidebar">
-          <span class="builder-demo-tool"></span>
-          <span class="builder-demo-tool"></span>
-          <span class="builder-demo-tool"></span>
+    <div class="section-intro-card">
+      <p>For owners who want to build, export, and keep control of their own site files.</p>
+    </div>
+    <div class="builder-showcase">
+      <div class="builder-hit-list" aria-label="DIY site builder features">
+        <div class="builder-hit">
+          <strong>Build In Browser</strong>
+          <span>Drag sections into place and edit pages without installing software.</span>
         </div>
-        <div class="builder-demo-canvas">
-          <span class="builder-demo-block"></span>
-          <span class="builder-demo-block"></span>
-          <span class="builder-demo-block"></span>
-          <span class="builder-demo-block"></span>
+        <div class="builder-hit">
+          <strong>Export Real Files</strong>
+          <span>Download plain HTML, CSS, and assets you can host almost anywhere.</span>
+        </div>
+        <div class="builder-hit">
+          <strong>Upgrade When Ready</strong>
+          <span>Use Pro for direct deploys, custom templates, and reusable blocks.</span>
+        </div>
+      </div>
+      <div class="builder-demo" aria-label="Simplified animated site builder preview">
+        <div class="builder-demo-topbar" aria-hidden="true">
+          <span class="builder-demo-dot"></span>
+          <span class="builder-demo-dot"></span>
+          <span class="builder-demo-dot"></span>
+        </div>
+        <div class="builder-demo-body" aria-hidden="true">
+          <div class="builder-demo-sidebar">
+            <span class="builder-demo-tool"></span>
+            <span class="builder-demo-tool"></span>
+            <span class="builder-demo-tool"></span>
+          </div>
+          <div class="builder-demo-canvas">
+            <span class="builder-demo-block"></span>
+            <span class="builder-demo-block"></span>
+            <span class="builder-demo-block"></span>
+            <span class="builder-demo-block"></span>
+          </div>
         </div>
       </div>
     </div>
-    <p class="pricing-intro">Use the browser builder when you want to make the site yourself. Start free, export real HTML files, and upgrade only if you want Pro publishing and custom builder tools.</p>
 
     <div class="pricing-grid">
       <!-- FREE -->
