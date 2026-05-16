@@ -229,14 +229,14 @@ body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; cursor: defaul
 [data-inline-edit] { cursor: text; }
 [data-inline-edit]:hover { box-shadow: inset 0 -3px 0 rgba(185,72,46,.45); }
 [data-inline-edit][contenteditable="true"] { outline: 3px solid #4b7f52; outline-offset: 3px; box-shadow: 4px 4px 0 rgba(16,16,13,.25); }
-.block-resize-handle { position: absolute; z-index: 1000; background: #7cff6b; border: 3px solid #10100d; box-shadow: 3px 3px 0 #10100d; opacity: 0; transition: opacity .12s ease, transform .12s ease; }
+.block-resize-handle { position: absolute; z-index: 1000; background: #7cff6b; border: 2px solid #10100d; box-shadow: 2px 2px 0 #10100d; opacity: 0; transition: opacity .12s ease, transform .12s ease; }
 .block-wrapper:hover > .block-resize-handle,
 .block-wrapper.selected > .block-resize-handle,
 .block-wrapper.resizing > .block-resize-handle { opacity: 1; }
-.block-resize-y { left: 50%; bottom: 8px; width: 54px; height: 14px; transform: translateX(-50%); cursor: ns-resize; }
-.block-resize-x { right: 8px; top: 50%; width: 14px; height: 54px; transform: translateY(-50%); cursor: ew-resize; }
-.column-width-handle { position: absolute; top: 0; bottom: 0; width: 12px; transform: translateX(-50%); cursor: ew-resize; z-index: 997; }
-.column-width-handle::after { content: ""; position: absolute; top: 14px; bottom: 14px; left: 3px; width: 6px; background: #7cff6b; border: 2px solid #10100d; box-shadow: 2px 2px 0 #10100d; opacity: 0; transition: opacity .12s ease; }
+.block-resize-y { left: 50%; bottom: 8px; width: 42px; height: 8px; transform: translateX(-50%); cursor: ns-resize; }
+.block-resize-x { right: 8px; top: 50%; width: 8px; height: 42px; transform: translateY(-50%); cursor: ew-resize; }
+.column-width-handle { position: absolute; top: 0; bottom: 0; width: 8px; transform: translateX(-50%); cursor: ew-resize; z-index: 997; }
+.column-width-handle::after { content: ""; position: absolute; top: 14px; bottom: 14px; left: 2px; width: 4px; background: #7cff6b; border: 1px solid #10100d; box-shadow: 1px 1px 0 #10100d; opacity: 0; transition: opacity .12s ease; }
 .fw-grid:hover > .column-width-handle::after,
 .column-width-handle.resizing::after { opacity: 1; }
 body.canvas-resizing, body.canvas-resizing * { user-select: none !important; }
@@ -267,8 +267,18 @@ body.canvas-resizing, body.canvas-resizing * { user-select: none !important; }
   cursor: pointer;
 }
 .micro-props select { min-width: 70px; }
+.micro-props input[type="color"] {
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  background: #f5efe0;
+  border: 2px solid #10100d;
+  border-radius: 3px;
+  cursor: pointer;
+}
 .micro-props button:hover,
 .micro-props select:hover,
+.micro-props input[type="color"]:hover,
 .micro-props .active {
   background: #7cff6b;
 }
@@ -317,6 +327,10 @@ function microSelect(blockId, key, value, options, title) {
     '</select>';
 }
 
+function microColor(blockId, key, value, title) {
+  return '<input type="color" title="' + microEscape(title || 'Background color') + '" value="' + microEscape(value || '#ffffff') + '" data-micro-block="' + microEscape(blockId) + '" data-micro-key="' + microEscape(key) + '">';
+}
+
 function microDivider() {
   return '<span class="micro-props-divider" aria-hidden="true"></span>';
 }
@@ -354,6 +368,9 @@ function buildMicroPropsHTML(blockId, config) {
   if (config.bgSizeOptions) {
     html += microSelect(blockId, 'bgSize', config.bgSize, config.bgSizeOptions, 'Background size');
   }
+  if (config.bgColorKey) {
+    html += microColor(blockId, config.bgColorKey, config.bgColor, 'Background color');
+  }
   return html.replace(new RegExp(microDivider() + '$'), '');
 }
 
@@ -385,9 +402,16 @@ window.showMicroProps = function(blockId, config) {
   toolbar.addEventListener('change', function(event) {
     event.preventDefault();
     event.stopPropagation();
-    var select = event.target.closest('select[data-micro-key]');
-    if (!select) return;
-    window.microApply(select.dataset.microBlock, select.dataset.microKey, select.value);
+    var control = event.target.closest('select[data-micro-key], input[data-micro-key]');
+    if (!control) return;
+    window.microApply(control.dataset.microBlock, control.dataset.microKey, control.value);
+  });
+  toolbar.addEventListener('input', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var control = event.target.closest('input[type="color"][data-micro-key]');
+    if (!control) return;
+    window.microApply(control.dataset.microBlock, control.dataset.microKey, control.value);
   });
   toolbar.addEventListener('dblclick', function(event) { event.stopPropagation(); });
   document.body.appendChild(toolbar);
@@ -1268,6 +1292,8 @@ function getCanvasMicroPropsConfig(blockId) {
       align: p.align || 'center',
       bgSizeOptions: bgSizes,
       bgSize: p.bgSize || 'cover',
+      bgColorKey: 'bgColor',
+      bgColor: p.bgColor || '#7c6af7',
     };
   }
   if (block.type === 'cta') {
@@ -1277,18 +1303,38 @@ function getCanvasMicroPropsConfig(blockId) {
       fontWeight: p.fontWeight || '700',
       fontStyle: p.fontStyle || 'normal',
       align: p.align || 'center',
+      bgColorKey: 'bgColor',
+      bgColor: p.bgColor || '#7c6af7',
     };
   }
   if (block.type === 'cards' || block.type === 'features' || block.type === 'testimonialWall') {
     return {
       type: block.type,
       align: p.align || 'center',
+      bgColorKey: 'bgColor',
+      bgColor: p.bgColor || (block.type === 'testimonialWall' ? '#f5f8fc' : block.type === 'cards' ? '#f8f8f8' : '#ffffff'),
     };
   }
   if (block.type === 'columns2' || block.type === 'columns3' || block.type === 'section') {
     return {
       type: block.type,
       align: p.align || 'left',
+      bgColorKey: 'bgColor',
+      bgColor: p.bgColor || '#ffffff',
+    };
+  }
+  if (block.type === 'form') {
+    return {
+      type: block.type,
+      bgColorKey: 'bgColor',
+      bgColor: p.bgColor || '#f8f8f8',
+    };
+  }
+  if (block.type === 'youtubeEmbed') {
+    return {
+      type: block.type,
+      bgColorKey: 'sectionBg',
+      bgColor: p.sectionBg || '#ffffff',
     };
   }
   return null;
