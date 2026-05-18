@@ -1,4 +1,4 @@
-const FW_BUILDER_CACHE = 'fw-builder-offline-2026-05-17-10';
+const FW_BUILDER_CACHE = 'fw-builder-offline-2026-05-17-13';
 const FW_IS_ROOT_WORKER = new URL(self.location.href).pathname === '/sw.js';
 
 const FW_BUILDER_ASSETS = [

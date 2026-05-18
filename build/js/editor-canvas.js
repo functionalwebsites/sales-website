@@ -11,6 +11,7 @@ function openEditor(id, options = {}) {
   applyBuilderSelectionFromUrl(options.selection);
   setProjectIdInUrl(id, STATE.currentPageIndex);
   _resetUndo();
+  startZipBackupReminderWindow();
   setSaveStatus('saved');
 
   document.getElementById('editor-project-name').textContent = _projectData.name;

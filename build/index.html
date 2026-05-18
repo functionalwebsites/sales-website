@@ -1752,6 +1752,12 @@ select:hover {
   <div class="modal">
     <div class="modal-title">Unsaved Changes</div>
     <p style="color:var(--text2);margin-bottom:16px;">You have unsaved changes in this website. Save before returning to the dashboard?</p>
+    <div style="background:var(--paper);border:var(--line);box-shadow:var(--shadow-sm);padding:12px;margin-bottom:16px;color:var(--ink);font-size:13px;line-height:1.45;">
+      <strong>Backup reminder:</strong> Download a ZIP if you want a portable copy before leaving the editor.
+      <div style="margin-top:10px;">
+        <button class="btn btn-secondary btn-sm" onclick="downloadZip()">⬇ Download ZIP</button>
+      </div>
+    </div>
     <div class="modal-actions" style="justify-content:space-between;gap:10px;flex-wrap:wrap;">
       <button class="btn btn-danger" onclick="continueWithoutSaving()">Continue Without Saving</button>
       <div style="display:flex;gap:8px;">
@@ -1954,6 +1960,21 @@ select:hover {
   </div>
 </div>
 
+<!-- ZIP Backup Reminder Modal -->
+<div id="modal-backup-reminder" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-title">Download a ZIP Backup?</div>
+    <p style="color:var(--text2);margin-bottom:12px;">Your work is saved in this browser. A ZIP backup gives you a portable copy you can restore if browser storage is cleared, or upload into another browser later.</p>
+    <div style="background:var(--paper);border:var(--line);box-shadow:var(--shadow-sm);padding:12px;margin-bottom:16px;color:var(--ink);font-size:13px;line-height:1.45;">
+      Keep the ZIP intact. From the dashboard, choose <strong>Upload Existing Site</strong> to bring the project back into the builder.
+    </div>
+    <div class="modal-actions" style="justify-content:flex-end;gap:10px;">
+      <button class="btn btn-secondary" onclick="closeModal('modal-backup-reminder')">Later</button>
+      <button class="btn btn-primary" onclick="downloadZip();closeModal('modal-backup-reminder')">⬇ Download ZIP</button>
+    </div>
+  </div>
+</div>
+
 <!-- Help / Docs Modal -->
 <div id="modal-help-docs" class="modal-overlay hidden">
   <div class="modal" style="width:760px;">
@@ -1970,8 +1991,19 @@ select:hover {
           <li>Click any block in the canvas to edit its settings in the right <strong>Properties</strong> panel.</li>
           <li>Use <strong>Save</strong> often. Your projects are stored in this browser's localStorage.</li>
           <li>Use <strong>Preview</strong> to open the current page, or <strong>Download ZIP</strong> to export the full site for free.</li>
+          <li>Download a ZIP backup after meaningful edits. It can restore your builder project if browser storage is cleared or transfer the site to another browser.</li>
         </ol>
         <p style="margin-top:12px;"><a href="https://functionalwebsites.com/docs/" target="_blank" rel="noopener" style="color:var(--green);text-decoration:underline;">Open full docs in a new tab</a></p>
+      </div>
+
+      <div class="help-card">
+        <h3>ZIP Backups</h3>
+        <ul>
+          <li><strong>Why:</strong> Browser storage can be cleared by browser settings, private browsing, cleanup tools, or device changes.</li>
+          <li><strong>What:</strong> Builder ZIPs include the static site files plus project data for importing back into the builder.</li>
+          <li><strong>Restore:</strong> From the dashboard, choose <strong>Upload Existing Site</strong> and upload the ZIP.</li>
+          <li><strong>Transfer:</strong> Download the ZIP in one browser, then upload it in another browser to keep editing there.</li>
+        </ul>
       </div>
 
       <div class="help-card">

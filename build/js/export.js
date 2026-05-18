@@ -30,6 +30,18 @@ function switchEditorMode(mode) {
   }
 }
 
+function exportTimestampForFilename(date = new Date()) {
+  const pad = value => String(value).padStart(2, '0');
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join('-') + '_' + [
+    pad(date.getHours()),
+    pad(date.getMinutes())
+  ].join('-');
+}
+
 // ============================================================
 // CODE EDITOR
 // ============================================================
@@ -374,9 +386,10 @@ async function downloadProjectZip(id) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = name + '.zip';
+  a.download = `${name}_backup_${exportTimestampForFilename()}.zip`;
   a.click();
   URL.revokeObjectURL(url);
+  if (typeof recordZipBackupDownload === 'function') recordZipBackupDownload(id);
   toast('Downloaded!', 'success');
 }
 

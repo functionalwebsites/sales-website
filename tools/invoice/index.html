@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Create a Functional Websites invoice and save it as a PDF.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <meta name="theme-color" content="#f5efe0">
+  <title>Invoice Generator - Functional Websites</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <style>
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(36, 77, 103, 0.14), transparent 20rem),
+        radial-gradient(circle at 86% 8%, rgba(185, 72, 46, 0.16), transparent 22rem),
+        var(--fw-texture);
+    }
+
+    body.invoice-locked #header-placeholder,
+    body.invoice-locked #footer-placeholder,
+    body.invoice-locked .invoice-app {
+      display: none;
+    }
+
+    body:not(.invoice-locked) .invoice-lock {
+      display: none;
+    }
+
+    .invoice-lock {
+      min-height: 100svh;
+      padding: 24px;
+      display: grid;
+      place-items: center;
+    }
+
+    .invoice-lock-card {
+      width: min(460px, 100%);
+      padding: clamp(22px, 5vw, 36px);
+      background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow);
+    }
+
+    .invoice-lock-card h1 {
+      margin: 0 0 12px;
+      color: var(--fw-rust);
+      font-size: clamp(28px, 6vw, 46px);
+      line-height: 1;
+    }
+
+    .invoice-lock-card p {
+      margin: 0 0 18px;
+      color: var(--fw-muted);
+      line-height: 1.6;
+    }
+
+    .invoice-lock-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .invoice-lock-error {
+      min-height: 20px;
+      color: var(--fw-rust);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .invoice-app {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: clamp(28px, 4vw, 56px) 20px 80px;
+    }
+
+    .tool-hero {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .tool-hero h1 {
+      width: fit-content;
+      margin: 0;
+      padding: 12px 16px;
+      background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow-sm);
+      color: var(--fw-rust);
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1;
+    }
+
+    .tool-hero p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--fw-muted);
+      line-height: 1.65;
+    }
+
+    .invoice-workspace {
+      display: grid;
+      grid-template-columns: minmax(320px, 460px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .invoice-controls,
+    .invoice-preview-shell {
+      background: var(--fw-panel);
+      border: var(--fw-border-width) solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: var(--fw-shadow);
+    }
+
+    .invoice-controls {
+      position: sticky;
+      top: 92px;
+      max-height: calc(100vh - 112px);
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .control-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .form-section {
+      padding: 14px 0;
+      border-top: 2px solid var(--fw-ink);
+    }
+
+    .form-section:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .form-section h2 {
+      margin: 0 0 12px;
+      color: var(--fw-rust);
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--fw-ink);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      background: var(--fw-paper);
+      color: var(--fw-ink);
+      border: 2px solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      font: inherit;
+      box-shadow: inset 2px 2px 0 rgba(16, 16, 13, 0.08);
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--fw-rust);
+    }
+
+    .line-items {
+      display: grid;
+      gap: 10px;
+    }
+
+    .line-editor {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 112px 32px;
+      gap: 8px;
+      align-items: end;
+      padding: 10px;
+      background: var(--fw-panel-strong);
+      border: 2px solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--fw-paper);
+      color: var(--fw-ink);
+      border: 2px solid var(--fw-ink);
+      border-radius: var(--fw-radius);
+      box-shadow: 2px 2px 0 var(--fw-ink);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .invoice-preview-shell {
+      padding: clamp(14px, 2vw, 24px);
+      overflow: auto;
+    }
+
+    .invoice-page {
+      width: min(8.5in, 100%);
+      min-height: 11in;
+      margin: 0 auto;
+      padding: 0.55in;
+      background: #f8f1e4;
+      color: #10100d;
+      border: 3px solid #10100d;
+      box-shadow: 12px 12px 0 #10100d;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .invoice-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: start;
+      padding-bottom: 22px;
+      border-bottom: 4px solid #10100d;
+    }
+
+    .invoice-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .invoice-logo {
+      width: 58px;
+      height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ebe2ce;
+      border: 3px solid #10100d;
+      box-shadow: 4px 4px 0 #10100d;
+      flex: 0 0 58px;
+    }
+
+    .invoice-logo img {
+      width: 44px;
+      height: 44px;
+      display: block;
+    }
+
+    .invoice-brand-title {
+      margin: 0;
+      color: #10100d;
+      font-size: 24px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .invoice-brand-meta {
+      margin: 6px 0 0;
+      color: #625d50;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .invoice-heading {
+      min-width: 188px;
+      padding: 12px;
+      background: #b9482e;
+      color: #f5efe0;
+      border: 3px solid #10100d;
+      text-align: right;
+      box-shadow: 4px 4px 0 #10100d;
+    }
+
+    .invoice-heading h2 {
+      margin: 0;
+      color: inherit;
+      font-size: 31px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .invoice-heading p {
+      margin: 8px 0 0;
+      color: inherit;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .invoice-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .meta-box,
+    .invoice-card {
+      background: #ebe2ce;
+      border: 2px solid #10100d;
+      padding: 12px;
+    }
+
+    .label {
+      color: #b9482e;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .value {
+      margin-top: 6px;
+      color: #10100d;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: pre-wrap;
+    }
+
+    .invoice-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border: 3px solid #10100d;
+      background: #f5efe0;
+    }
+
+    .invoice-table th {
+      background: #244d67;
+      color: #f5efe0;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+      padding: 12px;
+      border-bottom: 2px solid #10100d;
+      vertical-align: top;
+    }
+
+    .invoice-table td:last-child,
+    .invoice-table th:last-child {
+      width: 140px;
+      text-align: right;
+      border-left: 2px solid #10100d;
+    }
+
+    .invoice-total {
+      display: flex;
+      justify-content: flex-end;
+      margin: 16px 0 22px;
+    }
+
+    .invoice-total-box {
+      min-width: 240px;
+      padding: 14px;
+      background: #7cff6b;
+      color: #10100d;
+      border: 3px solid #10100d;
+      box-shadow: 4px 4px 0 #10100d;
+      text-align: right;
+    }
+
+    .invoice-total-box .label {
+      color: #10100d;
+    }
+
+    .invoice-total-box strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .invoice-bottom {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .invoice-note {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 3px solid #10100d;
+      color: #625d50;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .empty-note {
+      color: #625d50;
+      font-style: italic;
+    }
+
+    @media (max-width: 980px) {
+      .invoice-workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .invoice-controls {
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .invoice-app {
+        padding-inline: 12px;
+      }
+
+      .control-actions,
+      .field-row,
+      .invoice-columns,
+      .invoice-bottom,
+      .invoice-meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .line-editor {
+        grid-template-columns: 1fr;
+      }
+
+      .icon-btn {
+        width: 100%;
+      }
+
+      .invoice-page {
+        min-height: auto;
+        padding: 20px;
+      }
+
+      .invoice-top {
+        grid-template-columns: 1fr;
+      }
+
+      .invoice-heading {
+        text-align: left;
+      }
+    }
+
+    @media print {
+      @page {
+        size: letter;
+        margin: 0.35in;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        background: #fff !important;
+      }
+
+      #header-placeholder,
+      #footer-placeholder,
+      .invoice-lock,
+      .tool-hero,
+      .invoice-controls {
+        display: none !important;
+      }
+
+      .invoice-app,
+      .invoice-workspace,
+      .invoice-preview-shell {
+        display: block !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      .invoice-page {
+        width: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: #f8f1e4 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body class="invoice-locked">
+  <section class="invoice-lock" aria-labelledby="invoice-lock-title">
+    <div class="invoice-lock-card">
+      <h1 id="invoice-lock-title">Invoice Tool</h1>
+      <p>Private utility. Enter the light access password to continue.</p>
+      <form class="invoice-lock-form" id="invoice-lock-form">
+        <div class="field">
+          <label for="invoice-password">Password</label>
+          <input id="invoice-password" type="password" autocomplete="current-password" autofocus>
+        </div>
+        <button class="btn btn-primary" type="submit">Open Invoice Generator</button>
+        <div class="invoice-lock-error" id="invoice-lock-error" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+  <div id="header-placeholder"></div>
+  <main class="invoice-app">
+    <section class="tool-hero">
+      <h1>Invoice Generator</h1>
+      <p>Fill in whatever you need, leave the rest blank, then use Download PDF to save a branded invoice. The PDF button opens the browser print dialog with invoice-only print styles.</p>
+    </section>
+
+    <section class="invoice-workspace" aria-label="Invoice generator">
+      <form class="invoice-controls" id="invoice-form">
+        <div class="control-actions">
+          <button class="btn btn-primary" type="button" id="download-pdf">Download PDF</button>
+          <button class="btn btn-secondary" type="button" id="add-line">Add Line</button>
+        </div>
+
+        <section class="form-section">
+          <h2>Invoice</h2>
+          <div class="field-grid">
+            <div class="field-row">
+              <div class="field">
+                <label for="invoice-number">Invoice #</label>
+                <input id="invoice-number" data-field="invoiceNumber" placeholder="FW-2026-0001">
+              </div>
+              <div class="field">
+                <label for="invoice-title">Title</label>
+                <input id="invoice-title" data-field="invoiceTitle" placeholder="Invoice">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="issued-date">Date Issued</label>
+                <input id="issued-date" data-field="issuedDate" placeholder="May 18, 2026">
+              </div>
+              <div class="field">
+                <label for="due-date">Due Date</label>
+                <input id="due-date" data-field="dueDate" placeholder="Upon Receipt">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>Client</h2>
+          <div class="field-grid">
+            <div class="field">
+              <label for="bill-to">Bill To</label>
+              <textarea id="bill-to" data-field="billTo" placeholder="Client / Organization Name&#10;Address&#10;Email"></textarea>
+            </div>
+            <div class="field">
+              <label for="project">Project</label>
+              <textarea id="project" data-field="project" placeholder="Project name or short description"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>Line Items</h2>
+          <div class="line-items" id="line-items"></div>
+        </section>
+
+        <section class="form-section">
+          <h2>Payment</h2>
+          <div class="field-grid">
+            <div class="field">
+              <label for="payment-methods">Payment Methods</label>
+              <textarea id="payment-methods" data-field="paymentMethods" placeholder="Stripe, Zelle, Venmo, PayPal"></textarea>
+            </div>
+            <div class="field">
+              <label for="pay-to">Pay To</label>
+              <textarea id="pay-to" data-field="payTo" placeholder="Cooper Carrasco&#10;cooper@functionalwebsites.com"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>Business</h2>
+          <div class="field-grid">
+            <div class="field">
+              <label for="mailing-address">Mailing Address</label>
+              <textarea id="mailing-address" data-field="mailingAddress" placeholder="Cooper Carrasco&#10;Address"></textarea>
+            </div>
+            <div class="field">
+              <label for="footer-note">Footer Note</label>
+              <textarea id="footer-note" data-field="footerNote" placeholder="Thank you for supporting independent web development."></textarea>
+            </div>
+          </div>
+        </section>
+      </form>
+
+      <section class="invoice-preview-shell" aria-label="Invoice preview">
+        <article class="invoice-page" id="invoice-preview">
+          <header class="invoice-top">
+            <div class="invoice-brand">
+              <span class="invoice-logo" aria-hidden="true"><img src="/img/minigear.svg" alt=""></span>
+              <div>
+                <h2 class="invoice-brand-title">Functional Websites</h2>
+                <p class="invoice-brand-meta">Est. 2024 · functionalwebsites.com</p>
+              </div>
+            </div>
+            <div class="invoice-heading">
+              <h2 id="preview-title">Invoice</h2>
+              <p id="preview-number">FW-2026-0001</p>
+            </div>
+          </header>
+
+          <section class="invoice-meta-grid">
+            <div class="meta-box">
+              <div class="label">Invoice #</div>
+              <div class="value" id="preview-number-box"></div>
+            </div>
+            <div class="meta-box">
+              <div class="label">Date Issued</div>
+              <div class="value" id="preview-issued"></div>
+            </div>
+            <div class="meta-box">
+              <div class="label">Due Date</div>
+              <div class="value" id="preview-due"></div>
+            </div>
+          </section>
+
+          <section class="invoice-columns">
+            <div class="invoice-card">
+              <div class="label">Bill To</div>
+              <div class="value" id="preview-bill-to"></div>
+            </div>
+            <div class="invoice-card">
+              <div class="label">Project</div>
+              <div class="value" id="preview-project"></div>
+            </div>
+          </section>
+
+          <section>
+            <div class="label">Description</div>
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Service / Deliverable</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="preview-items"></tbody>
+            </table>
+          </section>
+
+          <section class="invoice-total">
+            <div class="invoice-total-box">
+              <div class="label">Total Due</div>
+              <strong id="preview-total">$0.00</strong>
+            </div>
+          </section>
+
+          <section class="invoice-bottom">
+            <div class="invoice-card">
+              <div class="label">Payment Methods</div>
+              <div class="value" id="preview-payment-methods"></div>
+            </div>
+            <div class="invoice-card">
+              <div class="label">Mailing Address</div>
+              <div class="value" id="preview-mailing-address"></div>
+            </div>
+          </section>
+
+          <section class="invoice-card" style="margin-top:14px;">
+            <div class="label">Pay To</div>
+            <div class="value" id="preview-pay-to"></div>
+          </section>
+
+          <footer class="invoice-note" id="preview-footer-note"></footer>
+        </article>
+      </section>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js" defer></script>
+  <script>
+    (() => {
+      const INVOICE_PASSWORD = 'pay-me';
+      const UNLOCK_KEY = 'fw_invoice_tool_unlocked';
+      const lockForm = document.getElementById('invoice-lock-form');
+      const passwordInput = document.getElementById('invoice-password');
+      const lockError = document.getElementById('invoice-lock-error');
+
+      function unlockInvoiceTool() {
+        document.body.classList.remove('invoice-locked');
+        sessionStorage.setItem(UNLOCK_KEY, 'true');
+      }
+
+      if (sessionStorage.getItem(UNLOCK_KEY) === 'true') {
+        unlockInvoiceTool();
+      }
+
+      lockForm.addEventListener('submit', event => {
+        event.preventDefault();
+        if (passwordInput.value === INVOICE_PASSWORD) {
+          unlockInvoiceTool();
+          return;
+        }
+        lockError.textContent = 'Incorrect password.';
+        passwordInput.select();
+      });
+
+      const state = {
+        invoiceTitle: 'Invoice',
+        invoiceNumber: '',
+        issuedDate: '',
+        dueDate: 'Upon Receipt',
+        billTo: '',
+        project: '',
+        paymentMethods: 'Stripe · Zelle · Venmo · PayPal',
+        payTo: 'Cooper Carrasco\ncooper@functionalwebsites.com\n714-369-0148',
+        mailingAddress: 'Cooper Carrasco\n7871 Ellis Ave Apt. 1\nHuntington Beach, CA 92648',
+        footerNote: 'Thank you for supporting independent web development and community-focused digital infrastructure.\nFast static websites you can have built for you or build yourself.',
+        items: [
+          { description: 'Website service / deliverable', amount: '' },
+          { description: '', amount: '' },
+          { description: '', amount: '' }
+        ]
+      };
+
+      const $ = selector => document.querySelector(selector);
+      const lineItems = $('#line-items');
+
+      function pad(value) {
+        return String(value).padStart(2, '0');
+      }
+
+      function defaultInvoiceNumber() {
+        const now = new Date();
+        return 'FW-' + now.getFullYear() + '-' + pad(now.getMonth() + 1) + pad(now.getDate()) + '-' + pad(now.getHours()) + pad(now.getMinutes());
+      }
+
+      function formattedToday() {
+        return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
+      }
+
+      function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, char => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[char]));
+      }
+
+      function money(value) {
+        const number = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+        if (!Number.isFinite(number)) return '';
+        return number.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+      }
+
+      function rawAmount(value) {
+        const number = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+        return Number.isFinite(number) ? number : 0;
+      }
+
+      function displayValue(value, fallback = '') {
+        const text = String(value || '').trim();
+        return text ? escapeHtml(text) : '<span class="empty-note">' + escapeHtml(fallback || 'Optional') + '</span>';
+      }
+
+      function filenameSafe(value) {
+        return String(value || 'invoice').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'invoice';
+      }
+
+      function renderLineEditors() {
+        lineItems.innerHTML = state.items.map((item, index) => `
+          <div class="line-editor">
+            <div class="field">
+              <label for="item-description-${index}">Description</label>
+              <input id="item-description-${index}" data-item-index="${index}" data-item-field="description" value="${escapeHtml(item.description)}" placeholder="Service / Deliverable">
+            </div>
+            <div class="field">
+              <label for="item-amount-${index}">Amount</label>
+              <input id="item-amount-${index}" data-item-index="${index}" data-item-field="amount" inputmode="decimal" value="${escapeHtml(item.amount)}" placeholder="0.00">
+            </div>
+            <button class="icon-btn" type="button" data-remove-line="${index}" aria-label="Remove line item">×</button>
+          </div>
+        `).join('');
+      }
+
+      function renderPreview() {
+        $('#preview-title').textContent = state.invoiceTitle.trim() || 'Invoice';
+        $('#preview-number').textContent = state.invoiceNumber.trim() || 'Draft';
+        $('#preview-number-box').innerHTML = displayValue(state.invoiceNumber, 'Draft');
+        $('#preview-issued').innerHTML = displayValue(state.issuedDate, 'Optional');
+        $('#preview-due').innerHTML = displayValue(state.dueDate, 'Optional');
+        $('#preview-bill-to').innerHTML = displayValue(state.billTo, 'Optional client details');
+        $('#preview-project').innerHTML = displayValue(state.project, 'Optional project description');
+        $('#preview-payment-methods').innerHTML = displayValue(state.paymentMethods, 'Optional');
+        $('#preview-pay-to').innerHTML = displayValue(state.payTo, 'Optional');
+        $('#preview-mailing-address').innerHTML = displayValue(state.mailingAddress, 'Optional');
+        $('#preview-footer-note').innerHTML = displayValue(state.footerNote, '');
+
+        const visibleItems = state.items.filter(item => item.description.trim() || item.amount.trim());
+        $('#preview-items').innerHTML = (visibleItems.length ? visibleItems : [{ description: '', amount: '' }]).map(item => `
+          <tr>
+            <td>${displayValue(item.description, 'Optional service / deliverable')}</td>
+            <td>${money(item.amount) || '<span class="empty-note">Optional</span>'}</td>
+          </tr>
+        `).join('');
+
+        const total = state.items.reduce((sum, item) => sum + rawAmount(item.amount), 0);
+        $('#preview-total').textContent = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+      }
+
+      function hydrateForm() {
+        state.invoiceNumber = defaultInvoiceNumber();
+        state.issuedDate = formattedToday();
+        document.querySelectorAll('[data-field]').forEach(input => {
+          input.value = state[input.dataset.field] || '';
+        });
+        renderLineEditors();
+        renderPreview();
+      }
+
+      document.addEventListener('input', event => {
+        const field = event.target.closest('[data-field]');
+        if (field) {
+          state[field.dataset.field] = field.value;
+          renderPreview();
+          return;
+        }
+
+        const itemInput = event.target.closest('[data-item-index]');
+        if (itemInput) {
+          const index = Number(itemInput.dataset.itemIndex);
+          const key = itemInput.dataset.itemField;
+          if (state.items[index]) {
+            state.items[index][key] = itemInput.value;
+            renderPreview();
+          }
+        }
+      });
+
+      document.addEventListener('click', event => {
+        const remove = event.target.closest('[data-remove-line]');
+        if (remove) {
+          const index = Number(remove.dataset.removeLine);
+          state.items.splice(index, 1);
+          if (!state.items.length) state.items.push({ description: '', amount: '' });
+          renderLineEditors();
+          renderPreview();
+        }
+      });
+
+      $('#add-line').addEventListener('click', () => {
+        state.items.push({ description: '', amount: '' });
+        renderLineEditors();
+      });
+
+      $('#download-pdf').addEventListener('click', () => {
+        const oldTitle = document.title;
+        document.title = filenameSafe(state.invoiceNumber || state.project || 'functional-websites-invoice');
+        window.print();
+        setTimeout(() => { document.title = oldTitle; }, 1000);
+      });
+
+      hydrateForm();
+    })();
+  </script>
+</body>
+</html>

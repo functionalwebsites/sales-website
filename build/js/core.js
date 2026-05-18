@@ -47,6 +47,50 @@ let _undoStack = [];
 let _redoStack = [];
 let _undoPending = false;
 let _saveState = 'saved';
+let _projectOpenedAt = Date.now();
+let _zipBackupReminderShown = false;
+
+const ZIP_BACKUP_REMINDER_EDIT_THRESHOLD = 12;
+const ZIP_BACKUP_REMINDER_TIME_MS = 20 * 60 * 1000;
+const ZIP_BACKUP_REMINDER_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+function zipBackupStorageKey(projectId = STATE.currentProjectId) {
+  return projectId ? `fw_zip_backup_reminder_${projectId}` : '';
+}
+
+function startZipBackupReminderWindow() {
+  _projectOpenedAt = Date.now();
+  _zipBackupReminderShown = false;
+}
+
+function recordZipBackupDownload(projectId = STATE.currentProjectId) {
+  const key = zipBackupStorageKey(projectId);
+  if (!key) return;
+  try { localStorage.setItem(key, String(Date.now())); } catch (error) {}
+  _zipBackupReminderShown = true;
+}
+
+function maybeShowZipBackupReminder() {
+  if (!STATE.currentProjectId || _zipBackupReminderShown) return;
+  const now = Date.now();
+  const key = zipBackupStorageKey();
+  try {
+    const lastShown = Number(localStorage.getItem(key) || 0);
+    if (lastShown && now - lastShown < ZIP_BACKUP_REMINDER_COOLDOWN_MS) return;
+  } catch (error) {}
+
+  const enoughEdits = _undoStack.length >= ZIP_BACKUP_REMINDER_EDIT_THRESHOLD;
+  const enoughTime = now - _projectOpenedAt >= ZIP_BACKUP_REMINDER_TIME_MS;
+  if (!enoughEdits && !enoughTime) return;
+
+  _zipBackupReminderShown = true;
+  try { localStorage.setItem(key, String(now)); } catch (error) {}
+  if (document.getElementById('modal-backup-reminder')) {
+    openModal('modal-backup-reminder');
+  } else {
+    toast('Backup reminder: Download a ZIP copy if this website matters.', 'info');
+  }
+}
 
 function setSaveStatus(state, text = '') {
   _saveState = state;
@@ -58,6 +102,7 @@ function setSaveStatus(state, text = '') {
 
 function markDirty() {
   if (_saveState !== 'saving') setSaveStatus('dirty');
+  maybeShowZipBackupReminder();
 }
 
 function _snapshot() {
