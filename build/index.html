@@ -112,6 +112,14 @@ body.panel-resizing {
 body.panel-resizing iframe {
   pointer-events: none;
 }
+body.builder-canvas-resizing-y,
+body.builder-canvas-resizing-y * {
+  cursor: row-resize !important;
+}
+body.builder-canvas-resizing-x,
+body.builder-canvas-resizing-x * {
+  cursor: col-resize !important;
+}
 button { cursor: pointer; border: none; outline: none; font-family: inherit; font-size: 13px; }
 input, textarea, select { font-family: inherit; font-size: 13px; outline: none; }
 a { color: var(--accent); text-decoration: none; }
@@ -234,6 +242,10 @@ select.input { appearance: none; }
 #view-editor { flex-direction: column; }
 .header-wrapper { max-width: 1200px; margin: 0 auto; height: 72px; min-height: 72px; padding: 6px 24px; display: flex; align-items: center; justify-content: space-between; line-height: 1; gap: 16px; }
 .editor-header { background: var(--bg); border-bottom: 1px solid var(--border); height: 72px; min-height: 72px; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+.editor-header-left,
+.editor-header-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.editor-header-left { flex: 1; }
+.editor-header-right { justify-content: flex-end; }
 .editor-title { font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .editor-layout { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
@@ -293,6 +305,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .editor-toolbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 6px 12px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .device-btn { width: 42px; height: 32px; padding: 0; border-radius: 5px; background: transparent; border: 1px solid transparent; color: var(--ink); font-size: 16px; display: inline-flex; align-items: center; justify-content: center; }
 .device-btn.active, .device-btn:hover { border-color: var(--border); background: var(--bg3); color: var(--ink); }
+.canvas-tool-toggle.active { background: var(--gold) !important; color: var(--ink) !important; border-color: var(--ink) !important; }
 .device-icon { display: block; border: 2px solid currentColor; background: transparent; box-shadow: inset 0 -3px 0 currentColor; }
 .device-icon-desktop { width: 28px; height: 16px; }
 .device-icon-tablet { width: 17px; height: 23px; }
@@ -312,7 +325,7 @@ body.command-drag .layout-item:active { cursor: grabbing; }
 .panel-restore-btn[data-panel="right"] { right: 12px; }
 
 /* Right panel - properties */
-.editor-right { width: var(--builder-right-width, 260px); background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; height: 100%; min-height: 0; position: relative; }
+.editor-right { width: var(--builder-right-width, 260px); background: var(--bg2); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; height: 100%; min-height: 0; position: relative; }
 .panel-resize-handle {
   display: none;
   position: absolute;
@@ -355,7 +368,7 @@ body.panel-resizing .panel-resize-handle::after {
     display: block;
   }
 }
-.props-panel { padding: 12px; }
+.props-panel { flex: 1; min-height: 0; overflow-y: auto; padding: 12px; }
 .props-section { margin-bottom: 16px; }
 .props-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text2); margin-bottom: 8px; }
 .color-input-wrap { display: flex; gap: 6px; align-items: center; }
@@ -444,7 +457,7 @@ body.panel-resizing .panel-resize-handle::after {
 
 /* ===== MOBILE BOTTOM NAV ===== */
 .mobile-bottom-nav { display: none; background: var(--bg2); border-top: 1px solid var(--border); height: 56px; flex-shrink: 0; }
-.mob-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: transparent; border: none; color: var(--text2); font-size: 10px; font-weight: 500; padding: 6px 0; cursor: pointer; transition: color .15s; font-family: inherit; }
+.mob-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: transparent; border: none; color: var(--text2); font-size: 10px; font-weight: 500; padding: 6px 0; cursor: pointer; transition: color .15s, background-color .15s; font-family: inherit; }
 .mob-tab.active { color: var(--accent); }
 .mob-tab-icon { font-size: 20px; line-height: 1; color: var(--green); }
 
@@ -498,10 +511,16 @@ body.panel-resizing .panel-resize-handle::after {
   .editor-header {
     height: calc(72px + env(safe-area-inset-top, 0px));
     min-height: calc(72px + env(safe-area-inset-top, 0px));
-    padding: env(safe-area-inset-top, 0px) 8px 0;
-    gap: 5px;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top, 0px) 12px 0;
+    justify-content: space-between;
+    gap: 14px;
     z-index: 500;
   }
+  .editor-header-left { flex: 1; gap: 12px; }
+  .editor-header-right { flex-shrink: 0; gap: 8px; }
   #editor-project-name { flex: 1; }
   #mode-visual,
   #mode-code {
@@ -840,6 +859,33 @@ html[data-theme="dark"] .builder-theme-toggle::after {
   background: var(--rust) !important;
   color: var(--paper) !important;
   border-color: var(--ink) !important;
+}
+
+.mobile-bottom-nav {
+  background: var(--paper) !important;
+  border-top: var(--line) !important;
+  box-shadow: 0 -4px 0 var(--shadow-color);
+  gap: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.mob-tab {
+  color: var(--ink) !important;
+  font-weight: 900 !important;
+  border: 2px solid transparent !important;
+  border-radius: 0;
+}
+
+.mob-tab.active {
+  background: var(--gold) !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+  box-shadow: none;
+}
+
+.mob-tab.active .mob-tab-icon {
+  color: var(--rust) !important;
 }
 
 .builder-theme-toggle:hover {
@@ -1309,6 +1355,18 @@ select:hover {
       </div>
     </div>
     <div class="settings-section">
+      <div class="settings-section-title">Canvas Toolbars</div>
+      <div class="settings-section-desc">Choose which in-canvas editing controls appear while you work.</div>
+      <label class="flex items-center gap-2" style="margin-bottom:10px;cursor:pointer;">
+        <input type="checkbox" id="canvas-toolbar-block-controls" onchange="updateCanvasToolbarSetting('blockControls', this.checked)">
+        <span>Show move / delete mini toolbar</span>
+      </label>
+      <label class="flex items-center gap-2" style="cursor:pointer;">
+        <input type="checkbox" id="canvas-toolbar-context" onchange="updateCanvasToolbarSetting('contextToolbar', this.checked)">
+        <span>Show contextual property toolbar</span>
+      </label>
+    </div>
+    <div class="settings-section">
       <div class="flex items-center gap-2" style="margin-bottom:4px">
         <div class="settings-section-title">Offline Builder</div>
         <span id="offline-status-badge" class="status-badge pending">● Checking</span>
@@ -1380,27 +1438,31 @@ select:hover {
 <!-- ==================== EDITOR ==================== -->
 <div id="view-editor">
   <div class="editor-header">
-    <button id="editor-back-btn" class="btn btn-ghost btn-sm" onclick="exitEditor()">← <span class="d-only">Dashboard</span></button>
-    <div class="editor-title" id="editor-project-name"></div>
-    <div class="save-status d-only" id="save-status" data-state="saved">Saved</div>
-    <div class="flex items-center gap-1 ml-auto d-only">
-      <button id="btn-undo" class="btn btn-ghost btn-sm" onclick="undo()" title="Undo (Ctrl+Z)" disabled style="font-size:16px;padding:4px 7px;">↩</button>
-      <button id="btn-redo" class="btn btn-ghost btn-sm" onclick="redo()" title="Redo (Ctrl+Shift+Z)" disabled style="font-size:16px;padding:4px 7px;">↪</button>
+    <div class="editor-header-left">
+      <button id="editor-back-btn" class="btn btn-ghost btn-sm" onclick="exitEditor()">← <span class="d-only">Dashboard</span></button>
+      <div class="editor-title" id="editor-project-name"></div>
     </div>
-    <div class="editor-mode-tabs d-only" id="editor-mode-tabs">
-      <button class="editor-mode-tab active" data-mode="visual" onclick="switchEditorMode('visual')">Visual</button>
-      <button class="editor-mode-tab" data-mode="code" onclick="switchEditorMode('code')">Code</button>
+    <div class="editor-header-right">
+      <div class="save-status d-only" id="save-status" data-state="saved">Saved</div>
+      <div class="flex items-center gap-1 d-only">
+        <button id="btn-undo" class="btn btn-ghost btn-sm" onclick="undo()" title="Undo (Ctrl+Z)" disabled style="font-size:16px;padding:4px 7px;">↩</button>
+        <button id="btn-redo" class="btn btn-ghost btn-sm" onclick="redo()" title="Redo (Ctrl+Shift+Z)" disabled style="font-size:16px;padding:4px 7px;">↪</button>
+      </div>
+      <div class="editor-mode-tabs d-only" id="editor-mode-tabs">
+        <button class="editor-mode-tab active" data-mode="visual" onclick="switchEditorMode('visual')">Visual</button>
+        <button class="editor-mode-tab" data-mode="code" onclick="switchEditorMode('code')">Code</button>
+      </div>
+      <button class="btn btn-secondary btn-sm d-only" onclick="openLibraryModal()">▦ Library</button>
+      <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)"><span style="color:var(--green);">▧</span> Images</button>
+      <button class="btn btn-secondary btn-sm d-only" onclick="openHelpDocs()">? Help</button>
+      <button class="btn btn-secondary btn-sm d-only" onclick="openDesignHealthModal()">◇ Health</button>
+      <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
+      <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
+      <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
+      <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
+      <!-- Mobile overflow trigger -->
+      <button class="btn btn-ghost btn-sm m-only builder-menu-toggle" onclick="toggleMobileOverflow(event)" style="font-size:18px;padding:4px 8px;">⋮</button>
     </div>
-    <button class="btn btn-secondary btn-sm d-only" onclick="openLibraryModal()">▦ Library</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)"><span style="color:var(--green);">▧</span> Images</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="openHelpDocs()">? Help</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="openDesignHealthModal()">◇ Health</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
-    <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
-    <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
-    <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
-    <!-- Mobile overflow trigger -->
-    <button class="btn btn-ghost btn-sm m-only builder-menu-toggle" onclick="toggleMobileOverflow(event)" style="font-size:18px;padding:4px 8px;">⋮</button>
   </div>
 
   <!-- Mobile overflow menu (hidden by default) -->
@@ -1413,7 +1475,6 @@ select:hover {
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openDesignHealthModal()">◇ &nbsp;Design Health</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()"><span style="color:var(--green);">◉</span> &nbsp;Preview</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();downloadZip()">⬇ &nbsp;Download ZIP</button>
-    <button class="mob-overflow-item" onclick="closeMobileOverflow();toggleBuilderTheme()">◐ &nbsp;Toggle Theme</button>
     <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">▲ &nbsp;Deploy</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();switchEditorMode('code')">＜/＞ &nbsp;Code Editor</button>
   </div>
@@ -1481,6 +1542,8 @@ select:hover {
         <button class="device-btn" data-device="tablet" onclick="setDevice('tablet')" title="Tablet 768px" aria-label="Tablet preview, 768px"><span class="device-icon device-icon-tablet" aria-hidden="true"></span></button>
         <button class="device-btn" data-device="mobile" onclick="setDevice('mobile')" title="Mobile phone 390px" aria-label="Mobile preview, 390px"><span class="device-icon device-icon-mobile" aria-hidden="true"></span></button>
         <button class="btn btn-secondary btn-sm d-only" onclick="toggleCanvasFocusMode()" title="Toggle canvas focus mode">Focus Canvas</button>
+        <button class="btn btn-secondary btn-sm d-only canvas-tool-toggle" id="btn-toggle-block-controls" type="button" onclick="toggleCanvasToolbarSetting('blockControls')" title="Show/hide move and delete toolbar" aria-pressed="true">Move Tools</button>
+        <button class="btn btn-secondary btn-sm d-only canvas-tool-toggle" id="btn-toggle-context-toolbar" type="button" onclick="toggleCanvasToolbarSetting('contextToolbar')" title="Show/hide contextual property toolbar" aria-pressed="true">Quick Props</button>
         <span class="text-muted text-sm ml-auto" id="page-url-display"></span>
       </div>
       <button class="btn btn-secondary btn-sm panel-restore-btn" type="button" data-panel="left" onclick="toggleBuilderPanel('left', false)" title="Open left panel" aria-label="Open left panel">Add / Layout</button>

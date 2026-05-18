@@ -7,8 +7,22 @@ function loadSettingsForm() {
   document.getElementById('cf-token').value = cf.token || '';
   document.getElementById('cf-account-id').value = cf.accountId || '';
   setBuilderTheme(getBuilderTheme());
+  syncCanvasToolbarSettingsForm();
   updateIntegrationBadges();
   updateOfflineStatus();
+}
+
+function syncCanvasToolbarSettingsForm(settings = getCanvasToolbarSettings()) {
+  const blockControls = document.getElementById('canvas-toolbar-block-controls');
+  const contextToolbar = document.getElementById('canvas-toolbar-context');
+  if (blockControls) blockControls.checked = !!settings.blockControls;
+  if (contextToolbar) contextToolbar.checked = !!settings.contextToolbar;
+  syncCanvasToolbarButtons(settings);
+}
+
+function updateCanvasToolbarSetting(key, checked) {
+  setCanvasToolbarSettings({ [key]: !!checked });
+  toast('Canvas toolbar setting updated', 'success');
 }
 
 function updateIntegrationBadges() {

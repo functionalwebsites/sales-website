@@ -276,6 +276,44 @@ function toggleCanvasFocusMode() {
   });
 }
 
+function getCanvasToolbarSettings() {
+  const saved = LS.get('canvasToolbarSettings') || {};
+  return {
+    blockControls: saved.blockControls !== false,
+    contextToolbar: saved.contextToolbar !== false
+  };
+}
+
+function setCanvasToolbarSettings(nextState = {}) {
+  const current = getCanvasToolbarSettings();
+  const next = {
+    ...current,
+    ...nextState
+  };
+  LS.set('canvasToolbarSettings', next);
+  syncCanvasToolbarButtons(next);
+  if (typeof syncCanvasToolbarSettingsForm === 'function') syncCanvasToolbarSettingsForm(next);
+  if (typeof renderCanvas === 'function' && STATE.currentProjectId) renderCanvas();
+}
+
+function syncCanvasToolbarButtons(settings = getCanvasToolbarSettings()) {
+  const blockControlsBtn = document.getElementById('btn-toggle-block-controls');
+  const contextToolbarBtn = document.getElementById('btn-toggle-context-toolbar');
+  if (blockControlsBtn) {
+    blockControlsBtn.classList.toggle('active', !!settings.blockControls);
+    blockControlsBtn.setAttribute('aria-pressed', settings.blockControls ? 'true' : 'false');
+  }
+  if (contextToolbarBtn) {
+    contextToolbarBtn.classList.toggle('active', !!settings.contextToolbar);
+    contextToolbarBtn.setAttribute('aria-pressed', settings.contextToolbar ? 'true' : 'false');
+  }
+}
+
+function toggleCanvasToolbarSetting(key) {
+  const current = getCanvasToolbarSettings();
+  setCanvasToolbarSettings({ [key]: !current[key] });
+}
+
 function initBuilderPanelResizers() {
   const layout = document.getElementById('mode-visual');
   if (!layout || layout.dataset.resizersReady === 'true') return;

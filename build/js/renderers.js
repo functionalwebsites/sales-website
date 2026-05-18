@@ -12,11 +12,7 @@ function inlineItemEditAttrs(block, list, index, key, mode = 'text') {
 function blockResizeHandles(block) {
   const type = block?.type || '';
   const heightTypes = new Set(['hero', 'section', 'columns2', 'columns3', 'spacer', 'image', 'cards', 'features', 'testimonialWall', 'cta', 'form', 'youtubeEmbed']);
-  const widthTypes = new Set(['hero', 'section', 'image', 'youtubeEmbed', 'testimonialWall']);
-  return [
-    heightTypes.has(type) ? '<div class="block-resize-handle block-resize-y" data-resize-axis="y" title="Drag to resize height"></div>' : '',
-    widthTypes.has(type) ? '<div class="block-resize-handle block-resize-x" data-resize-axis="x" title="Drag to resize width"></div>' : '',
-  ].join('');
+  return heightTypes.has(type) ? '<div class="block-resize-handle block-resize-y" data-resize-axis="y" title="Drag to resize height"></div>' : '';
 }
 
 function getColumnRatios(block, count) {
