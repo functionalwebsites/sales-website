@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="How to prevent website form spam with honeypots, CAPTCHA, Cloudflare, mailto links, rate limiting, validation, and safer form handling.">
+  <link rel="canonical" href="https://functionalwebsites.com/blog/prevent-spam-on-website-forms/">
+  <meta property="og:title" content="How to Prevent Spam on a Website">
+  <meta property="og:description" content="Practical anti-spam options for small business websites, including honeypots, CAPTCHA, Cloudflare, mailto links, and safer form handling.">
+  <meta property="og:url" content="https://functionalwebsites.com/blog/prevent-spam-on-website-forms/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://functionalwebsites.com/blog/assets/prevent-spam-on-website-forms.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="How to Prevent Spam on a Website - Functional Websites">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How to Prevent Spam on a Website">
+  <meta name="twitter:description" content="Practical anti-spam options for small business websites.">
+  <meta name="twitter:image" content="https://functionalwebsites.com/blog/assets/prevent-spam-on-website-forms.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#10100d">
+  <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
+  <meta name="theme-color" content="#0f0f13">
+  <title>How to Prevent Spam on a Website - Functional Websites</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/blog/blog.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "How to Prevent Spam on a Website",
+      "description": "Practical anti-spam options for small business websites, including honeypots, CAPTCHA, Cloudflare, mailto links, and safer form handling.",
+      "author": { "@type": "Person", "name": "Cooper Carrasco" },
+      "publisher": { "@type": "Organization", "name": "Functional Websites" },
+      "image": "https://functionalwebsites.com/blog/assets/prevent-spam-on-website-forms.png",
+      "datePublished": "2026-08-19",
+      "dateModified": "2026-08-19",
+      "mainEntityOfPage": "https://functionalwebsites.com/blog/prevent-spam-on-website-forms/"
+    }
+  </script>
+</head>
+<body>
+  <div class="blog-progress" aria-hidden="true"><span class="blog-progress-bar" data-blog-progress></span></div>
+  <div id="header-placeholder"></div>
+  <header class="blog-hero">
+    <img class="blog-hero-art" src="/blog/assets/prevent-spam-on-website-forms.png" alt="" width="1200" height="630" fetchpriority="high">
+    <div class="blog-hero-inner">
+      <div class="blog-kicker">Website Security</div>
+      <h1>How to Prevent Spam on a Website</h1>
+      <p class="blog-deck">Form spam is not just annoying. It wastes time, fills inboxes with junk, and can expose weak form handling. The best fix is usually a stack of small defenses, not one magic checkbox.</p>
+      <div class="blog-meta">
+        <span>August 19, 2026</span>
+        <span>By Cooper Carrasco</span>
+        <span>9 min read</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="blog-page">
+    <article class="blog-article" data-blog-article>
+      <p>Most website spam comes through contact forms, quote forms, newsletter forms, comment boxes, and login pages. Bots look for a public endpoint, fill every visible field, and submit faster than a real person ever would.</p>
+      <p>The goal is not to make the form impossible to use. The goal is to make spam expensive for bots while keeping the path easy for real visitors.</p>
+
+      <div class="blog-callout">
+        <strong>Best first move</strong>
+        <p>Use a honeypot, validate every submission on the server, rate limit repeated attempts, and add CAPTCHA or Cloudflare protection only when the spam volume justifies the extra friction.</p>
+      </div>
+
+      <h2 id="use-a-honeypot-field">Use a honeypot field</h2>
+      <p>A honeypot is a form field that humans should never fill out. You hide it from people with CSS, leave it visible in the HTML, and reject the submission if that field contains anything. Many bots fill every field they find, so this catches simple automated spam without bothering real users.</p>
+      <p>Implementation:</p>
+      <ol>
+        <li>Add an extra field with a boring name like <code>company_url</code> or <code>website</code>.</li>
+        <li>Hide it visually, but do not use <code>display: none</code> because some bots ignore hidden fields.</li>
+        <li>On the server, reject the message if the field is not empty.</li>
+      </ol>
+      <pre><code class="language-html">&lt;label class="hp-field"&gt;
+  Leave this field empty
+  &lt;input type="text" name="company_url" tabindex="-1" autocomplete="off"&gt;
+&lt;/label&gt;</code></pre>
+      <pre><code class="language-css">.hp-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}</code></pre>
+      <pre><code class="language-js">if (formData.get('company_url')) {
+  return new Response('Rejected', { status: 400 });
+}</code></pre>
+      <p>Honeypots are not enough by themselves, but they are cheap, invisible to normal users, and worth adding to most forms.</p>
+
+      <h2 id="add-captcha-when-needed">Add CAPTCHA when needed</h2>
+      <p>CAPTCHA tools try to prove that a visitor is human before accepting a submission. Google reCAPTCHA, hCaptcha, and Cloudflare Turnstile are common options. They are useful when spam is getting through simpler filters, but they add a dependency and can make the form feel heavier.</p>
+      <p>Implementation:</p>
+      <ol>
+        <li>Create keys with your CAPTCHA provider.</li>
+        <li>Add the provider's widget or script to the form page.</li>
+        <li>Send the returned token with the form submission.</li>
+        <li>Verify that token on the server before sending an email, saving data, or triggering automation.</li>
+      </ol>
+      <p>This last step matters. A client-side CAPTCHA widget alone is not protection. For example, Google's reCAPTCHA verification docs explain that the response token must be sent to the verification API, and Cloudflare's Turnstile docs also state that server-side validation is mandatory.</p>
+      <p>Official implementation references: <a href="https://developers.google.com/recaptcha/docs/verify">Google reCAPTCHA server-side verification</a>, <a href="https://docs.hcaptcha.com/">hCaptcha docs</a>, and <a href="https://developers.cloudflare.com/turnstile/get-started/server-side-validation/">Cloudflare Turnstile server-side validation</a>.</p>
+
+      <h2 id="use-cloudflare-protection">Use Cloudflare protection</h2>
+      <p>Cloudflare can help before the request ever reaches your site. If your DNS runs through Cloudflare, you can use firewall rules, bot protections, rate limiting, managed challenges, and Turnstile.</p>
+      <p>Implementation options:</p>
+      <ul>
+        <li><strong>Cloudflare Turnstile:</strong> Add a privacy-friendly challenge to forms, then validate the token on the server.</li>
+        <li><strong>Rate limiting:</strong> Limit repeated POST requests to your form endpoint from the same IP address or suspicious pattern.</li>
+        <li><strong>WAF rules:</strong> Challenge or block requests from countries you do not serve, known bad paths, empty user agents, or abusive request patterns.</li>
+        <li><strong>Bot Fight Mode or bot rules:</strong> Use Cloudflare's bot controls when generic automated traffic is a problem across the whole site.</li>
+      </ul>
+      <p>Cloudflare is strongest when you combine edge rules with server-side checks. Do not rely on an edge challenge as your only form validation layer.</p>
+
+      <h2 id="ditch-the-contact-form">Ditch the contact form</h2>
+      <p>Sometimes the best anti-spam move is removing the form completely. If your website only needs basic inquiries, replace the contact form with a <code>mailto:</code> link or a generated mailto contact form. The visitor's email app opens, and your site no longer exposes a form endpoint for bots to hammer.</p>
+      <p>You can build one with the <a href="/tools/contact-form/">Functional Websites Mailto Contact Form Builder</a>.</p>
+      <p>Implementation:</p>
+      <pre><code class="language-html">&lt;a href="mailto:hello@example.com?subject=Website%20Inquiry"&gt;
+  Email us
+&lt;/a&gt;</code></pre>
+      <p>A mailto setup has tradeoffs: it depends on the visitor's email app, it is harder to track conversions, and it may not feel as polished as an embedded form. But for many small business sites, that tradeoff is better than paying for a backend form service and filtering junk all day.</p>
+
+      <h2 id="rate-limit-form-submissions">Rate limit form submissions</h2>
+      <p>Rate limiting stops the same source from submitting too many times in a short window. It will not catch every botnet, but it blocks the obvious floods.</p>
+      <p>Implementation:</p>
+      <ul>
+        <li>Allow only a small number of form submissions per IP address per minute.</li>
+        <li>Use a longer cooldown for repeated failures.</li>
+        <li>Return a generic error so attackers do not learn which rule they hit.</li>
+        <li>Apply the limit before sending email or calling third-party services.</li>
+      </ul>
+      <p>On static sites, you can often handle this through your form provider, Cloudflare rate limiting, a serverless function, or your backend API gateway.</p>
+
+      <h2 id="validate-input-on-the-server">Validate input on the server</h2>
+      <p>Client-side validation is helpful for user experience, but attackers can skip it. The server must validate every field again before accepting the submission.</p>
+      <p>Implementation:</p>
+      <ul>
+        <li>Require only the fields you actually need.</li>
+        <li>Set minimum and maximum lengths for each field.</li>
+        <li>Use allowlists where possible, especially for dropdowns and hidden values.</li>
+        <li>Reject links in message fields if you do not need them.</li>
+        <li>Reject messages with too many repeated characters, suspicious HTML, or known spam phrases.</li>
+      </ul>
+      <p>OWASP's <a href="https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html">Input Validation Cheat Sheet</a> is a good reference for building server-side validation rules.</p>
+
+      <h2 id="watch-for-code-injection">Watch for code injection</h2>
+      <p>Spam is annoying. Code injection is dangerous. Any form that accepts text can be abused if the backend stores, renders, emails, logs, or forwards that text unsafely.</p>
+      <p>Common problems include:</p>
+      <ul>
+        <li><strong>Cross-site scripting:</strong> An attacker submits HTML or JavaScript that later appears in an admin panel or public page.</li>
+        <li><strong>SQL injection:</strong> Form data is placed into a database query without parameterized queries.</li>
+        <li><strong>Email header injection:</strong> User input is allowed inside email headers like <code>To</code>, <code>From</code>, or <code>Subject</code>.</li>
+        <li><strong>Command injection:</strong> Form data reaches shell commands, file paths, or automation scripts without strict validation.</li>
+      </ul>
+      <p>Implementation rules:</p>
+      <ul>
+        <li>Use parameterized database queries.</li>
+        <li>Escape output based on where it is rendered: HTML, attribute, URL, JavaScript, or plain text.</li>
+        <li>Never trust hidden fields, dropdown values, or disabled inputs.</li>
+        <li>Do not put raw form data into email headers.</li>
+        <li>Keep secrets, API keys, SMTP credentials, and webhook tokens off the client.</li>
+      </ul>
+
+      <h2 id="make-spam-less-profitable">Make spam less profitable</h2>
+      <p>Small details can reduce spam without adding much complexity:</p>
+      <ul>
+        <li>Add a minimum time check. If the form loads and submits in one second, it is probably not a real person.</li>
+        <li>Block duplicate messages sent repeatedly in a short period.</li>
+        <li>Log rejected submissions so you can tune rules without guessing.</li>
+        <li>Use disposable-email checks only when they fit the business. They can block real people too.</li>
+        <li>Keep form endpoints obscure but do not treat obscurity as security.</li>
+        <li>Disable comments or public submissions unless they create real business value.</li>
+      </ul>
+
+      <h2 id="recommended-stack">Recommended anti-spam stack</h2>
+      <p>For a normal small business website, start with this order:</p>
+      <ol>
+        <li>Use a mailto link if you do not truly need an embedded form.</li>
+        <li>If you keep the form, add a honeypot field.</li>
+        <li>Validate and sanitize everything on the server.</li>
+        <li>Rate limit the endpoint.</li>
+        <li>Add Cloudflare Turnstile or another CAPTCHA only when simpler defenses are not enough.</li>
+        <li>Monitor rejected submissions and adjust carefully.</li>
+      </ol>
+      <p>The best setup is boring: fewer public endpoints, layered validation, no raw input, and no unnecessary friction for real customers.</p>
+    </article>
+    <aside class="blog-toc" data-blog-toc aria-labelledby="toc-heading">
+      <h2 id="toc-heading">Table of Contents</h2>
+    </aside>
+  </main>
+
+  <section class="blog-next">
+    <div class="blog-next-inner">
+      <strong>Need a simpler contact option?</strong>
+      <a class="btn btn-secondary" href="/tools/contact-form/">Build a mailto form</a>
+    </div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+  <script src="/components/components.js" defer></script>
+  <script src="/blog/blog.js" defer></script>
+</body>
+</html>

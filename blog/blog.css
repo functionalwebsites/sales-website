@@ -165,6 +165,32 @@
   margin-top: 8px;
 }
 
+.blog-article code {
+  padding: 2px 5px;
+  background: var(--fw-paper);
+  border: 1px solid rgba(16, 16, 13, 0.28);
+  border-radius: 4px;
+  font-size: 0.92em;
+}
+
+.blog-article pre {
+  overflow-x: auto;
+  padding: 16px;
+  background: var(--fw-paper);
+  border: var(--fw-border-width) solid var(--fw-ink);
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow-sm);
+}
+
+.blog-article pre code {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 .blog-callout {
   padding: 18px;
   background: var(--fw-paper);
