@@ -95,18 +95,44 @@
 
       <h2 id="add-captcha-when-needed">Add CAPTCHA when needed</h2>
       <p>CAPTCHA tools try to prove that a visitor is human before accepting a submission. Google reCAPTCHA, hCaptcha, and Cloudflare Turnstile are common options. They are useful when spam is getting through simpler filters, but they add a dependency and can make the form feel heavier.</p>
-      <p>Implementation:</p>
+      <p>The basic setup is the same for most CAPTCHA tools:</p>
       <ol>
-        <li>Create keys with your CAPTCHA provider.</li>
-        <li>Add the provider's widget or script to the form page.</li>
-        <li>Send the returned token with the form submission.</li>
-        <li>Verify that token on the server before sending an email, saving data, or triggering automation.</li>
+        <li>Create an account with the CAPTCHA provider. For reCAPTCHA, use a Google account. For hCaptcha, create an hCaptcha account. For Cloudflare Turnstile, use a Cloudflare account.</li>
+        <li>Add your website domain inside the provider's dashboard. This tells the provider which site is allowed to use the CAPTCHA.</li>
+        <li>Copy the <strong>site key</strong> into the public form page. This key is safe to show in the browser.</li>
+        <li>Store the <strong>secret key</strong> only on the server, serverless function, or form service. Do not put the secret key in HTML or frontend JavaScript.</li>
+        <li>Add the provider's widget or script to the form page so the visitor receives a verification token.</li>
+        <li>Send that token with the form submission.</li>
+        <li>Verify the token on the server before sending an email, saving data, or triggering automation.</li>
       </ol>
+      <p>Think of the site key as the public lock and the secret key as the private proof. The browser can request a token, but your backend still has to ask the CAPTCHA provider whether that token is valid.</p>
+      <p>If you are using a form provider, look for a setting like <strong>Spam protection</strong>, <strong>reCAPTCHA</strong>, <strong>hCaptcha</strong>, or <strong>Turnstile</strong> in that provider's dashboard. Some form services handle the server-side verification for you. If you built the form yourself, your form endpoint has to do that verification before it accepts the message.</p>
       <p>This last step matters. A client-side CAPTCHA widget alone is not protection. For example, Google's reCAPTCHA verification docs explain that the response token must be sent to the verification API, and Cloudflare's Turnstile docs also state that server-side validation is mandatory.</p>
       <p>Official implementation references: <a href="https://developers.google.com/recaptcha/docs/verify">Google reCAPTCHA server-side verification</a>, <a href="https://docs.hcaptcha.com/">hCaptcha docs</a>, and <a href="https://developers.cloudflare.com/turnstile/get-started/server-side-validation/">Cloudflare Turnstile server-side validation</a>.</p>
 
       <h2 id="use-cloudflare-protection">Use Cloudflare protection</h2>
       <p>Cloudflare can help before the request ever reaches your site. If your DNS runs through Cloudflare, you can use firewall rules, bot protections, rate limiting, managed challenges, and Turnstile.</p>
+      <p>To use Cloudflare, you first need a Cloudflare account and your domain added to Cloudflare. In plain English, that means you log in at Cloudflare, add your website, and update your domain's nameservers where you bought the domain. Once the nameservers point to Cloudflare, traffic can pass through Cloudflare before it reaches your host.</p>
+      <p>Cloudflare setup usually looks like this:</p>
+      <ol>
+        <li>Create or log in to your Cloudflare account.</li>
+        <li>Add your domain, such as <code>example.com</code>.</li>
+        <li>Review the DNS records Cloudflare imports. Make sure the important records for your website and email are present.</li>
+        <li>Copy the Cloudflare nameservers and paste them into your domain registrar, such as GoDaddy, Namecheap, Squarespace Domains, or wherever the domain was purchased.</li>
+        <li>Wait for DNS to update. This can be quick, but it is normal for it to take a few hours.</li>
+        <li>After Cloudflare is active, turn on the specific protections you need.</li>
+      </ol>
+      <p>For form spam, the most relevant Cloudflare product is often <strong>Turnstile</strong>. In the Cloudflare dashboard, open Turnstile, create a new widget, add your domain, then copy the site key and secret key. The site key goes in the form page. The secret key goes in your backend or serverless function so it can call Cloudflare's Siteverify endpoint.</p>
+      <pre><code class="language-html">&lt;script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer&gt;&lt;/script&gt;
+
+&lt;form method="post" action="/api/contact"&gt;
+  &lt;input name="name" required&gt;
+  &lt;input type="email" name="email" required&gt;
+  &lt;textarea name="message" required&gt;&lt;/textarea&gt;
+  &lt;div class="cf-turnstile" data-sitekey="YOUR_PUBLIC_SITE_KEY"&gt;&lt;/div&gt;
+  &lt;button type="submit"&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      <p>That widget is only the frontend half. Your form endpoint also needs to read the Turnstile token and verify it with Cloudflare using the secret key. If the verification fails, do not send the email and do not save the submission.</p>
       <p>Implementation options:</p>
       <ul>
         <li><strong>Cloudflare Turnstile:</strong> Add a privacy-friendly challenge to forms, then validate the token on the server.</li>
@@ -114,6 +140,7 @@
         <li><strong>WAF rules:</strong> Challenge or block requests from countries you do not serve, known bad paths, empty user agents, or abusive request patterns.</li>
         <li><strong>Bot Fight Mode or bot rules:</strong> Use Cloudflare's bot controls when generic automated traffic is a problem across the whole site.</li>
       </ul>
+      <p>If DNS, nameservers, keys, or backend verification sound like more than you want to deal with, that is a good reason to get help. We can set up the right option for your site, connect the keys correctly, and test that spam protection works before the form goes live.</p>
       <p>Cloudflare is strongest when you combine edge rules with server-side checks. Do not rely on an edge challenge as your only form validation layer.</p>
 
       <h2 id="ditch-the-contact-form">Ditch the contact form</h2>
@@ -187,7 +214,7 @@
         <li>Add Cloudflare Turnstile or another CAPTCHA only when simpler defenses are not enough.</li>
         <li>Monitor rejected submissions and adjust carefully.</li>
       </ol>
-      <p>The best setup is boring: fewer public endpoints, layered validation, no raw input, and no unnecessary friction for real customers.</p>
+      <p>The best setup is boring: fewer public endpoints, layered validation, no raw input, and no unnecessary friction for real customers. If you want help choosing the right setup or connecting Cloudflare, CAPTCHA, or a safer form workflow, <a href="/get-a-quote/">Functional Websites can help</a>.</p>
     </article>
     <aside class="blog-toc" data-blog-toc aria-labelledby="toc-heading">
       <h2 id="toc-heading">Table of Contents</h2>
