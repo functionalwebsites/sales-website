@@ -909,6 +909,7 @@ footer {
     </div>
     <div class="footer-section">
       <h4>Resources</h4>
+      <a href="https://functionalwebsites.com/qr/">Free QR Code Generator</a>
       <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
       <a href="https://build.functionalwebsites.com/tools/contact-form/">Contact Form Builder</a>
       <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>

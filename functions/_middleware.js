@@ -18,6 +18,11 @@ const PRO_MARKETPLACE_ASSET_PATHS = new Set([
 export async function onRequest(context) {
   const url = new URL(context.request.url);
 
+  if (url.pathname === '/qrcode' || url.pathname === '/qrcode/') {
+    url.pathname = '/qr/';
+    return Response.redirect(url.toString(), 308);
+  }
+
   if (PRO_MARKETPLACE_ASSET_PATHS.has(url.pathname)) {
     return new Response('Not found', { status: 404 });
   }

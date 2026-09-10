@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free QR Code Generator - Functional Websites</title>
+  <meta name="description" content="Make a free QR code for a website or text. Instant preview, PNG and SVG downloads. No signup, subscriptions, or scan limits.">
+  <link rel="canonical" href="https://functionalwebsites.com/qr/">
+  <link rel="icon" type="image/png" href="/img/favicon/favicon-32x32.png">
+  <meta name="theme-color" content="#f5efe0">
+  <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/qr/qr.css">
+  <script src="/components/components.js" defer></script>
+  <script src="/qr/vendor/qrcode.js" defer></script>
+  <script src="/qr/vendor/qrcode_UTF8.js" defer></script>
+  <script src="/qr/qr.js" defer></script>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main class="qr-app" id="main">
+    <header class="qr-hero">
+      <p class="eyebrow"><span></span> A SMALL TOOL. TOTALLY FREE.</p>
+      <h1>Make it <span>scannable.</span></h1>
+      <p>A link, a little text, a QR code. That’s it.<br>No signup. No subscriptions. No scan limits.</p>
+    </header>
+    <div class="qr-workspace">
+      <section class="qr-panel qr-controls" aria-labelledby="content-heading">
+        <h2 id="content-heading"><span class="step">01</span> Add your content</h2>
+        <fieldset class="type-switch">
+          <legend class="sr-only">Content type</legend>
+          <label><input type="radio" name="type" value="url" checked><span>Website URL</span></label>
+          <label><input type="radio" name="type" value="text"><span>Plain text</span></label>
+        </fieldset>
+        <label class="field-label" for="content" id="content-label">Where should your code go?</label>
+        <textarea id="content" rows="3" placeholder="https://yourwebsite.com" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="content-help qr-status"></textarea>
+        <p class="hint" id="content-help">Paste a link. We’ll add https:// if you leave it out.</p>
+        <div class="qr-options">
+          <div><label class="field-label" for="color">Code color</label><select id="color"><option value="#10100d">Original ink</option><option value="#244d67">Denim blue</option><option value="#b9482e">Rust red</option></select></div>
+          <div><label class="field-label" for="size">PNG size</label><select id="size"><option value="512">512 × 512 px</option><option value="1024" selected>1024 × 1024 px</option><option value="2048">2048 × 2048 px</option></select></div>
+        </div>
+        <p class="local-note">↳ Made right in your browser. Your content isn’t sent to a QR service.</p>
+      </section>
+      <section class="qr-panel qr-output" aria-labelledby="preview-heading">
+        <div class="preview-heading"><h2 id="preview-heading"><span class="step">02</span> Grab your code</h2><span class="live-tag">LIVE PREVIEW</span></div>
+        <div class="qr-preview" id="preview"><div class="empty-preview"><span aria-hidden="true">[ QR ]</span><p>Your code goes here.<br>Add a link or text to get started.</p></div></div>
+        <p id="qr-status" role="status" aria-live="polite">Ready when you are.</p>
+        <div class="download-actions"><button type="button" id="download-png" disabled>Download PNG <span aria-hidden="true">↓</span></button><button type="button" id="download-svg" disabled>SVG <span aria-hidden="true">↓</span></button></div>
+        <p class="hint">PNG for everyday use. SVG for sharp prints at any size.</p>
+      </section>
+    </div>
+    <noscript><p class="qr-panel">Please enable JavaScript to generate and download a QR code in your browser.</p></noscript>
+    <section class="qr-notes" aria-label="Good to know">
+      <article><h3>Yours to keep.</h3><p>Download as many as you need. No watermark, account, or payment required.</p></article>
+      <article><h3>No expiration date.</h3><p>Your content is built into the code. Website codes work as long as the destination stays available; changing the link means making a new code.</p></article>
+      <article><h3>Print. Scan. Done.</h3><p>Keep the white border and test with your phone before printing. Shorter links make simpler, easier-to-scan codes.</p></article>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+</body>
+</html>
