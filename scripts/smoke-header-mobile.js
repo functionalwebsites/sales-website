@@ -25,10 +25,29 @@ const PAGES = [
   '/docs/getting-started/',
   '/docs/github/',
   '/build/',
+  '/docs/',
+  '/docs/cloudflare/',
+  '/docs/clone-static/',
+  '/docs/custom-blocks/',
+  '/docs/custom-templates/',
+  '/docs/export-selfhost/',
+  '/get-a-quote/',
+  '/pay/',
+  '/blog/',
+  '/blog/what-is-a-static-website/',
+  '/blog/dynamic-vs-static-websites/',
+  '/blog/prevent-spam-on-website-forms/',
+  '/blog/write/',
+  '/qr/',
+  '/tools/',
+  '/tools/contact-form/',
+  '/tools/invoice/',
+  '/copy/',
 ];
 const VIEWPORTS = [
   { width: 390, height: 844 },
   { width: 630, height: 844 },
+  { width: 1440, height: 900 },
 ];
 
 function findChrome() {
@@ -122,6 +141,9 @@ function connect(wsUrl) {
             listeners.set(method, [...list, fn]);
           });
         },
+        on(method, handler) {
+          listeners.set(method, [...(listeners.get(method) || []), handler]);
+        },
         close() {
           ws.close();
         },
@@ -148,7 +170,7 @@ async function navigate(client, url, viewport) {
     width: viewport.width,
     height: viewport.height,
     deviceScaleFactor: 2,
-    mobile: true,
+    mobile: viewport.width <= 768,
   });
   const loaded = client.once('Page.loadEventFired');
   await client.send('Page.navigate', { url });
@@ -202,7 +224,8 @@ const headerMetricsExpression = `(() => {
     navVisible: visible(nav),
     builderUnlockVisible: visible(builderUnlock),
     proBannerVisible: visible(proBanner),
-    hasSiteHeader: Boolean(menu && mobileBuild),
+    brokenImages: Array.from(document.images).filter(img => img.currentSrc && img.complete && !img.naturalWidth).map(img => img.currentSrc),
+    hasSiteHeader: Boolean(menu && mobileBuild && visible(placeholder)),
     hasBuilderDashboard: Boolean(document.querySelector('#view-dashboard .header-wrapper')),
   };
 })()`;
@@ -218,7 +241,9 @@ async function assertPage(client, page, viewport) {
     failures.push(`horizontal overflow: scrollWidth ${metrics.scrollWidth}`);
   }
 
-  if (metrics.hasSiteHeader) {
+  if (metrics.brokenImages.length) failures.push(`broken images: ${metrics.brokenImages.join(', ')}`);
+
+  if (metrics.hasSiteHeader && viewport.width <= 768) {
     if (!metrics.menuVisible) failures.push('menu toggle is not visible');
     if (!metrics.mobileBuildVisible) failures.push('mobile Build button is not visible');
     if (metrics.logoTextVisible) failures.push('logo text is visible on mobile');
@@ -241,22 +266,59 @@ async function assertPage(client, page, viewport) {
         expanded: button?.getAttribute('aria-expanded') === 'true',
         pointerEvents: style?.pointerEvents,
         transform: style?.transform,
-        bodyFixed: getComputedStyle(document.body).position === 'fixed',
+        scrollLocked: getComputedStyle(document.body).overflow === 'hidden' && getComputedStyle(document.documentElement).overflow === 'hidden',
       };
     })()`);
     if (!openMetrics.expanded) failures.push('menu did not set aria-expanded');
     if (openMetrics.pointerEvents !== 'auto') failures.push('open menu is not interactive');
-    if (!openMetrics.bodyFixed) failures.push('open menu did not lock page scroll');
+    if (!openMetrics.scrollLocked) failures.push('open menu did not lock page scroll');
+    await evaluate(client, `document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))`);
+    const closed = await evaluate(client, `(() => {
+      const root = document.querySelector('#header-placeholder')?.shadowRoot || document;
+      return root.querySelector('.menu-toggle')?.getAttribute('aria-expanded') === 'false'
+        && getComputedStyle(document.body).overflow !== 'hidden'
+        && getComputedStyle(document.documentElement).overflow !== 'hidden';
+    })()`);
+    if (!closed) failures.push('Escape did not close menu and restore page scroll');
+    await wait(350);
   }
 
-  if (metrics.hasBuilderDashboard) {
+  if (metrics.hasBuilderDashboard && viewport.width <= 768) {
     if (metrics.logoTextVisible) failures.push('builder dashboard logo text is visible on mobile');
     if (metrics.builderUnlockVisible) failures.push('builder header Unlock Pro button is visible on mobile');
     if (!metrics.proBannerVisible) failures.push('Pro banner is not visible for free dashboard state');
   }
 
+  if (page === '/qr/') {
+    const generated = await evaluate(client, `(async () => {
+      const input = document.getElementById('content');
+      input.value = 'example.com';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return Boolean(document.querySelector('#preview svg')) && !document.getElementById('download-png').disabled
+        && document.getElementById('qr-status').textContent.includes('https://example.com/');
+    })()`);
+    if (!generated) failures.push('QR generation failed');
+    const invalidated = await evaluate(client, `(async () => {
+      const input = document.getElementById('content');
+      input.value = 'javascript:alert(1)';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const rejected = input.getAttribute('aria-invalid') === 'true' && document.getElementById('download-png').disabled;
+      input.value = '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      return rejected;
+    })()`);
+    if (!invalidated) failures.push('QR invalid URL was not rejected');
+  }
+
   if (failures.length) {
     throw new Error(`${label}: ${failures.join('; ')}`);
+  }
+  if (process.env.SCREENSHOT_DIR && ['/', '/blog/prevent-spam-on-website-forms/', '/qr/'].includes(page)) {
+    fs.mkdirSync(process.env.SCREENSHOT_DIR, { recursive: true });
+    const shot = await client.send('Page.captureScreenshot', { format: 'png' });
+    fs.writeFileSync(path.join(process.env.SCREENSHOT_DIR, `${page.replaceAll('/', '_')}-${viewport.width}.png`), Buffer.from(shot.data, 'base64'));
   }
   console.log(`PASS ${label}`);
 }
@@ -296,6 +358,24 @@ async function main() {
       throw new Error('build.functionalwebsites.com root did not serve build/index.html');
     }
 
+    const docsRoot = await requestTextWithHost('/', 'docs.functionalwebsites.com');
+    if (docsRoot.status !== 200 || !docsRoot.body.includes('<title>Documentation')) {
+      throw new Error('Docs subdomain root did not serve docs/index.html');
+    }
+    for (const path of ['/blog/hello-world', '/blog/hello-world/', '/blog/hello-world/index.html']) {
+      const sample = await fetch(BASE_URL + path, { redirect: 'manual' });
+      if (sample.status !== 308 || new URL(sample.headers.get('location'), BASE_URL).pathname !== '/blog/') {
+        throw new Error(`${path} did not redirect to the blog`);
+      }
+    }
+    const manifest = await requestJson(BASE_URL + '/img/favicon/site.webmanifest');
+    for (const icon of manifest.icons) {
+      const response = await fetch(BASE_URL + icon.src);
+      if (!response.ok || !response.headers.get('content-type')?.startsWith('image/')) {
+        throw new Error(`Missing manifest icon: ${icon.src}`);
+      }
+    }
+
     const legacy = await fetch(BASE_URL + '/site-builder/', { redirect: 'manual' });
     if (legacy.status !== 308 || !String(legacy.headers.get('location')).includes('/build/')) {
       throw new Error('/site-builder/ did not redirect to /build/');
@@ -303,11 +383,24 @@ async function main() {
 
     const client = await createPage();
     try {
+      const failures = [];
+      client.on('Runtime.exceptionThrown', ({ exceptionDetails }) => {
+        const message = exceptionDetails.exception?.description || exceptionDetails.text;
+        failures.push(`Browser exception: ${message}`);
+        console.error(message);
+      });
       for (const viewport of VIEWPORTS) {
         for (const page of PAGES) {
-          await assertPage(client, page, viewport);
+          if (process.env.PAGE_FILTER && !process.env.PAGE_FILTER.split(',').includes(page)) continue;
+          try {
+            await assertPage(client, page, viewport);
+          } catch (error) {
+            failures.push(error.message);
+            console.error(error.message);
+          }
         }
       }
+      if (failures.length) throw new Error(`${failures.length} page checks failed`);
     } finally {
       client.close();
     }

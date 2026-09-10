@@ -3,6 +3,15 @@ import { createCheckoutSession } from '../../_utils/stripe.js';
 
 const DEFAULT_PRO_PRICE_ID = 'price_1TMd9XQtO2WgU350cTZRFc4y';
 
+function isSameOrigin(value, origin) {
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).origin === origin;
+  } catch {
+    return false;
+  }
+}
+
 export async function onRequestPost(context) {
   const optionsResponse = handleOptions(context.request);
   if (optionsResponse) return optionsResponse;
@@ -17,6 +26,11 @@ export async function onRequestPost(context) {
 
     if (!successUrl || !cancelUrl) {
       return json({ error: 'Missing required checkout parameters' }, 400);
+    }
+
+    const origin = new URL(context.request.url).origin;
+    if (!isSameOrigin(successUrl, origin) || !isSameOrigin(cancelUrl, origin)) {
+      return json({ error: 'Invalid checkout return URL.' }, 400);
     }
 
     const session = await createCheckoutSession(context.env.STRIPE_SECRET_KEY, {

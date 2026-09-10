@@ -34,7 +34,11 @@
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         toc.querySelectorAll('a').forEach((link) => {
-          link.toggleAttribute('aria-current', link.getAttribute('href') === `#${entry.target.id}`);
+          if (link.getAttribute('href') === `#${entry.target.id}`) {
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
         });
       });
     }, {

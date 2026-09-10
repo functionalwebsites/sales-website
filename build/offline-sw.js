@@ -1,4 +1,4 @@
-const FW_BUILDER_CACHE = 'fw-builder-offline-2026-05-18-1';
+const FW_BUILDER_CACHE = 'fw-builder-offline-2026-09-10-1';
 const FW_IS_ROOT_WORKER = new URL(self.location.href).pathname === '/sw.js';
 
 const FW_BUILDER_ASSETS = [
@@ -72,7 +72,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== FW_BUILDER_CACHE).map(key => caches.delete(key))))
+      .then(keys => Promise.all(keys.filter(key => key.startsWith('fw-builder-offline-') && key !== FW_BUILDER_CACHE).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });

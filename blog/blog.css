@@ -118,6 +118,7 @@
 }
 
 .blog-article {
+  min-width: 0;
   background: var(--fw-panel);
   border: var(--fw-border-width) solid var(--fw-ink);
   border-radius: var(--fw-radius);
@@ -236,7 +237,7 @@
 }
 
 .blog-toc a:hover,
-.blog-toc a[aria-current="true"] {
+.blog-toc a[aria-current="location"] {
   color: var(--fw-rust);
 }
 
@@ -310,7 +311,7 @@
 
 @media (max-width: 900px) {
   .blog-page {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .blog-toc {

@@ -18,6 +18,12 @@ const PRO_MARKETPLACE_ASSET_PATHS = new Set([
 export async function onRequest(context) {
   const url = new URL(context.request.url);
 
+  // The sample article is an unpublished writing template, not a public post.
+  if (/^\/blog\/hello-world(?:\/index\.html|\/)?$/.test(url.pathname)) {
+    url.pathname = '/blog/';
+    return Response.redirect(url.toString(), 308);
+  }
+
   if (url.pathname === '/qrcode' || url.pathname === '/qrcode/') {
     url.pathname = '/qr/';
     return Response.redirect(url.toString(), 308);

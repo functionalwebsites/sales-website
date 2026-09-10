@@ -30,7 +30,7 @@ async function findExistingTokenByEmail(kv, email) {
           return key.name.replace(/^token:/, '');
         }
       } catch (error) {
-        console.error(`Failed parsing token record ${key.name}:`, error);
+        console.error('Failed parsing a token record');
       }
     }
 
@@ -47,12 +47,9 @@ export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
     const normalizedEmail = normalizeEmail(body?.email);
-    const code = body?.code;
-
-    console.log('Free plan request received:', { email: normalizedEmail, code, hasSecret: !!context.env.FREE_PLAN });
+    const code = typeof body?.code === 'string' ? body.code.trim() : '';
 
     if (!normalizedEmail || !code) {
-      console.log('Missing email or code:', { email: normalizedEmail, code });
       return json({ error: 'Email and code are required' }, 400);
     }
 
@@ -66,8 +63,7 @@ export async function onRequestPost(context) {
       return json({ error: 'Server configuration error: FREE_PLAN secret not set' }, 500);
     }
 
-    if (code.trim() !== (context.env.FREE_PLAN || '').trim()) {
-      console.log('Code mismatch:', { received: code, expected: context.env.FREE_PLAN });
+    if (code !== (context.env.FREE_PLAN || '').trim()) {
       return json({ error: 'Invalid promo code' }, 400);
     }
 
