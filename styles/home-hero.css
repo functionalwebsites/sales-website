@@ -1,0 +1,141 @@
+/* Letterboard rhythm, rendered in the site's flat paper / ink palette. */
+html[data-theme-lock="light"] { color-scheme: only light; }
+.hero.home-hero {
+  min-height: calc(100svh - 72px);
+  padding: clamp(20px, 4svh, 44px) 24px;
+  background: var(--fw-paper) !important;
+  overflow: visible;
+}
+.home-hero::before,
+.hero.home-hero::after { display: none; }
+.shop-hero-inner { width: min(100%, 1000px); }
+.shop-board {
+  padding: clamp(22px, 4vw, 44px) clamp(20px, 5vw, 60px) 20px;
+  color: var(--fw-ink);
+  background: repeating-linear-gradient(0deg, transparent 0 7px, #10100d06 7px 8px), var(--fw-paper);
+  border: var(--fw-border-width) solid var(--fw-ink);
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow);
+}
+.shop-board-top,
+.shop-board-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: .08em;
+  line-height: 1.5;
+}
+.shop-board-top { padding-bottom: 16px; border-bottom: 2px solid var(--fw-ink); }
+.home-hero h1.shop-title {
+  margin: 26px 0 20px;
+  max-width: none;
+  font-size: clamp(30px, 5.7vw, 68px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: .015em;
+  font-weight: 800 !important;
+}
+.home-hero h1.shop-title span {
+  display: block;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  color: var(--fw-ink) !important;
+}
+.home-hero h1.shop-title .shop-kicker {
+  margin-bottom: 16px;
+  color: var(--fw-rust) !important;
+  font-size: clamp(12px, 1.6vw, 16px);
+  letter-spacing: .16em;
+}
+.home-hero .home-hero-note {
+  margin: 0 auto 24px;
+  max-width: 580px;
+  color: var(--text2) !important;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.home-hero .hero-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: min(100%, 680px);
+  margin: 0 auto;
+}
+.home-hero .hero-buttons .btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 76px;
+  padding: 14px 20px;
+  font-size: 17px;
+  line-height: 1.3;
+  text-align: left;
+  border: var(--fw-border-width) solid var(--fw-ink);
+  border-radius: var(--fw-radius);
+  box-shadow: var(--fw-shadow-sm);
+  white-space: normal;
+}
+.shop-action-copy { display: grid; gap: 6px; }
+.shop-action-copy small { font-size: 10px; font-weight: 400; letter-spacing: .04em; }
+.home-hero .hero-buttons .btn-secondary { background: var(--fw-panel); color: var(--fw-ink); }
+.home-hero .hero-buttons .btn-primary { background: var(--fw-green); color: var(--fw-black); }
+.home-hero .hero-buttons .btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--fw-ink); }
+.home-hero .hero-buttons .btn:focus-visible { outline: 3px solid var(--fw-rust); outline-offset: 5px; }
+.shop-board-bottom { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--fw-muted); color: var(--text2); }
+#services { scroll-margin-top: 90px; }
+@media (max-width: 768px) {
+  .hero.home-hero { min-height: calc(100svh - 64px); padding: 20px 16px 24px; }
+  .shop-hero-inner { max-width: 560px; }
+  .shop-board {
+    min-height: calc(100svh - 116px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 18px 20px;
+  }
+  .shop-board-top, .shop-board-bottom { font-size: 9px; letter-spacing: .02em; }
+  .home-hero h1.shop-title { font-size: clamp(32px, 10vw, 64px) !important; margin: 24px 0 18px; }
+  .home-hero h1.shop-title > span:last-child { max-width: 10ch; margin-inline: auto; }
+  .home-hero .home-hero-note { font-size: 13px; margin-bottom: 20px; }
+  .home-hero .hero-buttons { grid-template-columns: 1fr; width: 100%; gap: 12px; }
+  .home-hero .hero-buttons .btn { width: 100%; min-height: 64px; padding: 12px 16px; font-size: 16px; gap: 10px; }
+  .shop-action-copy small { font-size: 9px; letter-spacing: 0; }
+  .shop-board-bottom { margin-top: 22px; }
+}
+@media (max-width: 360px) {
+  .hero.home-hero { padding-inline: 10px; }
+  .shop-board { padding-inline: 12px; }
+  .shop-board-top { font-size: 8px; }
+}
+@media (max-height: 700px) {
+  .hero.home-hero { padding-block: 16px 20px; }
+  .shop-board { padding-block: 16px; }
+  .shop-board-top { padding-bottom: 10px; }
+  .home-hero h1.shop-title { margin-block: 16px; }
+  .home-hero h1.shop-title .shop-kicker { margin-bottom: 10px; }
+  .shop-board-bottom { margin-top: 18px; padding-top: 10px; }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  .hero.home-hero { padding-block: 12px; }
+  .shop-board { padding: 12px 24px; }
+  .shop-board-top { padding-bottom: 6px; font-size: 9px; }
+  .home-hero h1.shop-title { font-size: 29px !important; margin-block: 8px; }
+  .home-hero h1.shop-title .shop-kicker { font-size: 10px; margin-bottom: 6px; }
+  .home-hero .home-hero-note { font-size: 11px; margin-bottom: 10px; max-width: 100%; }
+  .home-hero .hero-buttons .btn { min-height: 52px; padding: 8px 12px; font-size: 12px; }
+  .shop-action-copy { gap: 2px; }
+  .shop-action-copy small { font-size: 8px; }
+  .shop-board-bottom { margin-top: 10px; padding-top: 6px; font-size: 8px; }
+}
+/* Keep stacked actions visible when a phone is turned sideways. */
+@media (max-width: 768px) and (min-width: 600px) and (max-height: 500px) {
+  .home-hero h1.shop-title > span:last-child { max-width: none; }
+  .home-hero .hero-buttons { gap: 8px; }
+  .home-hero .hero-buttons .btn { min-height: 44px; padding-block: 4px; }
+}
