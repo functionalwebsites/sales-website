@@ -69,7 +69,7 @@
 }
 
 .header {
-  background: transparent;
+  background: var(--bg);
   border-bottom: 0;
   position: fixed;
   top: 0;
@@ -977,7 +977,8 @@ footer {
   function applySiteTheme(theme) {
     const nextTheme = document.documentElement.dataset.themeLock === 'light' ? 'light' : (theme === 'dark' ? 'dark' : 'light');
     document.documentElement.dataset.theme = nextTheme;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', nextTheme === 'dark' ? '#101211' : '#f5efe0');
+    const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--fw-paper').trim() || (nextTheme === 'dark' ? '#151717' : '#f5efe0');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', paperColor);
     document.querySelectorAll('#header-placeholder, #footer-placeholder').forEach((placeholder) => {
       const root = placeholder.shadowRoot;
       root?.querySelector('.site-component')?.setAttribute('data-theme', nextTheme);

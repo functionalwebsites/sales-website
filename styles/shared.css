@@ -144,11 +144,14 @@
 }
 
 html {
+  /* Solid canvas color for Safari toolbar tinting and overscroll. */
+  background-color: var(--fw-paper);
   scroll-behavior: smooth;
 }
 
 body {
   background: var(--fw-texture);
+  background-color: var(--fw-paper);
   color: var(--text);
   line-height: 1.6;
 }
@@ -170,7 +173,8 @@ button {
 }
 
 .header {
-  background: transparent;
+  /* Safari samples the fixed element itself, not only its pseudo-element. */
+  background: var(--fw-paper);
   border-bottom: 0;
   position: fixed;
   top: 0;
