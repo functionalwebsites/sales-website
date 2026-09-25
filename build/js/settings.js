@@ -6,7 +6,7 @@ function loadSettingsForm() {
   document.getElementById('gh-owner').value = gh.owner || '';
   document.getElementById('cf-token').value = cf.token || '';
   document.getElementById('cf-account-id').value = cf.accountId || '';
-  setBuilderTheme(getBuilderTheme());
+  applyBuilderLightAppearance();
   syncCanvasToolbarSettingsForm();
   updateIntegrationBadges();
   updateOfflineStatus();

@@ -87,10 +87,15 @@ function normalizeFormFields(fields) {
   });
 }
 
+function normalizeMailtoRecipient(value) {
+  const email = String(value || '').trim().replace(/^mailto:/i, '');
+  return /^[^\s@?&#<>]+@[^\s@?&#<>]+\.[^\s@?&#<>]+$/.test(email) ? email : '';
+}
+
 function renderMailtoFormBlock(block, sel, p, opts) {
   const fields = normalizeFormFields(p.fields);
   const formId = `fw-mailto-${String(block.id || Math.random().toString(36).slice(2)).replace(/[^a-zA-Z0-9_-]/g, '')}`;
-  const recipient = String(p.mailtoEmail || p.action || '').replace(/^mailto:/, '');
+  const recipient = normalizeMailtoRecipient(p.mailtoEmail || p.action);
   const inputStyle = `width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;background:#fff;color:#111;box-sizing:border-box;`;
   const labelStyle = `display:block;margin-bottom:4px;font-weight:500;`;
   const fieldsHtml = fields.map(field => {
@@ -111,7 +116,7 @@ function renderMailtoFormBlock(block, sel, p, opts) {
   const config = {
     recipient,
     subjectTemplate: p.subjectTemplate || 'New message from {{name}}',
-    successTitle: p.successTitle || 'Thank you for reaching out!',
+    successTitle: p.successTitle || 'Your email draft is ready',
     successMessage: p.successMessage || 'Your email app should have opened with a pre-filled message.',
     fields
   };
@@ -121,8 +126,8 @@ function renderMailtoFormBlock(block, sel, p, opts) {
     ${p.introText ? `<p style="text-align:center;margin:0 0 28px;color:#555;line-height:1.6;">${escapeHtml(p.introText)}</p>` : ''}
     <form id="${escAttr(formId)}" data-fw-mailto-form style="display:flex;flex-direction:column;gap:${opts.siteContentGap};">
       ${fieldsHtml}
-      <p style="margin:0;color:#666;font-size:13px;line-height:1.6;"><em>Submitting opens your email app with a pre-filled message. Review it, then hit send.</em></p>
-      <button type="submit" style="background:${p.btnBg||'#7c6af7'};color:${p.btnColor||'#fff'};padding:12px;border-radius:${opts.siteButtonRadius};font-weight:600;font-size:15px;border:none;cursor:pointer;">${escapeHtml(p.submitText||'Send Message')}</button>
+      <p style="margin:0;color:#666;font-size:13px;line-height:1.6;">${recipient ? '<em>Submitting opens your email app with a pre-filled message. Review it, then hit send.</em>' : 'This form is not available yet. Please contact the business directly.'}</p>
+      <button type="submit" ${recipient ? '' : 'disabled aria-disabled="true"'} style="background:${p.btnBg||'#7c6af7'};color:${p.btnColor||'#fff'};padding:12px;border-radius:${opts.siteButtonRadius};font-weight:600;font-size:15px;border:none;cursor:${recipient ? 'pointer' : 'not-allowed'};${recipient ? '' : 'opacity:.6;'}">${escapeHtml(p.submitText||'Send Message')}</button>
     </form>
     <div id="${escAttr(formId)}-thanks" style="display:none;text-align:center;">
       <p style="font-weight:700;margin:0 0 8px;">${escapeHtml(config.successTitle)}</p>
@@ -143,7 +148,6 @@ function renderMailtoFormBlock(block, sel, p, opts) {
       });
       var recipient = String(config.recipient || '').replace(/^mailto:/, '');
       if (!recipient) {
-        alert('Add a recipient email address before using this form.');
         return false;
       }
       var subject = String(config.subjectTemplate || 'New message')
@@ -300,7 +304,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
       ${p.description ? `<p style="margin:0 auto;max-width:700px;font-size:${siteBodySize};line-height:var(--site-line-height, 1.7);color:#5a6b7d;">${p.description}</p>` : ''}
     </div>` : ''}
     <div style="position:relative;width:100%;aspect-ratio:${p.aspectRatio||'16 / 9'};border-radius:${radius};overflow:hidden;box-shadow:0 28px 70px rgba(19,41,61,.18);background:#000;">
-      <iframe src="${escAttr(embedUrl)}" title="${escAttr(p.title||'YouTube Video')}" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      ${embedUrl ? `<iframe src="${escAttr(embedUrl)}" title="${escAttr(p.title||'YouTube Video')}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>` : `<div role="status" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#e9eff5;color:#34495e;text-align:center;padding:20px;"><span aria-hidden="true" style="font-size:40px;">▶</span><span>${editing ? 'Add a valid YouTube link in Video URL.' : 'Video coming soon'}</span></div>`}
     </div>
   </div>
 </section>`;
@@ -668,25 +672,28 @@ function resolveFaviconHref(asset, projectData) {
 function toYouTubeEmbedUrl(url, privacyMode = true, autoplay = false, showControls = true) {
   const raw = String(url || '').trim();
   if (!raw) return '';
-  let videoId = '';
-  try {
-    const parsed = new URL(raw);
-    if (parsed.hostname.includes('youtu.be')) {
-      videoId = parsed.pathname.replace(/\//g, '');
-    } else if (parsed.searchParams.get('v')) {
-      videoId = parsed.searchParams.get('v');
-    } else {
+  let videoId = raw;
+  if (!/^[a-zA-Z0-9_-]{11}$/.test(raw)) {
+    try {
+      const parsed = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+      if (!['http:', 'https:'].includes(parsed.protocol)) return '';
+      const host = parsed.hostname.toLowerCase();
       const parts = parsed.pathname.split('/').filter(Boolean);
-      const embedIndex = parts.findIndex(part => part === 'embed' || part === 'shorts');
-      if (embedIndex >= 0 && parts[embedIndex + 1]) videoId = parts[embedIndex + 1];
+      if (host === 'youtu.be' || host === 'www.youtu.be') {
+        videoId = parts.length === 1 ? parts[0] : '';
+      } else if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) {
+        videoId = parsed.pathname === '/watch' ? parsed.searchParams.get('v') : (['embed', 'shorts', 'live'].includes(parts[0]) && parts.length === 2 ? parts[1] : '');
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return '';
     }
-  } catch (e) {
-    videoId = raw;
   }
-  videoId = String(videoId || raw).replace(/[^a-zA-Z0-9_-]/g, '');
+  if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId || '')) return '';
   const host = privacyMode ? 'https://www.youtube-nocookie.com/embed/' : 'https://www.youtube.com/embed/';
   const params = new URLSearchParams();
-  if (autoplay) params.set('autoplay', '1');
+  if (autoplay) { params.set('autoplay', '1'); params.set('mute', '1'); }
   if (!showControls) params.set('controls', '0');
   const qs = params.toString();
   return `${host}${videoId}${qs ? '?' + qs : ''}`;

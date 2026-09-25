@@ -210,41 +210,15 @@ const LS = {
   keys() { return Object.keys(localStorage).filter(k=>k.startsWith(this.PREFIX)).map(k=>k.slice(this.PREFIX.length)); }
 };
 
-function getBuilderTheme() {
-  return 'light';
-}
-
-function applyBuilderTheme(theme) {
-  const nextTheme = theme === 'dark' ? 'dark' : 'light';
-  document.body.classList.toggle('builder-light', nextTheme === 'light');
-  document.body.classList.toggle('builder-dark', nextTheme === 'dark');
-  document.documentElement.dataset.theme = nextTheme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', nextTheme === 'dark' ? '#101211' : '#f5efe0');
-  document.querySelectorAll('.builder-theme-toggle').forEach((toggleBtn) => {
-    if (!toggleBtn.querySelector('.toggle-ball')) {
-      toggleBtn.innerHTML = '<span class="toggle-icon toggle-icon-moon" aria-hidden="true">☾</span><span class="toggle-icon toggle-icon-sun" aria-hidden="true">☀</span><span class="toggle-ball" aria-hidden="true"></span>';
-    }
-    toggleBtn.setAttribute('aria-pressed', nextTheme === 'dark' ? 'true' : 'false');
-    toggleBtn.dataset.themeState = nextTheme;
-    toggleBtn.classList.toggle('is-dark', nextTheme === 'dark');
-    toggleBtn.setAttribute('aria-label', nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-    toggleBtn.title = nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-  });
-}
-
-function setBuilderTheme(theme) {
-  const nextTheme = theme === 'dark' ? 'dark' : 'light';
-  LS.set('builderTheme', nextTheme);
-  localStorage.setItem('fw_site_theme', nextTheme);
-  applyBuilderTheme(nextTheme);
-  const darkBtn = document.getElementById('btn-builder-theme-dark');
-  const lightBtn = document.getElementById('btn-builder-theme-light');
-  if (darkBtn) darkBtn.className = `btn btn-sm ${nextTheme === 'dark' ? 'btn-primary' : 'btn-secondary'}`;
-  if (lightBtn) lightBtn.className = `btn btn-sm ${nextTheme === 'light' ? 'btn-primary' : 'btn-secondary'}`;
-}
-
-function toggleBuilderTheme() {
-  setBuilderTheme(getBuilderTheme() === 'dark' ? 'light' : 'dark');
+function applyBuilderLightAppearance() {
+  document.body.classList.add('builder-light');
+  document.documentElement.dataset.theme = 'light';
+  document.documentElement.style.colorScheme = 'only light';
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f5efe0');
+  try {
+    localStorage.removeItem('fw_builderTheme');
+    localStorage.removeItem('fw_site_theme');
+  } catch (e) {}
 }
 
 function getBuilderPanelState() {
@@ -1407,9 +1381,10 @@ function applySiteBriefStarter(data, brief = {}) {
   return data;
 }
 
-function applyLibraryProjectTemplate(baseData, templateEntry) {
+function applyLibraryProjectTemplate(baseData, templateEntry, brandOverrides = {}) {
   const incoming = JSON.parse(JSON.stringify(templateEntry.projectData || {}));
   const brandName = baseData.brandName || baseData.name;
+  updateGeneratedBrandReferences(incoming.brandName || incoming.name, brandName, true, incoming);
   const merged = Object.assign({}, baseData, incoming);
   const mergedMeta = Object.assign({}, incoming.meta || {});
   Object.entries(baseData.meta || {}).forEach(([key, value]) => {
@@ -1417,16 +1392,24 @@ function applyLibraryProjectTemplate(baseData, templateEntry) {
   });
   merged.name = baseData.name;
   merged.brandName = brandName;
-  merged.brand = Object.assign({}, incoming.brand || {}, baseData.brand || {});
+  merged.brand = Object.assign({}, baseData.brand || {}, incoming.brand || {}, brandOverrides);
   merged.meta = mergedMeta;
   merged.images = Array.isArray(incoming.images) ? incoming.images : [];
   merged.templates = Array.isArray(incoming.templates) ? incoming.templates : [];
   merged.navbars = incoming.navbars || {};
   merged.siteTheme = incoming.siteTheme || baseData.siteTheme || 'light';
-  merged.styleSystem = normalizeStyleSystem(Object.assign({}, incoming.styleSystem || {}, baseData.styleSystem || {}));
+  merged.styleSystem = normalizeStyleSystem(Object.assign({}, baseData.styleSystem || {}, incoming.styleSystem || {}));
   merged.pages = Array.isArray(incoming.pages) && incoming.pages.length
     ? incoming.pages
     : JSON.parse(JSON.stringify(baseData.pages));
+  const applyBrandLinks = blocks => (blocks || []).forEach(block => {
+    Object.entries(block.brandLinks || {}).forEach(([prop, key]) => {
+      if (merged.brand[key]) block.props[prop] = merged.brand[key];
+    });
+    applyBrandLinks(block.props?.blocks);
+    (block.props?.columns || []).forEach(column => { if (Array.isArray(column)) applyBrandLinks(column); });
+  });
+  merged.pages.forEach(page => applyBrandLinks(page.blocks));
   return merged;
 }
 
@@ -1464,13 +1447,13 @@ function mkBlock(type, props = {}) {
     ]},
     cta: { bgColor: brand.accent || '#7c6af7', textColor: '#ffffff', padding: '', heading: 'Ready to get started?', subheading: 'Join thousands of happy users today.', buttonText: 'Get Started Free', buttonHref: '#', btnBg: '#ffffff', btnColor: brand.accent || '#7c6af7' },
     footer: { bgColor: brand.dark || '#1a1a1a', textColor: '#aaaaaa', linkColor: '#cccccc', brand: projectBrandName, tagline: 'Building the web.', copyright: `© ${new Date().getFullYear()} ${projectBrandName}. All rights reserved.` },
-    form: { bgColor: '#f8f8f8', padding: '', title: 'Contact Us', introText: '', submitText: 'Send Message', action: '#', mailtoEmail: '', subjectTemplate: 'New message from {{name}}', successTitle: 'Thank you for reaching out!', successMessage: 'Your email app should have opened with a pre-filled message. If you do not see it, email us directly.', btnBg: brand.accent || '#7c6af7', btnColor: '#ffffff', fields: [
+    form: { bgColor: '#f8f8f8', padding: '', title: 'Contact Us', introText: '', submitText: 'Prepare Email', action: '', mailtoEmail: '', subjectTemplate: 'New message from {{name}}', successTitle: 'Your email draft is ready', successMessage: 'Review the message in your email app, then press Send. Your message has not been sent automatically.', btnBg: brand.accent || '#7c6af7', btnColor: '#ffffff', fields: [
       { id: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your name' },
       { id: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com' },
       { id: 'phone', label: 'Phone Number', type: 'tel', required: false, placeholder: '' },
       { id: 'message', label: 'Message', type: 'textarea', required: false, placeholder: 'How can we help?', defaultValue: '', rows: 5 }
     ] },
-    youtubeEmbed: { title: 'Featured Video', description: 'Use a YouTube video to explain your offer or show your work.', videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', maxWidth: '960px', aspectRatio: '16 / 9', autoplay: false, showControls: true, privacyMode: true, rounded: true, sectionBg: '#ffffff' },
+    youtubeEmbed: { title: 'Featured Video', description: 'Use a YouTube video to explain your offer or show your work.', videoUrl: '', maxWidth: '960px', aspectRatio: '16 / 9', autoplay: false, showControls: true, privacyMode: true, rounded: true, sectionBg: '#ffffff' },
     testimonialWall: { title: 'What Customers Say', intro: 'Social proof helps visitors trust you faster. Add a few real reviews to show the quality of your work.', bgColor: '#f5f8fc', padding: '80px 20px', maxWidth: '1100px', columns: '3', showStars: true, highlightFirst: false, testimonials: [
       { name: 'Jordan M.', role: 'Homeowner', quote: 'Fast response, fair pricing, and clear communication from start to finish.', rating: '5' },
       { name: 'Taylor R.', role: 'Local Customer', quote: 'Professional, efficient, and respectful of our home. We would absolutely hire them again.', rating: '5' },

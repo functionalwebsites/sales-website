@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="color-scheme" content="only light">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -14,7 +15,7 @@
 <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
 <meta name="msapplication-TileColor" content="#f5efe0">
 <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
-<meta name="theme-color" content="#0f0f13">
+<meta name="theme-color" content="#f5efe0">
 <title>Functional Websites — Static Website Builder</title>
 <link rel="stylesheet" href="/styles/shared.css">
 <script src="/build/vendor/jszip.min.js"></script>
@@ -60,29 +61,6 @@ body.builder-light {
   --text2: #625d50;
   --shadow: 6px 6px 0 var(--shadow-color);
 }
-body.builder-dark {
-  --shadow-color: #050505;
-  --ink: #f3ecd9;
-  --paper: #151717;
-  --panel: #20231f;
-  --panel-strong: #2b2e27;
-  --steel: #98b1bd;
-  --rust: #ff8a66;
-  --denim: #87b8cf;
-  --gold: #f0bc3f;
-  --bg: #151717;
-  --bg2: #20231f;
-  --bg3: #2b2e27;
-  --border: #f3ecd9;
-  --accent: #87b8cf;
-  --accent2: #ff8a66;
-  --red: #ff8a66;
-  --yellow: #f0bc3f;
-  --text: #f3ecd9;
-  --text2: #d1c7b2;
-  --shadow: 8px 8px 0 #050505;
-  --shadow-sm: 4px 4px 0 #050505;
-}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { padding-top: 0; scroll-padding-top: 0; scrollbar-width: thin; scrollbar-color: var(--paper) var(--bg2); }
 body {
@@ -96,13 +74,6 @@ body {
   font-size: 14px;
   min-height: 100vh;
   padding-top: 0;
-}
-body.builder-dark {
-  background:
-    radial-gradient(circle at 12% 10%, rgba(135,184,207,.12), transparent 18rem),
-    radial-gradient(circle at 90% 12%, rgba(185,72,46,.16), transparent 20rem),
-    repeating-linear-gradient(0deg, rgba(245,239,224,.035) 0 1px, transparent 1px 7px),
-    var(--bg);
 }
 body.editor-mode { overflow: hidden; height: 100vh; height: 100dvh; }
 body.panel-resizing {
@@ -717,71 +688,6 @@ textarea,
   transition: var(--button-motion) !important;
 }
 
-.builder-theme-toggle {
-  display: none !important;
-  width: 76px;
-  min-width: 76px;
-  height: 42px;
-  position: relative;
-  top: auto;
-  right: auto;
-  z-index: 1;
-  padding: 0 !important;
-  font-size: 0 !important;
-  line-height: 1;
-  overflow: hidden;
-  background: var(--paper) !important;
-  border: var(--line) !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
-}
-
-.builder-theme-toggle::before {
-  content: "☾";
-  position: absolute;
-  top: 11px;
-  left: 13px;
-  display: block;
-  padding: 0;
-  color: var(--ink);
-  font-size: 16px;
-  line-height: 1;
-  text-shadow: 42px 0 0 currentColor;
-}
-
-.builder-theme-toggle::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 26px;
-  height: 26px;
-  background: var(--green);
-  border: var(--line);
-  box-shadow: none;
-  transition: transform 0.22s ease;
-}
-
-body.builder-dark .builder-theme-toggle {
-  box-shadow:
-    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-body.builder-dark .builder-theme-toggle::after {
-  transform: translateX(35px);
-}
-
-html[data-theme="dark"] .builder-theme-toggle::after {
-  transform: translateX(35px);
-}
-
-.builder-theme-toggle[aria-pressed="true"]::after,
-.builder-theme-toggle[data-theme-state="dark"]::after {
-  transform: translateX(35px);
-}
-
 .btn:hover:not(:disabled),
 .device-btn:hover,
 .editor-mode-tab:hover {
@@ -888,110 +794,6 @@ html[data-theme="dark"] .builder-theme-toggle::after {
   color: var(--rust) !important;
 }
 
-.builder-theme-toggle:hover {
-  background: var(--paper) !important;
-  color: var(--ink) !important;
-  border-color: var(--ink) !important;
-  transform: none !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
-}
-
-.btn.builder-theme-toggle:hover:not(:disabled) {
-  transform: none !important;
-  background: var(--paper) !important;
-  color: var(--ink) !important;
-  border: var(--line) !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
-}
-
-body.builder-dark .btn.builder-theme-toggle:hover:not(:disabled),
-html[data-theme="dark"] .btn.builder-theme-toggle:hover:not(:disabled) {
-  border-width: 3px !important;
-  border-style: solid !important;
-  border-color: #f3ecd9 !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-.builder-theme-toggle::before,
-.builder-theme-toggle::after {
-  content: none !important;
-}
-
-.builder-theme-toggle .toggle-icon {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  color: var(--ink);
-  font-size: 16px;
-  line-height: 1;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.builder-theme-toggle .toggle-icon-moon {
-  left: 13px;
-}
-
-.builder-theme-toggle .toggle-icon-sun {
-  right: 11px;
-}
-
-.builder-theme-toggle .toggle-ball {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  z-index: 2;
-  width: 26px;
-  height: 26px;
-  background: var(--green);
-  border: var(--line);
-  box-shadow: none;
-  transition: transform 0.22s ease;
-  pointer-events: none;
-}
-
-.builder-theme-toggle[aria-pressed="true"] .toggle-ball,
-.builder-theme-toggle[data-theme-state="dark"] .toggle-ball,
-body.builder-dark .builder-theme-toggle .toggle-ball,
-html[data-theme="dark"] .builder-theme-toggle .toggle-ball {
-  transform: translateX(35px);
-}
-
-.btn.builder-theme-toggle {
-  border: var(--line) !important;
-}
-
-body.editor-mode .builder-theme-toggle {
-  display: none !important;
-}
-
-body.builder-dark .builder-theme-toggle,
-body.builder-dark .btn.builder-theme-toggle,
-body.builder-dark .builder-theme-toggle:hover {
-  background: var(--paper) !important;
-  color: var(--ink) !important;
-  border-width: 3px !important;
-  border-style: solid !important;
-  border-color: #f3ecd9 !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-html[data-theme="dark"] .builder-theme-toggle,
-html[data-theme="dark"] .btn.builder-theme-toggle,
-html[data-theme="dark"] .builder-theme-toggle:hover {
-  border-width: 3px !important;
-  border-style: solid !important;
-  border-color: #f3ecd9 !important;
-}
-
 .input {
   background: var(--paper) !important;
   border: var(--line) !important;
@@ -999,12 +801,6 @@ html[data-theme="dark"] .builder-theme-toggle:hover {
   box-shadow:
     inset 4px 4px 0 rgba(16, 16, 13, 0.18),
     inset -2px -2px 0 rgba(255, 255, 255, 0.28) !important;
-}
-
-body.builder-dark .input {
-  box-shadow:
-    inset 4px 4px 0 rgba(0, 0, 0, 0.42),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 .input::placeholder,
@@ -1257,7 +1053,7 @@ select:hover {
 }
 </style>
 </head>
-<body>
+<body class="builder-light">
 
 <!-- TOAST CONTAINER -->
 <div id="toasts"></div>
@@ -1654,7 +1450,7 @@ select:hover {
     </div>
     <div class="field">
       <label class="label">Template</label>
-      <select class="input" id="new-project-template">
+      <select class="input" id="new-project-template" onchange="syncNewProjectTemplateColors()">
         <option value="guided">Guided Starter</option>
         <option value="blank">Blank</option>
         <option value="landing">Landing Page</option>

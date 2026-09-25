@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="color-scheme" content="only light">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Functional Websites Marketplace — Premium blocks and themes for the site builder.">
@@ -12,7 +13,7 @@
   <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
   <meta name="msapplication-TileColor" content="#f5efe0">
   <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
-  <meta name="theme-color" content="#0f0f13">
+  <meta name="theme-color" content="#f5efe0">
   <title>Marketplace — Functional Websites</title>
   <link rel="stylesheet" href="/styles/shared.css">
   <link rel="stylesheet" href="/components/hero-gear.css">
@@ -120,17 +121,23 @@
     }
 
     .item-preview {
+      position: relative;
+      display: block;
       width: 100%;
-      height: 160px;
-      background: linear-gradient(135deg, rgba(74,222,128,0.1) 0%, rgba(74,222,128,0.05) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-      color: var(--green);
-      line-height: 1;
-      border-bottom: 1px solid var(--border);
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      background: #ffffff;
+      border-bottom: 2px solid var(--border);
     }
+    .item-preview img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .item-preview > span { position: absolute; right: 10px; bottom: 10px; padding: 7px 10px; background: var(--fw-paper); color: var(--fw-ink); border: 2px solid var(--fw-ink); font-size: 11px; }
+    .item-preview:focus-visible { outline: 3px solid var(--fw-rust); outline-offset: -4px; }
+    .item-setup { margin-bottom: 20px; font-size: 12px; line-height: 1.6; color: var(--text2); }
+    .item-setup summary { cursor: pointer; font-weight: 700; color: var(--text); }
+    .item-setup p { margin-top: 8px; }
+    .item-btn:disabled { cursor: wait; opacity: .65; }
+    .info-section ol { padding-left: 24px; line-height: 1.8; }
+    .info-section li + li { margin-top: 10px; }
 
     .item-content {
       padding: 20px;
@@ -385,7 +392,7 @@
   <!-- HERO -->
   <section class="hero gear-hero">
     <h1>Extend Your <span>Builder</span></h1>
-    <p>Unlock custom blocks and themes with Pro, then choose included advanced items, paid premium add-ons, or custom business solutions.</p>
+    <p>Useful blocks and website starters, included with Pro. Preview a design, download it, and make it yours.</p>
   </section>
 
   <!-- FILTERS -->
@@ -393,8 +400,6 @@
     <button class="filter-btn active" data-filter="all">All</button>
     <button class="filter-btn" data-filter="block">Blocks</button>
     <button class="filter-btn" data-filter="theme">Themes</button>
-    <button class="filter-btn" data-filter="free">Free with Pro</button>
-    <button class="filter-btn" data-filter="pro">Unavailable Add-ons</button>
   </div>
 
   <section class="marketplace-auth" aria-label="Pro token access">
@@ -404,7 +409,7 @@
         <span id="marketplace-auth-detail">Enter your Pro token once on this domain to download included marketplace items.</span>
       </div>
       <form class="marketplace-auth-form" id="marketplace-auth-form">
-        <input class="marketplace-token-input" id="marketplace-token-input" type="password" autocomplete="off" placeholder="Paste Pro token">
+        <input class="marketplace-token-input" id="marketplace-token-input" type="password" autocomplete="off" aria-label="Pro token" placeholder="Paste Pro token">
         <button class="item-btn" id="marketplace-token-submit" type="submit">Unlock</button>
       </form>
     </div>
@@ -420,14 +425,14 @@
 
   <!-- INFO SECTION -->
   <section class="info-section">
-    <h2>How to Unlock Premium Items</h2>
-    <p>All custom blocks and custom themes require a Pro plan first. Once Pro is unlocked, items fall into three groups: included advanced items, paid premium add-ons, and custom business builds.</p>
-    <ul>
-      <li><strong>Advanced Items:</strong> Included with Pro. These are ready to use as soon as your Pro plan is active.</li>
-      <li><strong>Premium Items:</strong> Require Pro and a separate one-time purchase for each item or pack.</li>
-      <li><strong>Business Items:</strong> Custom solutions for your business. Contact sales for pricing and details.</li>
-    </ul>
-    <p>Start with Pro to unlock custom item support, then add premium blocks or themes only when you need them.</p>
+    <h2>From Marketplace to Your Website</h2>
+    <ol>
+      <li><strong>Download:</strong> Enter your Pro token and download any item here. All three are included with Pro.</li>
+      <li><strong>Import:</strong> In the builder, open Custom Library and import the downloaded JSON file.</li>
+      <li><strong>Use:</strong> Add a block to an open page, or select the installed template when creating a website.</li>
+      <li><strong>Make it yours:</strong> Edit the sample content, configure contact details, and preview your site on mobile before publishing.</li>
+    </ol>
+    <p><a href="https://build.functionalwebsites.com/">Open the builder ↗</a></p>
   </section>
   <div id="footer-placeholder"></div>
   <script>
@@ -451,78 +456,33 @@
       items: [
         {
           id: 'testimonial-wall',
-          type: 'block',
           title: 'Testimonial Wall',
-          description: 'Beautiful customer testimonials grid with star ratings and quotes. Included with Pro once custom blocks are unlocked.',
-          icon: '★',
-          downloadPath: '/build/blocks/testimonial-wall-block.json',
+          description: 'Editable review cards with star ratings, a highlighted review option, and a layout that stacks on phones.',
+          preview: '/marketplace/previews/testimonial-wall.png',
+          previewAlt: 'Testimonial Wall preview with three editable sample review cards',
+          setup: 'Replace the sample names and reviews with real customer feedback before publishing.',
           downloadFilename: 'testimonial-wall-block.json',
-          tier: 'free',
-          category: 'block',
-          priceLabel: 'Free with Pro'
+          category: 'block'
         },
         {
           id: 'youtube-embed',
-          type: 'block',
           title: 'YouTube Embed',
-          description: 'Embed YouTube videos with custom sizing and responsive behavior. Included with Pro once custom blocks are unlocked.',
-          icon: '▶',
-          downloadPath: '/build/blocks/youtube-embed-block.json',
+          description: 'A responsive video player with size, privacy, and playback controls. Starts with a neutral video placeholder.',
+          preview: '/marketplace/previews/youtube-embed.png',
+          previewAlt: 'YouTube block preview showing the video placeholder and heading',
+          setup: 'Paste your YouTube link in the block’s Video URL field. Invalid or missing links show a placeholder instead of a broken player.',
           downloadFilename: 'youtube-embed-block.json',
-          tier: 'free',
-          category: 'block',
-          priceLabel: 'Free with Pro'
-        },
-        {
-          id: 'pro-carousel',
-          type: 'block',
-          title: 'Advanced Carousel',
-          description: 'Full-featured image carousel with touch controls, animations, and auto-play. This paid add-on is unavailable until checkout is connected.',
-          icon: '◫',
-          tier: 'pro',
-          category: 'block',
-          priceLabel: 'Unavailable'
-        },
-        {
-          id: 'pro-form',
-          type: 'block',
-          title: 'Advanced Form Builder',
-          description: 'Create custom forms with validation, file uploads, and email notifications. This paid add-on is unavailable until checkout is connected.',
-          icon: '¶',
-          tier: 'pro',
-          category: 'block',
-          priceLabel: 'Unavailable'
+          category: 'block'
         },
         {
           id: 'plumber-template',
-          type: 'theme',
           title: 'Plumber Pro Template',
-          description: 'Complete website template for plumbing and HVAC services. Included with Pro once custom themes are unlocked.',
-          icon: '⚒',
+          description: 'A four-page plumbing starter: Home, Services, Emergency Service, and Contact. Adapts to your business name and includes a coordinated color palette.',
+          preview: '/marketplace/previews/plumber-template.png',
+          previewAlt: 'Plumbing template home page with a blue service hero and clear contact buttons',
+          setup: 'Replace sample contact details and review service claims. Set Recipient Email on the contact form to enable email drafts. This is a service-request form, not an automatic booking system.',
           downloadFilename: 'plumber-website-template.json',
-          tier: 'free',
-          category: 'theme',
-          priceLabel: 'Free with Pro'
-        },
-        {
-          id: 'pro-saas',
-          type: 'theme',
-          title: 'SaaS Landing Page',
-          description: 'Modern SaaS template with hero section, pricing, testimonials, and CTA sections. This paid add-on is unavailable until checkout is connected.',
-          icon: '▲',
-          tier: 'pro',
-          category: 'theme',
-          priceLabel: 'Unavailable'
-        },
-        {
-          id: 'pro-portfolio',
-          type: 'theme',
-          title: 'Portfolio Template',
-          description: 'Elegant portfolio site for creatives, designers, and photographers. This paid add-on is unavailable until checkout is connected.',
-          icon: '✦',
-          tier: 'pro',
-          category: 'theme',
-          priceLabel: 'Unavailable'
+          category: 'theme'
         }
       ]
     };
@@ -602,8 +562,6 @@
         if (currentFilter === 'all') return true;
         if (currentFilter === 'block') return item.category === 'block';
         if (currentFilter === 'theme') return item.category === 'theme';
-        if (currentFilter === 'free') return item.tier === 'free';
-        if (currentFilter === 'pro') return item.tier === 'pro';
         return true;
       });
 
@@ -619,21 +577,24 @@
 
       filtered.forEach((item) => {
         const card = document.createElement('div');
-        const isPremium = item.tier === 'pro';
         const isBlock = item.category === 'block';
-        const isDownloadable = !isPremium && isProUnlocked();
-        const buttonLabel = isPremium ? 'Unavailable' : isDownloadable ? 'Download' : 'Unlock to Download';
+        const isDownloadable = isProUnlocked();
+        const buttonLabel = isDownloadable ? 'Download' : 'Unlock to Download';
 
         card.className = 'item-card';
         card.innerHTML = `
-          <div class="item-preview">${item.icon}</div>
+          <a class="item-preview" href="${item.preview}" target="_blank" rel="noopener" aria-label="View larger preview of ${item.title} (opens a new tab)">
+            <img src="${item.preview}" alt="${item.previewAlt}" width="1200" height="800" loading="lazy">
+            <span>View preview ↗</span>
+          </a>
           <div class="item-content">
-            <span class="item-type">${isBlock ? 'Block' : 'Theme'} · ${isPremium ? 'Premium Add-on' : 'Advanced'}</span>
+            <span class="item-type">${isBlock ? 'Block' : 'Theme'} · Included with Pro</span>
             <h3 class="item-title">${item.title}</h3>
             <p class="item-description">${item.description}</p>
+            <details class="item-setup"><summary>Before you publish</summary><p>${item.setup}</p></details>
             <div class="item-footer">
-              ${isPremium ? `<span class="item-price">${item.priceLabel}</span>` : `<span class="item-free">${item.priceLabel}</span>`}
-              <button class="item-btn ${isPremium || !isDownloadable ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', ${isPremium})" ${isPremium ? 'disabled' : ''}>
+              <span class="item-free">Free with Pro</span>
+              <button class="item-btn ${!isDownloadable ? 'secondary' : ''}" onclick="handleItemClick('${item.id}', this)">
                 ${buttonLabel}
               </button>
             </div>
@@ -646,7 +607,7 @@
 
     async function downloadItemAsset(item) {
       const token = await ensureProUnlocked();
-      if (!token) return;
+      if (!token) return false;
 
       const response = await fetch(PRO_DOWNLOAD_URL, {
         method: 'POST',
@@ -674,24 +635,22 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return true;
     }
 
-    async function handleItemClick(itemId, isPremium) {
+    async function handleItemClick(itemId, button) {
       const item = marketplaceData.items.find((entry) => entry.id === itemId);
       if (!item) return;
-
-      if (isPremium) {
-        alert(`${item.title} is unavailable until paid add-on checkout is connected.`);
-        return;
-      }
-
+      if (button) button.disabled = true;
       try {
         setMarketplaceStatus(`Preparing ${item.title} download...`);
-        await downloadItemAsset(item);
-        setMarketplaceStatus(`${item.title} download started.`, 'success');
+        const started = await downloadItemAsset(item);
+        setMarketplaceStatus(started ? `${item.title} download started. Import the file in the builder’s Custom Library.` : 'Download canceled.', started ? 'success' : '');
       } catch (error) {
         setMarketplaceStatus(`Download failed for ${item.title}: ${error.message}`, 'error');
+      } finally {
+        if (button) button.disabled = false;
       }
     }
 

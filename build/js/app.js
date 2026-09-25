@@ -159,7 +159,7 @@ window.handleBuilderShortcut = function(eventLike = {}) {
 // ============================================================
 document.addEventListener('DOMContentLoaded', function init() {
   console.log('DOM loaded, initializing app');
-  applyBuilderTheme(getBuilderTheme());
+  applyBuilderLightAppearance();
   applyBuilderPanelState();
   initBuilderPanelResizers();
   initProFeatures();

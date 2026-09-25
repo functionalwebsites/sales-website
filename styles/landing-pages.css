@@ -1,0 +1,35 @@
+/* Shared service landing pages and homepage service directory. */
+.funnel-directory,.landing-main { max-width: 1120px; margin: 0 auto; padding: 64px 24px; }
+.funnel-directory h2 { font-size: clamp(26px,4vw,38px); margin-bottom: 16px; }
+.funnel-directory > p { color: var(--text2); max-width: 720px; margin-bottom: 28px; }
+.funnel-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; }
+.funnel-link { display: block; padding: 24px; border: 3px solid var(--fw-ink); border-radius: var(--fw-radius); box-shadow: var(--fw-shadow-sm); background: var(--fw-panel); color: var(--text); text-decoration: none; }
+.funnel-link strong { display: block; margin-bottom: 12px; font-size: 18px; }
+.funnel-link span { font-size: 13px; color: var(--text2); }
+.funnel-link:hover { background: var(--fw-paper); }
+.funnel-link:focus-visible,.landing-main a:focus-visible { outline: 3px solid var(--fw-rust); outline-offset: 6px; }
+.landing-kicker { color: var(--fw-rust); text-transform: uppercase; font-size: 13px; font-weight: 700; margin-bottom: 20px; }
+.landing-main h1 { font-size: clamp(34px,5.4vw,60px); line-height: 1.12; max-width: 950px; margin: 0 0 24px; }
+.landing-lead { max-width: 800px; font-size: 18px; line-height: 1.7; color: var(--text2); }
+.landing-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 32px 0 24px; }
+.landing-facts div { border-top: 3px solid var(--fw-ink); padding-top: 16px; }
+.landing-facts dt { color: var(--fw-rust); font-weight: 700; margin-bottom: 8px; }
+.landing-facts dd { margin: 0; font-size: 20px; }
+.landing-facts small { display: block; font-size: 12px; color: var(--text2); margin-top: 8px; line-height: 1.7; }
+.landing-main .btn { padding: 16px 22px; white-space: normal; }
+.landing-section { margin-top: 64px; }
+.landing-section h2 { font-size: 28px; margin-bottom: 18px; }
+.landing-section p,.landing-section li { line-height: 1.8; color: var(--text2); }
+.landing-section ul { padding-left: 24px; }
+.landing-section li { margin-bottom: 10px; }
+.landing-demo { border: 3px solid var(--fw-ink); box-shadow: var(--fw-shadow); border-radius: var(--fw-radius); overflow: hidden; margin: 24px 0; background: var(--fw-paper); }
+.demo-bar { padding: 16px 24px; border-bottom: 3px solid var(--fw-ink); font-size: 12px; font-weight: 700; }
+.demo-body { background: var(--demo-accent); padding: clamp(24px,5vw,56px); }
+.demo-body h3 { font-size: clamp(28px,4vw,44px); line-height: 1.15; max-width: 700px; margin-bottom: 20px; }
+.demo-body p { color: var(--fw-ink); max-width: 650px; }
+.demo-tiles { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
+.demo-tiles span { padding: 24px; font-size: 14px; font-weight: 700; }
+.demo-tiles span + span { border-left: 1px solid var(--fw-ink); }
+.landing-caption { font-size: 12px; }
+.landing-delivery { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+@media(max-width:760px) { .funnel-grid,.landing-delivery { grid-template-columns: 1fr; } .landing-main,.funnel-directory { padding: 40px 20px; } .landing-facts { grid-template-columns: 1fr; } .demo-tiles { grid-template-columns: 1fr; } .demo-tiles span + span { border-left: 0; border-top: 1px solid var(--fw-ink); } }

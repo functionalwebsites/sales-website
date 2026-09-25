@@ -7,14 +7,14 @@
     {
       "id": "tpl_plumber_rapidflow",
       "name": "RapidFlow Plumbing",
-      "description": "A service-business template for plumbers with emergency service messaging, service pages, and a lead form.",
-      "author": "Codex",
-      "priceLabel": "Premium Template",
+      "description": "Four plumbing pages with your business name and template colors. Before publishing, replace the sample phone and email, set the contact form recipient, and review service claims.",
+      "author": "Functional Websites",
+      "priceLabel": "Free with Pro",
       "source": "templates/plumber-website-template.json",
       "projectData": {
         "name": "RapidFlow Plumbing",
         "brandName": "RapidFlow Plumbing",
-        "globalCSS": "/* RapidFlow Plumbing template */\nbody { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--color-page-bg, #f3f7fb); color: var(--color-text-dark, #13293d); }\n* { box-sizing: border-box; }\na { transition: opacity .2s ease, transform .2s ease; }\na:hover { opacity: 0.92; }\nsection { position: relative; }\n.rf-badge { display: inline-block; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.18); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }\n.rf-stat-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 28px; }\n.rf-stat { background: #ffffff; border: 1px solid #d8e4ef; border-radius: 16px; padding: 18px; box-shadow: 0 16px 40px rgba(19,41,61,0.08); }\n.rf-stat strong { display: block; font-size: 28px; color: #0b63ce; margin-bottom: 6px; }\n.rf-service-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }\n.rf-service-card { background: #ffffff; border: 1px solid #d8e4ef; border-radius: 18px; padding: 24px; box-shadow: 0 18px 50px rgba(19,41,61,0.08); }\n.rf-service-card h3 { margin: 0 0 8px; font-size: 20px; }\n.rf-service-card p { margin: 0 0 12px; color: #4d657a; line-height: 1.6; }\n.rf-service-card ul { margin: 0; padding-left: 18px; color: #4d657a; line-height: 1.6; }\n.rf-service-card li + li { margin-top: 6px; }\n.rf-highlight { background: linear-gradient(135deg, #0b63ce, #0b8fe5); color: #ffffff; border-radius: 22px; padding: 28px; box-shadow: 0 24px 70px rgba(11,99,206,0.18); }\n.rf-highlight h3 { margin: 0 0 10px; font-size: 26px; }\n.rf-highlight p { margin: 0; line-height: 1.7; opacity: 0.94; }\n.rf-checklist { list-style: none; padding: 0; margin: 18px 0 0; }\n.rf-checklist li { margin: 0 0 10px; padding-left: 28px; position: relative; }\n.rf-checklist li::before { content: '✓'; position: absolute; left: 0; top: 0; color: #13b16b; font-weight: 800; }\n.rf-contact-strip { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; background: #13293d; color: #ffffff; border-radius: 18px; padding: 22px 24px; }\n.rf-contact-strip a { color: #ffffff; text-decoration: none; font-weight: 700; }\n@media (max-width: 720px) { .rf-contact-strip { align-items: flex-start; } }",
+        "globalCSS": "/* RapidFlow Plumbing template */\nbody { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--color-page-bg, #f3f7fb); color: var(--color-text-dark, #13293d); }\n* { box-sizing: border-box; }\na { transition: opacity .2s ease, transform .2s ease; }\na:hover { opacity: 0.92; }\nsection { position: relative; }\n.rf-badge { display: inline-block; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.18); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }\n.rf-stat-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 28px; }\n.rf-stat { background: var(--color-section-bg, #ffffff); border: 1px solid var(--color-border, #d8e4ef); border-radius: 16px; padding: 18px; box-shadow: 0 16px 40px rgba(19,41,61,0.08); }\n.rf-stat strong { display: block; font-size: 28px; color: var(--color-accent, #0b63ce); margin-bottom: 6px; }\n.rf-service-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }\n.rf-service-card { background: var(--color-section-bg, #ffffff); border: 1px solid var(--color-border, #d8e4ef); border-radius: 18px; padding: 24px; box-shadow: 0 18px 50px rgba(19,41,61,0.08); }\n.rf-service-card h3 { margin: 0 0 8px; font-size: 20px; }\n.rf-service-card p { margin: 0 0 12px; color: var(--color-text-muted, #4d657a); line-height: 1.6; }\n.rf-service-card ul { margin: 0; padding-left: 18px; color: var(--color-text-muted, #4d657a); line-height: 1.6; }\n.rf-service-card li + li { margin-top: 6px; }\n.rf-highlight { background: linear-gradient(135deg, var(--color-accent, #0b63ce), #0b8fe5); color: #ffffff; border-radius: 22px; padding: 28px; box-shadow: 0 24px 70px rgba(11,99,206,0.18); }\n.rf-highlight h3 { margin: 0 0 10px; font-size: 26px; }\n.rf-highlight p { margin: 0; line-height: 1.7; opacity: 0.94; }\n.rf-checklist { list-style: none; padding: 0; margin: 18px 0 0; }\n.rf-checklist li { margin: 0 0 10px; padding-left: 28px; position: relative; }\n.rf-checklist li::before { content: '✓'; position: absolute; left: 0; top: 0; color: #13b16b; font-weight: 800; }\n.rf-contact-strip { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; background: var(--color-text-dark, #13293d); color: #ffffff; border-radius: 18px; padding: 22px 24px; }\n.rf-contact-strip a { color: #ffffff; text-decoration: none; font-weight: 700; }\n@media (max-width: 720px) { .rf-contact-strip { align-items: flex-start; } }",
         "globalJS": "// RapidFlow Plumbing template scripts\n",
         "meta": {
           "description": "RapidFlow Plumbing provides fast repairs, drain cleaning, water heater installs, and 24/7 emergency plumbing service.",
@@ -97,6 +97,10 @@
                   "bgPosition": "center",
                   "overlayColor": "#102437",
                   "overlayOpacity": "0.12"
+                },
+                "brandLinks": {
+                  "bgColor": "accent",
+                  "btnColor": "accent"
                 }
               },
               {
@@ -106,7 +110,10 @@
                   "bgColor": "#f3f7fb",
                   "padding": "36px 20px 20px",
                   "maxWidth": "1100px",
-                  "content": "<div class=\"rf-contact-strip\"><div><strong style=\"font-size:22px;display:block;margin-bottom:4px;\">Call now for same-day plumbing service</strong><span style=\"color:rgba(255,255,255,.8);\">Licensed technicians. Upfront pricing. Respectful in-home service.</span></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;\"><a href=\"tel:5550102457\" style=\"background:#13b16b;padding:12px 16px;border-radius:10px;\">(555) 010-2457</a><a href=\"contact.html\" style=\"background:#ffffff;color:#13293d;padding:12px 16px;border-radius:10px;\">Book Online</a></div></div><div class=\"rf-stat-grid\"><div class=\"rf-stat\"><strong>24/7</strong><span>Emergency response for burst pipes and urgent leaks</span></div><div class=\"rf-stat\"><strong>60 min</strong><span>Typical arrival window for priority calls</span></div><div class=\"rf-stat\"><strong>1,200+</strong><span>Homes and small businesses served locally</span></div><div class=\"rf-stat\"><strong>5-Star</strong><span>Rated for clean work, communication, and follow-through</span></div></div>"
+                  "content": "<div class=\"rf-contact-strip\"><div><strong style=\"font-size:22px;display:block;margin-bottom:4px;\">Call now for same-day plumbing service</strong><span style=\"color:rgba(255,255,255,.8);\">Licensed technicians. Upfront pricing. Respectful in-home service.</span></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;\"><a href=\"tel:5550102457\" style=\"background:#13b16b;padding:12px 16px;border-radius:10px;\">(555) 010-2457</a><a href=\"contact.html\" style=\"background:#ffffff;color:var(--color-text-dark, #13293d);padding:12px 16px;border-radius:10px;\">Request Service</a></div></div><div class=\"rf-stat-grid\"><div class=\"rf-stat\"><strong>24/7</strong><span>Emergency response for burst pipes and urgent leaks</span></div><div class=\"rf-stat\"><strong>Repairs</strong><span>Help with leaks, clogs, and damaged fixtures</span></div><div class=\"rf-stat\"><strong>Installs</strong><span>Fixtures and water heaters fitted for your needs</span></div><div class=\"rf-stat\"><strong>Care</strong><span>Clear explanations and a tidy work area</span></div></div>"
+                },
+                "brandLinks": {
+                  "bgColor": "pageBg"
                 }
               },
               {
@@ -117,6 +124,9 @@
                   "level": "h2",
                   "align": "center",
                   "color": "#13293d"
+                },
+                "brandLinks": {
+                  "color": "textDark"
                 }
               },
               {
@@ -127,6 +137,9 @@
                   "padding": "12px 20px 72px",
                   "maxWidth": "1100px",
                   "content": "<div class=\"rf-service-grid\"><div class=\"rf-service-card\"><h3>Leak Detection</h3><p>We pinpoint hidden leaks fast and repair them before they turn into drywall, flooring, or foundation damage.</p><ul><li>Slab and wall leak tracing</li><li>Pipe and fixture leak repair</li><li>Water pressure troubleshooting</li></ul></div><div class=\"rf-service-card\"><h3>Drain Cleaning</h3><p>From stubborn kitchen backups to recurring sewer line slowdowns, we clear the issue and explain the cause.</p><ul><li>Kitchen and bath clogs</li><li>Hydro jet recommendations</li><li>Camera inspection options</li></ul></div><div class=\"rf-service-card\"><h3>Water Heaters</h3><p>Repair or replace traditional and tankless systems with honest guidance on efficiency, capacity, and lifespan.</p><ul><li>No hot water diagnosis</li><li>Tankless descaling service</li><li>New heater installations</li></ul></div><div class=\"rf-service-card\"><h3>Emergency Plumbing</h3><p>When water will not stop, we move quickly to limit damage and restore safe, reliable plumbing.</p><ul><li>Burst pipe response</li><li>Overflowing toilets</li><li>After-hours dispatch</li></ul></div></div>"
+                },
+                "brandLinks": {
+                  "bgColor": "sectionBg"
                 }
               },
               {
@@ -135,7 +148,7 @@
                 "props": {
                   "bgColor": "#f3f7fb",
                   "padding": "72px 20px",
-                  "title": "Why Homeowners Choose RapidFlow",
+                  "title": "Why Homeowners Choose RapidFlow Plumbing",
                   "features": [
                     {
                       "icon": "🛠",
@@ -153,6 +166,9 @@
                       "desc": "Shoe covers, clean work areas, and updates throughout the job."
                     }
                   ]
+                },
+                "brandLinks": {
+                  "bgColor": "pageBg"
                 }
               },
               {
@@ -162,7 +178,10 @@
                   "bgColor": "#ffffff",
                   "padding": "72px 20px",
                   "maxWidth": "1100px",
-                  "content": "<div class=\"rf-highlight\"><h3>Need an emergency plumber right now?</h3><p>If you have a burst pipe, overflowing drain, sewer backup, or no hot water before guests arrive, call our emergency line and we will help you take the next right step immediately.</p><ul class=\"rf-checklist\"><li>Talk to a real person, not a call center maze</li><li>Get guidance to reduce water damage before we arrive</li><li>Schedule priority dispatch based on urgency and location</li></ul><div style=\"margin-top:22px;\"><a href=\"tel:5550102457\" style=\"display:inline-block;background:#ffffff;color:#0b63ce;padding:14px 18px;border-radius:10px;font-weight:700;text-decoration:none;\">Call Emergency Service</a></div></div>"
+                  "content": "<div class=\"rf-highlight\"><h3>Need an emergency plumber right now?</h3><p>If you have a burst pipe, overflowing drain, sewer backup, or no hot water before guests arrive, call our emergency line and we will help you take the next right step immediately.</p><ul class=\"rf-checklist\"><li>Talk to a real person, not a call center maze</li><li>Get guidance to reduce water damage before we arrive</li><li>Schedule priority dispatch based on urgency and location</li></ul><div style=\"margin-top:22px;\"><a href=\"tel:5550102457\" style=\"display:inline-block;background:#ffffff;color:var(--color-accent, #0b63ce);padding:14px 18px;border-radius:10px;font-weight:700;text-decoration:none;\">Call Emergency Service</a></div></div>"
+                },
+                "brandLinks": {
+                  "bgColor": "sectionBg"
                 }
               },
               {
@@ -178,6 +197,10 @@
                   "buttonHref": "contact.html",
                   "btnBg": "#ffffff",
                   "btnColor": "#0b63ce"
+                },
+                "brandLinks": {
+                  "bgColor": "accent",
+                  "btnColor": "accent"
                 }
               },
               {
@@ -190,6 +213,9 @@
                   "brand": "RapidFlow Plumbing",
                   "tagline": "Repairs, installs, and emergency plumbing done with urgency and care.",
                   "copyright": "© 2026 RapidFlow Plumbing. All rights reserved."
+                },
+                "brandLinks": {
+                  "bgColor": "footerBg"
                 }
               }
             ]
@@ -229,6 +255,10 @@
                   "bgPosition": "center",
                   "overlayColor": "#102437",
                   "overlayOpacity": "0"
+                },
+                "brandLinks": {
+                  "bgColor": "textDark",
+                  "btnColor": "textDark"
                 }
               },
               {
@@ -239,6 +269,9 @@
                   "padding": "72px 20px",
                   "maxWidth": "1100px",
                   "content": "<div class=\"rf-service-grid\"><div class=\"rf-service-card\"><h3>Drain and Sewer</h3><p>Kitchen drains, bathtub backups, sewer odors, and recurring clogs diagnosed and cleared.</p><ul><li>Drain snaking</li><li>Camera inspections</li><li>Main line recommendations</li></ul></div><div class=\"rf-service-card\"><h3>Fixture Repair</h3><p>Leaky faucets, running toilets, garbage disposals, and shower valve issues repaired the right way.</p><ul><li>Faucets and sinks</li><li>Toilet repair and replacement</li><li>Garbage disposal swaps</li></ul></div><div class=\"rf-service-card\"><h3>Water Heaters</h3><p>Installations, repairs, and maintenance for both tank and tankless units.</p><ul><li>Thermostat and pilot diagnosis</li><li>Expansion tank updates</li><li>Energy-efficiency guidance</li></ul></div><div class=\"rf-service-card\"><h3>Repiping and Upgrades</h3><p>Old, corroded, or unreliable piping replaced with durable, code-conscious solutions.</p><ul><li>Partial repipes</li><li>Shutoff valve upgrades</li><li>Pressure regulator installs</li></ul></div></div>"
+                },
+                "brandLinks": {
+                  "bgColor": "pageBg"
                 }
               },
               {
@@ -265,6 +298,9 @@
                       "img": ""
                     }
                   ]
+                },
+                "brandLinks": {
+                  "bgColor": "sectionBg"
                 }
               },
               {
@@ -277,6 +313,9 @@
                   "brand": "RapidFlow Plumbing",
                   "tagline": "Plumbing service plans built around urgency, craftsmanship, and trust.",
                   "copyright": "© 2026 RapidFlow Plumbing. All rights reserved."
+                },
+                "brandLinks": {
+                  "bgColor": "footerBg"
                 }
               }
             ]
@@ -332,9 +371,12 @@
                 "id": "emergency_text",
                 "type": "text",
                 "props": {
-                  "content": "<p style=\"max-width:900px;margin:0 auto;line-height:1.8;\">Not every plumbing problem needs emergency dispatch, but active flooding, sewage exposure, or no water in a critical moment usually does. This page is designed to convert high-intent emergency calls fast, while still reassuring the customer that they will be guided clearly through the next steps.</p>",
+                  "content": "<p style=\"max-width:900px;margin:0 auto;line-height:1.8;\">Not every plumbing problem needs emergency dispatch, but active flooding, sewage exposure, or no water in a critical moment usually does. Call us to describe the problem, check availability, and discuss the next steps.</p>",
                   "align": "center",
                   "color": "#4d657a"
+                },
+                "brandLinks": {
+                  "color": "textMuted"
                 }
               },
               {
@@ -350,6 +392,10 @@
                   "buttonHref": "tel:5550102457",
                   "btnBg": "#ffffff",
                   "btnColor": "#13293d"
+                },
+                "brandLinks": {
+                  "bgColor": "textDark",
+                  "btnColor": "textDark"
                 }
               },
               {
@@ -362,6 +408,9 @@
                   "brand": "RapidFlow Plumbing",
                   "tagline": "Emergency plumbing support that helps reduce damage and restore order.",
                   "copyright": "© 2026 RapidFlow Plumbing. All rights reserved."
+                },
+                "brandLinks": {
+                  "bgColor": "footerBg"
                 }
               }
             ]
@@ -389,6 +438,9 @@
                   "level": "h1",
                   "align": "center",
                   "color": "#13293d"
+                },
+                "brandLinks": {
+                  "color": "textDark"
                 }
               },
               {
@@ -398,6 +450,9 @@
                   "content": "<p style=\"max-width:780px;margin:0 auto;line-height:1.8;\">Use the form below to request service, ask for an estimate, or let us know if you need a fast callback. You can also call us directly for urgent situations.</p>",
                   "align": "center",
                   "color": "#4d657a"
+                },
+                "brandLinks": {
+                  "color": "textMuted"
                 }
               },
               {
@@ -407,10 +462,17 @@
                   "bgColor": "#f3f7fb",
                   "padding": "60px 20px",
                   "title": "Tell Us What You Need",
-                  "submitText": "Request Service",
-                  "action": "#",
+                  "submitText": "Prepare Service Request",
+                  "action": "",
                   "btnBg": "#0b63ce",
-                  "btnColor": "#ffffff"
+                  "btnColor": "#ffffff",
+                  "mailtoEmail": "",
+                  "successTitle": "Your service request draft is ready",
+                  "successMessage": "Review the message in your email app, then press Send. Your request has not been sent automatically."
+                },
+                "brandLinks": {
+                  "bgColor": "pageBg",
+                  "btnBg": "accent"
                 }
               },
               {
@@ -420,7 +482,10 @@
                   "bgColor": "#ffffff",
                   "padding": "12px 20px 72px",
                   "maxWidth": "900px",
-                  "content": "<div class=\"rf-contact-strip\" style=\"background:#0b63ce;\"><div><strong style=\"font-size:20px;display:block;margin-bottom:4px;\">Prefer to call?</strong><span style=\"color:rgba(255,255,255,.82);\">Speak with our team about repairs, estimates, or emergency dispatch.</span></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;\"><a href=\"tel:5550102457\" style=\"background:#ffffff;color:#0b63ce;padding:12px 16px;border-radius:10px;\">(555) 010-2457</a><a href=\"mailto:service@rapidflowplumbing.com\" style=\"background:rgba(255,255,255,.14);padding:12px 16px;border-radius:10px;\">service@rapidflowplumbing.com</a></div></div>"
+                  "content": "<div class=\"rf-contact-strip\" style=\"background:var(--color-accent, #0b63ce);\"><div><strong style=\"font-size:20px;display:block;margin-bottom:4px;\">Prefer to call?</strong><span style=\"color:rgba(255,255,255,.82);\">Speak with our team about repairs, estimates, or emergency dispatch.</span></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;\"><a href=\"tel:5550102457\" style=\"background:#ffffff;color:var(--color-accent, #0b63ce);padding:12px 16px;border-radius:10px;\">(555) 010-2457</a><a href=\"mailto:service@example.com\" style=\"background:rgba(255,255,255,.14);padding:12px 16px;border-radius:10px;\">service@example.com</a></div></div>"
+                },
+                "brandLinks": {
+                  "bgColor": "sectionBg"
                 }
               },
               {
@@ -433,6 +498,9 @@
                   "brand": "RapidFlow Plumbing",
                   "tagline": "Schedule service quickly and get clear communication from first call to final repair.",
                   "copyright": "© 2026 RapidFlow Plumbing. All rights reserved."
+                },
+                "brandLinks": {
+                  "bgColor": "footerBg"
                 }
               }
             ]

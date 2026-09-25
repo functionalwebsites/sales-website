@@ -9,7 +9,7 @@
 }
 
 :host {
-  color-scheme: dark;
+  color-scheme: only light;
 }
 
 * {
@@ -37,20 +37,6 @@
     linear-gradient(180deg, #161a1a 0%, #101313 100%);
   color: var(--text);
   font-family: 'JetBrains Mono', monospace;
-}
-
-:host-context(html[data-theme="dark"]) .site-component {
-  --bg: #151717;
-  --bg2: #20231f;
-  --bg3: #2b2e27;
-  --border: #f3ecd9;
-  --green: #7cff6b;
-  --rust: #ff8a66;
-  --text: #f3ecd9;
-  --text2: #d1c7b2;
-  --shadow-color: #050505;
-  --line: 3px solid var(--border);
-  --shadow-sm: 4px 4px 0 var(--shadow-color);
 }
 
 .site-component a {
@@ -205,72 +191,6 @@
   display: none;
 }
 
-.theme-toggle {
-  width: 76px;
-  min-width: 76px;
-  height: 42px;
-  padding: 0;
-  font-size: 0 !important;
-  flex: 0 0 76px;
-  position: relative;
-  overflow: hidden;
-  background: var(--bg);
-  border: var(--line) !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
-}
-
-.theme-toggle::before {
-  content: "☾";
-  position: absolute;
-  top: 11px;
-  left: 13px;
-  display: block;
-  padding: 0;
-  color: var(--text);
-  font-size: 16px;
-  line-height: 1;
-  text-shadow: 42px 0 0 currentColor;
-}
-
-.theme-toggle::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 26px;
-  height: 26px;
-  background: var(--green);
-  border: var(--line);
-  box-shadow: none;
-  transition: transform 0.22s ease;
-}
-
-.site-component[data-theme="dark"] .theme-toggle,
-:host-context(html[data-theme="dark"]) .theme-toggle {
-  background: var(--bg);
-  box-shadow:
-    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-.site-component[data-theme="dark"] .theme-toggle::after,
-:host-context(html[data-theme="dark"]) .theme-toggle::after,
-.theme-toggle.is-dark::after,
-.theme-toggle[aria-pressed="true"]::after,
-.theme-toggle[data-theme-state="dark"]::after {
-  transform: translateX(35px);
-}
-
-.desktop-theme-toggle {
-  position: static;
-}
-
-.mobile-theme-toggle {
-  display: none !important;
-}
-
 .menu-toggle {
   display: none;
   align-items: center;
@@ -295,23 +215,6 @@
   border-color: var(--border);
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--shadow-color);
-}
-
-.theme-toggle:hover {
-  transform: none !important;
-  background: var(--bg) !important;
-  color: var(--text) !important;
-  border: var(--line) !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
-}
-
-.site-component[data-theme="dark"] .theme-toggle:hover,
-:host-context(html[data-theme="dark"]) .theme-toggle:hover {
-  box-shadow:
-    inset 4px 4px 0 rgba(0, 0, 0, 0.58),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 .menu-toggle-bar {
@@ -418,60 +321,6 @@
   box-shadow: 2px 2px 0 var(--shadow-color);
 }
 
-.theme-toggle.btn-secondary:hover {
-  transform: none !important;
-  background: var(--bg) !important;
-  color: var(--text) !important;
-  border: var(--line) !important;
-  box-shadow:
-    inset 4px 4px 0 rgba(16, 16, 13, 0.24),
-    inset -2px -2px 0 rgba(255, 255, 255, 0.34) !important;
-}
-
-.theme-toggle::before,
-.theme-toggle::after {
-  content: none !important;
-}
-
-.theme-toggle .toggle-icon {
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  color: var(--text);
-  font-size: 16px;
-  line-height: 1;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.theme-toggle .toggle-icon-moon {
-  left: 13px;
-}
-
-.theme-toggle .toggle-icon-sun {
-  right: 11px;
-}
-
-.theme-toggle .toggle-ball {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  z-index: 2;
-  width: 26px;
-  height: 26px;
-  background: var(--green);
-  border: var(--line);
-  box-shadow: none;
-  transition: transform 0.22s ease;
-  pointer-events: none;
-}
-
-.theme-toggle.is-dark .toggle-ball,
-.theme-toggle[aria-pressed="true"] .toggle-ball,
-.theme-toggle[data-theme-state="dark"] .toggle-ball {
-  transform: translateX(35px);
-}
-
 footer {
   background: var(--bg2);
   border-top: 1px solid var(--border);
@@ -571,16 +420,6 @@ footer {
   font-size: 13px;
 }
 
-.site-component[data-theme="dark"] footer,
-.site-component[data-theme="dark"] .footer-section a,
-.site-component[data-theme="dark"] .footer-bottom {
-  color: var(--text2);
-}
-
-.site-component[data-theme="dark"] .footer-section h4 {
-  color: var(--text);
-}
-
 @media (max-width: 768px) {
   .header-wrapper {
     padding: 6px 16px;
@@ -594,7 +433,6 @@ footer {
     left: 50%;
     transform: translateX(-50%);
   }
-
 
   .logo-mark {
     width: 46px;
@@ -646,10 +484,6 @@ footer {
     display: none;
   }
 
-  .desktop-theme-toggle {
-    display: none;
-  }
-
   .nav-links a {
     padding: 8px 0;
   }
@@ -667,17 +501,6 @@ footer {
     margin-left: auto;
     padding: 8px 14px;
     font-size: 16px;
-  }
-
-  .mobile-theme-toggle {
-    display: inline-flex !important;
-    width: 76px;
-    min-width: 76px;
-    height: 42px;
-    position: absolute;
-    right: 14px;
-    z-index: 2;
-    padding: 0;
   }
 
   footer {
@@ -766,8 +589,7 @@ footer {
   display: flex !important;
 }
 
-.desktop-builder-action .build-shortcut,
-.desktop-theme-toggle {
+.desktop-builder-action .build-shortcut{
   display: none !important;
 }
 
@@ -779,25 +601,6 @@ footer {
   margin-left: auto;
   padding: 8px 14px;
   font-size: 16px;
-}
-
-.topbar-theme-toggle {
-  display: none !important;
-  order: 3;
-  margin-left: 8px;
-}
-
-.mobile-theme-toggle {
-  display: inline-flex !important;
-  width: 76px;
-  min-width: 76px;
-  height: 42px;
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 2;
-  margin-left: 0;
-  padding: 0;
 }
 
 @media (min-width: 769px) {
@@ -839,20 +642,6 @@ footer {
   .nav-links a {
     padding: 0;
   }
-
-  .mobile-theme-toggle {
-    position: absolute;
-    top: 11px;
-    right: 24px;
-    margin-left: 0;
-    margin-top: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .mobile-theme-toggle .toggle-icon,
-  .mobile-theme-toggle .toggle-ball {
-    position: absolute;
-  }
 }`;
 
   const fallbackMarkup = {
@@ -879,8 +668,6 @@ footer {
       </div>
       <div class="nav-actions desktop-builder-action">
         <a href="https://build.functionalwebsites.com/" class="btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
-        <button class="btn btn-secondary theme-toggle desktop-theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
-        <button class="btn btn-secondary theme-toggle mobile-theme-toggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">Dark</button>
       </div>
     </nav>
     <a href="https://build.functionalwebsites.com/" class="mobile-builder-link btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
@@ -934,7 +721,7 @@ footer {
       root = placeholder.attachShadow({ mode: 'open' });
     }
 
-    root.innerHTML = `<style>${fallbackStyles}</style><link rel="stylesheet" href="/styles/shared.css"><div class="site-component" data-theme="${getSiteTheme()}">${markup}</div>`;
+    root.innerHTML = `<style>${fallbackStyles}</style><link rel="stylesheet" href="/styles/shared.css"><div class="site-component" data-theme="light">${markup}</div>`;
 
     if (name === 'header') {
       markActiveNav(root);
@@ -965,51 +752,19 @@ footer {
     });
   }
 
-  function getSiteTheme() {
-    if (document.documentElement.dataset.themeLock === 'light') return 'light';
-    try {
-      return localStorage.getItem('fw_site_theme') || 'light';
-    } catch (e) {
-      return 'light';
-    }
-  }
-
-  function applySiteTheme(theme) {
-    const nextTheme = document.documentElement.dataset.themeLock === 'light' ? 'light' : (theme === 'dark' ? 'dark' : 'light');
-    document.documentElement.dataset.theme = nextTheme;
-    const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--fw-paper').trim() || (nextTheme === 'dark' ? '#151717' : '#f5efe0');
+  function applyLightAppearance() {
+    document.documentElement.dataset.theme = 'light';
+    document.documentElement.style.colorScheme = 'only light';
+    // Discard legacy preferences so returning visitors use the same palette.
+    try { localStorage.removeItem('fw_site_theme'); } catch (e) {}
+    const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--fw-paper').trim() || '#f5efe0';
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', paperColor);
-    document.querySelectorAll('#header-placeholder, #footer-placeholder').forEach((placeholder) => {
-      const root = placeholder.shadowRoot;
-      root?.querySelector('.site-component')?.setAttribute('data-theme', nextTheme);
-      root?.querySelectorAll('.theme-toggle').forEach((button) => {
-        button.hidden = document.documentElement.dataset.themeLock === 'light';
-        if (!button.querySelector('.toggle-ball')) {
-          button.innerHTML = '<span class="toggle-icon toggle-icon-moon" aria-hidden="true">☾</span><span class="toggle-icon toggle-icon-sun" aria-hidden="true">☀</span><span class="toggle-ball" aria-hidden="true"></span>';
-        }
-        button.setAttribute('aria-pressed', nextTheme === 'dark' ? 'true' : 'false');
-        button.dataset.themeState = nextTheme;
-        button.classList.toggle('is-dark', nextTheme === 'dark');
-        button.setAttribute('aria-label', nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-        button.title = nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-      });
-    });
-  }
-
-  function setSiteTheme(theme) {
-    if (document.documentElement.dataset.themeLock === 'light') return;
-    const nextTheme = theme === 'dark' ? 'dark' : 'light';
-    try {
-      localStorage.setItem('fw_site_theme', nextTheme);
-    } catch (e) {}
-    applySiteTheme(nextTheme);
   }
 
   function bindHeaderInteractions(root) {
     const nav = root.getElementById('site-nav');
     const button = root.querySelector('.menu-toggle');
     const logoMark = root.querySelector('.logo-mark');
-    const themeButtons = root.querySelectorAll('.theme-toggle');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const breakpointQueries = [
       window.matchMedia('(max-width: 768px)')
@@ -1088,11 +843,6 @@ footer {
       event.stopPropagation();
       toggleMenu();
     });
-    themeButtons.forEach((themeButton) => {
-      themeButton.addEventListener('click', () => {
-        setSiteTheme(getSiteTheme() === 'dark' ? 'light' : 'dark');
-      });
-    });
     nav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => toggleMenu(false));
     });
@@ -1101,7 +851,7 @@ footer {
     });
 
     requestAnimationFrame(spinLogoGear);
-    applySiteTheme(getSiteTheme());
+    applyLightAppearance();
 
     breakpointQueries.forEach((query) => onMediaQueryChange(query, spinLogoGear));
 
@@ -1138,7 +888,7 @@ footer {
   }
 
   async function initComponents() {
-    applySiteTheme(getSiteTheme());
+    applyLightAppearance();
     await Promise.all([
       loadComponent('header', '#header-placeholder'),
       loadComponent('footer', '#footer-placeholder')

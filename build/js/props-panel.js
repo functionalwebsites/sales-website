@@ -427,9 +427,9 @@ function replaceTextValue(value, oldName, newName) {
   return value.split(oldName).join(newName);
 }
 
-function updateGeneratedBrandReferences(oldName, newName, includeCopy = false) {
+function updateGeneratedBrandReferences(oldName, newName, includeCopy = false, projectData = _projectData) {
   if (!oldName || oldName === newName) return;
-  Object.values(_projectData.navbars || {}).forEach(nav => {
+  Object.values(projectData.navbars || {}).forEach(nav => {
     nav.brand = includeCopy ? (replaceTextValue(nav.brand, oldName, newName) || newName) : newName;
     if (!nav.logoAlt || nav.logoAlt === oldName || !includeCopy) {
       nav.logoAlt = newName;
@@ -437,19 +437,19 @@ function updateGeneratedBrandReferences(oldName, newName, includeCopy = false) {
       nav.logoAlt = replaceTextValue(nav.logoAlt, oldName, newName);
     }
   });
-  if (_projectData.logo) {
-    if (!_projectData.logo.alt || _projectData.logo.alt === oldName || !includeCopy) {
-      _projectData.logo.alt = newName;
+  if (projectData.logo) {
+    if (!projectData.logo.alt || projectData.logo.alt === oldName || !includeCopy) {
+      projectData.logo.alt = newName;
     } else {
-      _projectData.logo.alt = replaceTextValue(_projectData.logo.alt, oldName, newName) || newName;
+      projectData.logo.alt = replaceTextValue(projectData.logo.alt, oldName, newName) || newName;
     }
   }
-  if (_projectData.meta) {
+  if (projectData.meta) {
     ['description', 'author', 'ogImage'].forEach(key => {
-      _projectData.meta[key] = replaceTextValue(_projectData.meta[key], oldName, newName);
+      projectData.meta[key] = replaceTextValue(projectData.meta[key], oldName, newName);
     });
   }
-  (_projectData.pages || []).forEach(page => {
+  (projectData.pages || []).forEach(page => {
     if (page.meta) {
       ['description', 'titleOverride', 'ogTitle', 'ogDescription'].forEach(key => {
         page.meta[key] = replaceTextValue(page.meta[key], oldName, newName);
@@ -1089,6 +1089,9 @@ function buildPropsForm(block, options = {}) {
       html += field('Title', 'title');
       html += field('Intro Text', 'introText', 'textarea');
       html += field('Recipient Email', 'mailtoEmail', 'email');
+      if (!normalizeMailtoRecipient(p.mailtoEmail || p.action)) {
+        html += '<p class="text-muted text-sm" role="status">Add a valid recipient email to enable this form. Submitting creates an email draft; it does not send a message automatically.</p>';
+      }
       html += field('Subject Template', 'subjectTemplate');
       html += field('Submit Button Text', 'submitText');
       html += field('Success Title', 'successTitle');
@@ -1102,6 +1105,9 @@ function buildPropsForm(block, options = {}) {
       html += field('Title', 'title');
       html += field('Description', 'description', 'textarea');
       html += field('Video URL', 'videoUrl');
+      if (!toYouTubeEmbedUrl(p.videoUrl)) {
+        html += '<p class="text-muted text-sm" role="status">Paste a YouTube watch, share, Shorts, or live video link. Until then, the site shows a video placeholder.</p>';
+      }
       html += field('Max Width', 'maxWidth');
       html += `<div class="field"><label class="label">Aspect Ratio</label><select class="input" onchange="updateProp('${block.id}','aspectRatio',this.value)">
         ${['16 / 9','4 / 3','1 / 1','9 / 16'].map(v=>`<option value="${v}" ${(p.aspectRatio||'16 / 9')===v?'selected':''}>${v}</option>`).join('')}

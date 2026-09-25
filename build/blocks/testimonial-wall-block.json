@@ -8,17 +8,17 @@
     {
       "id": "blk_testimonial_wall",
       "name": "Testimonial Wall",
-      "description": "A native testimonial grid with editable reviews, star ratings, layout controls, and highlight toggles.",
+      "description": "Responsive review cards with editable quotes, ratings, and layout controls. Replace the clearly marked sample reviews with real customer feedback.",
       "category": "Social Proof",
-      "author": "Codex",
-      "priceLabel": "Custom Block",
+      "author": "Functional Websites",
+      "priceLabel": "Free with Pro",
       "source": "blocks/testimonial-wall-block.json",
       "block": {
         "id": "testimonial_wall_block",
         "type": "testimonialWall",
         "props": {
           "title": "What Customers Say",
-          "intro": "Social proof helps visitors trust you faster. Add a few real reviews to show the quality of your work.",
+          "intro": "Feedback from the people we work with.",
           "bgColor": "#f5f8fc",
           "padding": "80px 20px",
           "maxWidth": "1100px",
@@ -27,21 +27,21 @@
           "highlightFirst": false,
           "testimonials": [
             {
-              "name": "Jordan M.",
-              "role": "Homeowner",
-              "quote": "Fast response, fair pricing, and clear communication from start to finish.",
+              "name": "Sample customer 1",
+              "role": "Sample review — replace before publishing",
+              "quote": "Replace this sample with a real customer review about your service.",
               "rating": "5"
             },
             {
-              "name": "Taylor R.",
-              "role": "Local Customer",
-              "quote": "Professional, efficient, and respectful of our home. We would absolutely hire them again.",
+              "name": "Sample customer 2",
+              "role": "Sample review — replace before publishing",
+              "quote": "Add another genuine review, using the customer’s own words.",
               "rating": "5"
             },
             {
-              "name": "Avery S.",
-              "role": "Repeat Client",
-              "quote": "One of the easiest contractor experiences we have had. Everything felt organized and trustworthy.",
+              "name": "Sample customer 3",
+              "role": "Sample review — replace before publishing",
+              "quote": "Share real feedback that helps visitors understand your work.",
               "rating": "5"
             }
           ]

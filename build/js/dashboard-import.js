@@ -172,7 +172,7 @@ async function createProject() {
       toast('That custom template is no longer installed.', 'error');
       return;
     }
-    data = applyLibraryProjectTemplate(data, templateEntry);
+    data = applyLibraryProjectTemplate(data, templateEntry, brandSetup);
   } else if (template === 'guided') {
     _brandContext = data.brand;
     _projectNameContext = data.brandName;
@@ -372,6 +372,20 @@ async function regenerateProjectFavicons(data) {
   data.favicons = await buildFaviconSetFromLogo(dataURL, data.brandName || data.name || 'Website', data.logo?.faviconCrop || {});
   data.meta = data.meta || {};
   data.meta.favicon = 'favicon.ico';
+}
+
+function syncNewProjectTemplateColors() {
+  const value = document.getElementById('new-project-template').value;
+  const template = getLibraryData().pageTemplates.find(item => `library:${item.id}` === value);
+  const brand = template?.projectData?.brand || createBlankProjectData('').brand;
+  const fields = { accent: 'accent', 'page-bg': 'pageBg', 'section-bg': 'sectionBg', 'text-dark': 'textDark' };
+  Object.entries(fields).forEach(([id, key]) => {
+    const color = brand[key];
+    if (/^#[0-9a-f]{6}$/i.test(color || '')) document.getElementById(`new-project-${id}`).value = color;
+  });
+  document.getElementById('new-project-template-note').textContent = template
+    ? `${template.description} Template colors are loaded above; you can adjust them before creating your site.`
+    : 'Choose a starter or import a website template from the Custom Library.';
 }
 
 function renderNewProjectTemplateOptions() {
