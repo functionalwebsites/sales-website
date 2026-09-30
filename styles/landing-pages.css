@@ -8,28 +8,89 @@
 .funnel-link span { font-size: 13px; color: var(--text2); }
 .funnel-link:hover { background: var(--fw-paper); }
 .funnel-link:focus-visible,.landing-main a:focus-visible { outline: 3px solid var(--fw-rust); outline-offset: 6px; }
-.landing-kicker { color: var(--fw-rust); text-transform: uppercase; font-size: 13px; font-weight: 700; margin-bottom: 20px; }
-.landing-main h1 { font-size: clamp(34px,5.4vw,60px); line-height: 1.12; max-width: 950px; margin: 0 0 24px; }
-.landing-lead { max-width: 800px; font-size: 18px; line-height: 1.7; color: var(--text2); }
-.landing-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 32px 0 24px; }
-.landing-facts div { border-top: 3px solid var(--fw-ink); padding-top: 16px; }
-.landing-facts dt { color: var(--fw-rust); font-weight: 700; margin-bottom: 8px; }
-.landing-facts dd { margin: 0; font-size: 20px; }
-.landing-facts small { display: block; font-size: 12px; color: var(--text2); margin-top: 8px; line-height: 1.7; }
-.landing-main .btn { padding: 16px 22px; white-space: normal; }
-.landing-section { margin-top: 64px; }
-.landing-section h2 { font-size: 28px; margin-bottom: 18px; }
-.landing-section p,.landing-section li { line-height: 1.8; color: var(--text2); }
-.landing-section ul { padding-left: 24px; }
-.landing-section li { margin-bottom: 10px; }
-.landing-demo { border: 3px solid var(--fw-ink); box-shadow: var(--fw-shadow); border-radius: var(--fw-radius); overflow: hidden; margin: 24px 0; background: var(--fw-paper); }
-.demo-bar { padding: 16px 24px; border-bottom: 3px solid var(--fw-ink); font-size: 12px; font-weight: 700; }
-.demo-body { background: var(--demo-accent); padding: clamp(24px,5vw,56px); }
-.demo-body h3 { font-size: clamp(28px,4vw,44px); line-height: 1.15; max-width: 700px; margin-bottom: 20px; }
+/* Service pages share the homepage's paper, ink, and assembled-window motif. */
+.service-landing { background: var(--fw-paper); }
+.landing-main { max-width: 1200px; padding-top: 52px; }
+.landing-hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center; padding: 24px 0 52px; }
+.landing-kicker,.section-number { color: var(--fw-rust); font-size: 12px; font-weight: 700; letter-spacing: .08em; line-height: 1.6; text-transform: uppercase; margin-bottom: 18px; }
+.landing-main h1 { font-size: clamp(34px,4vw,54px); letter-spacing: -.035em; line-height: 1.08; margin: 0 0 24px; }
+.landing-lead { color: var(--text2); font-size: 16px; line-height: 1.8; margin-bottom: 26px; }
+.landing-main .btn { display: inline-flex; justify-content: space-between; gap: 24px; padding: 16px 20px; white-space: normal; text-align: left; }
+.hero-footnote { font-size: 11px; color: var(--text2); margin-top: 16px; line-height: 1.7; }
+.landing-art { min-width: 0; margin: 0; padding: 18px; background: repeating-linear-gradient(0deg,transparent 0 7px,#10100d06 7px 8px),var(--fw-panel); border: 3px solid var(--fw-ink); border-radius: var(--fw-radius); box-shadow: var(--fw-shadow); }
+.art-topline,.landing-art figcaption { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+.art-topline { border-bottom: 2px solid var(--fw-ink); padding-bottom: 14px; }
+.landing-art svg { width: 100%; height: auto; display: block; overflow: visible; margin: 14px 0; }
+.landing-art figcaption { border-top: 1px solid var(--fw-muted); padding-top: 14px; }
+.art-arrive { animation: art-assemble 1.4s ease both; }
+.art-delay { animation-delay: .35s; }
+.art-float { animation: art-settle 3.6s ease-in-out both; }
+.art-flow { stroke-dasharray: 85; animation: art-draw 1.8s ease both; }
+@keyframes art-assemble { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes art-settle { 0% { opacity: 0; transform: translateY(16px); } 30%,75% { opacity: 1; transform: translateY(-6px); } 50%,100% { opacity: 1; transform: translateY(0); } }
+@keyframes art-draw { from { stroke-dashoffset: 85; } to { stroke-dashoffset: 0; } }
+.landing-facts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-block: 3px solid var(--fw-ink); margin: 0; }
+.landing-facts > div { padding: 25px 28px; }
+.landing-facts > div:first-child { padding-left: 0; }
+.landing-facts > div + div { border-left: 1px solid var(--fw-muted); }
+.landing-facts dt { font-size: 11px; color: var(--text2); margin-bottom: 9px; text-transform: uppercase; letter-spacing: .06em; }
+.landing-facts dd { font-size: clamp(24px,3vw,34px); font-weight: 800; line-height: 1.2; }
+.landing-facts p { font-size: 11px; font-weight: 400; color: var(--text2); margin-top: 9px; line-height: 1.6; }
+.landing-section { margin-top: 80px; }
+.section-heading { max-width: 760px; margin-bottom: 28px; }
+.landing-main h2 { font-size: clamp(27px,3.4vw,39px); line-height: 1.2; letter-spacing: -.03em; margin-bottom: 18px; }
+.landing-main h3 { font-size: 18px; line-height: 1.4; margin-bottom: 12px; }
+.landing-section p { color: var(--text2); line-height: 1.8; font-size: 14px; }
+.landing-section .section-number { color: var(--fw-rust); font-size: 12px; }
+.benefit-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; }
+.benefit-card { padding: 26px; border: 3px solid var(--fw-ink); border-radius: var(--fw-radius); box-shadow: var(--fw-shadow-sm); background: var(--fw-paper); }
+.card-index { display: inline-block; font-size: 12px; font-weight: 700; background: var(--fw-gold); padding: 4px 9px; border: 2px solid var(--fw-ink); margin-bottom: 24px; }
+.benefit-card:nth-child(2) .card-index { background: var(--fw-panel-strong); }
+.benefit-card:nth-child(3) .card-index { background: var(--fw-green); }
+.landing-example { padding: 36px; background: var(--fw-panel); border: 3px solid var(--fw-ink); border-radius: var(--fw-radius); }
+.landing-demo { border: 3px solid var(--fw-ink); box-shadow: var(--fw-shadow-sm); border-radius: var(--fw-radius); overflow: hidden; margin: 24px 0 20px; background: var(--fw-paper); }
+.demo-bar { padding: 14px 24px; border-bottom: 3px solid var(--fw-ink); font-size: 11px; font-weight: 700; }
+.demo-body { background: var(--demo-accent); padding: clamp(24px,4vw,48px); }
+.demo-body h3 { font-size: clamp(26px,3.5vw,40px); max-width: 720px; line-height: 1.15; }
 .demo-body p { color: var(--fw-ink); max-width: 650px; }
 .demo-tiles { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
-.demo-tiles span { padding: 24px; font-size: 14px; font-weight: 700; }
+.demo-tiles span { padding: 24px; font-size: 13px; font-weight: 700; }
 .demo-tiles span + span { border-left: 1px solid var(--fw-ink); }
-.landing-caption { font-size: 12px; }
-.landing-delivery { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
-@media(max-width:760px) { .funnel-grid,.landing-delivery { grid-template-columns: 1fr; } .landing-main,.funnel-directory { padding: 40px 20px; } .landing-facts { grid-template-columns: 1fr; } .demo-tiles { grid-template-columns: 1fr; } .demo-tiles span + span { border-left: 0; border-top: 1px solid var(--fw-ink); } }
+.landing-caption { font-size: 11px; color: var(--text2); line-height: 1.7; }
+.landing-delivery { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.delivery-included ul { padding: 0; list-style: none; }
+.delivery-included li { padding: 14px 0 14px 26px; position: relative; border-bottom: 1px solid var(--fw-panel-strong); font-size: 14px; line-height: 1.6; }
+.delivery-included li::before { content: '✓'; position: absolute; left: 0; color: var(--fw-rust); font-weight: 700; }
+.prep-note { border: 3px solid var(--fw-ink); border-top: 10px solid var(--fw-gold); padding: 28px; background: var(--fw-panel); box-shadow: var(--fw-shadow-sm); }
+.note-label { font-size: 10px; letter-spacing: .08em; display: block; margin-bottom: 20px; color: var(--text2); }
+.prep-note h3 { font-size: 24px; line-height: 1.25; }
+.prep-note .scope-note { font-size: 11px; border-top: 1px solid var(--fw-muted); padding-top: 20px; margin-top: 24px; }
+.process-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); list-style: none; padding: 0; gap: 32px; }
+.process-grid li { border-top: 3px solid var(--fw-ink); padding-top: 20px; }
+.landing-step-number { display: block; color: var(--fw-rust); font-size: 12px; font-weight: 700; margin-bottom: 20px; }
+.landing-section .estimate-note { margin-top: 32px; font-size: 11px; max-width: 900px; }
+.landing-close { margin-top: 80px; padding: 44px; border: 3px solid var(--fw-ink); border-radius: var(--fw-radius); box-shadow: var(--fw-shadow); background: repeating-linear-gradient(0deg,transparent 0 7px,#10100d06 7px 8px),var(--fw-panel); }
+.landing-close h2 { max-width: 700px; }
+.landing-close > p:not(.section-number) { max-width: 650px; color: var(--text2); line-height: 1.8; font-size: 15px; margin-bottom: 24px; }
+@media(max-width: 960px) { .landing-hero { gap: 28px; } .landing-art { padding: 12px; } .art-topline,.landing-art figcaption { font-size: 8px; } .landing-delivery { gap: 32px; } }
+@media(max-width:760px) {
+ .funnel-grid,.landing-hero,.benefit-grid,.landing-delivery,.process-grid { grid-template-columns: 1fr; }
+ .landing-main,.funnel-directory { padding: 32px 20px 48px; }
+ .landing-hero { padding: 12px 0 36px; gap: 32px; }
+ .landing-main h1 { font-size: clamp(34px,8vw,48px); }
+ .landing-art { width: 100%; max-width: 470px; margin: 0 auto; padding: 16px; }
+ .art-topline,.landing-art figcaption { font-size: 9px; }
+ .landing-facts { grid-template-columns: 1fr; }
+ .landing-facts > div,.landing-facts > div:first-child { padding: 20px 0; }
+ .landing-facts > div + div { border-left: 0; border-top: 1px solid var(--fw-panel-strong); }
+ .landing-facts dd { font-size: 29px; }
+ .landing-section,.landing-close { margin-top: 52px; }
+ .landing-example,.landing-close { padding: 24px 18px; }
+ .benefit-card { padding: 24px; }
+ .card-index { margin-bottom: 16px; }
+ .demo-tiles { grid-template-columns: 1fr; }
+ .demo-tiles span { padding: 16px; }
+ .demo-tiles span + span { border-left: 0; border-top: 1px solid var(--fw-ink); }
+ .demo-bar { font-size: 10px; padding: 12px; }
+}
+@media(prefers-reduced-motion: reduce) { .landing-art * { animation: none !important; } }
