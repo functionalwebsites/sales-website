@@ -642,7 +642,22 @@ footer {
   .nav-links a {
     padding: 0;
   }
-}`;
+}
+/* Hometown details and a clock fixed to Huntington Beach, not the visitor's zone. */
+.footer-local { max-width: 1200px; margin: 0 auto 28px; padding-top: 24px; border-top: 1px solid var(--text2); display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.footer-home { display: grid; gap: 10px; }
+.footer-hometown { color: var(--text); font-size: 16px; font-weight: 700; text-decoration: none; line-height: 1.5; }
+.footer-license { color: var(--text2); font-size: 11px; line-height: 1.7; text-underline-offset: 4px; }
+.footer-local a:hover { color: var(--rust, var(--fw-rust)); }
+.footer-local a:focus-visible { outline: 3px solid var(--rust, var(--fw-rust)); outline-offset: 5px; }
+.footer-clock { display: grid; gap: 10px; flex-shrink: 0; }
+.footer-clock-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--text2); font-size: 10px; line-height: 1.6; }
+.footer-flags { display: inline-flex; align-items: center; gap: 7px; }
+.footer-flags img { display: block; height: 19px; width: auto; object-fit: contain; border: 0; box-shadow: none; }
+.footer-local-time { color: var(--text); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.footer-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media(max-width: 768px) { .footer-local { align-items: flex-start; flex-direction: column; } .footer-clock { flex-shrink: 1; max-width: 100%; } }
+`;
 
   const fallbackMarkup = {
     header: `<header class="header">
@@ -709,6 +724,16 @@ footer {
       <a class="footer-action-button footer-pay-button" href="https://functionalwebsites.com/pay">Pay</a>
     </div>
   </div>
+  <div class="footer-local">
+    <div class="footer-home">
+      <a class="footer-hometown" href="https://functionalwebsites.com/huntington-beach-web-design/">Based in Surf City, USA</a>
+      <a class="footer-license" href="https://aca-prod.accela.com/COHB/Cap/CapDetail.aspx?Module=Licenses&amp;TabName=Licenses&amp;capID1=26LIC&amp;capID2=00000&amp;capID3=16112&amp;agencyCode=COHB&amp;IsToShowInspection=" target="_blank" rel="noopener noreferrer">Huntington Beach business license · A326075 <span aria-hidden="true">↗</span><span class="footer-sr-only"> (opens in a new tab)</span></a>
+    </div>
+    <div class="footer-clock">
+      <div class="footer-clock-heading"><span class="footer-flags"><img src="/img/flags/huntington-beach.svg" width="30" height="19" alt="Huntington Beach flag"><img src="/img/flags/usa.svg" width="30" height="16" alt="USA flag"></span><span>Local time · Huntington Beach</span></div>
+      <time class="footer-local-time" aria-label="Current time in Huntington Beach">Pacific Time</time>
+    </div>
+  </div>
   <div class="footer-bottom">
     <p>&copy; 2026 Functional Websites. Built static. All rights reserved.</p>
   </div>
@@ -726,7 +751,34 @@ footer {
     if (name === 'header') {
       markActiveNav(root);
       bindHeaderInteractions(root);
+    } else if (name === 'footer') {
+      bindFooterClock(placeholder, root);
     }
+  }
+
+  function bindFooterClock(placeholder, root) {
+    const clock = root.querySelector('.footer-local-time');
+    if (!clock) return;
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Los_Angeles',
+      hour: 'numeric', minute: '2-digit', second: '2-digit',
+      hour12: true, timeZoneName: 'short'
+    });
+    const update = () => {
+      const now = new Date();
+      clock.textContent = formatter.format(now);
+      clock.dateTime = now.toISOString();
+    };
+    update();
+    // A component re-render replaces its timer instead of starting a second clock.
+    clearInterval(placeholder.footerClockTimer);
+    placeholder.footerClockTimer = setInterval(() => {
+      if (!placeholder.isConnected) {
+        clearInterval(placeholder.footerClockTimer);
+        return;
+      }
+      if (!document.hidden) update();
+    }, 1000);
   }
 
   function markActiveNav(root) {

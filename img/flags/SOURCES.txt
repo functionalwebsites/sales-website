@@ -1,0 +1,5 @@
+huntington-beach.svg: unmodified source supplied by the user.
+https://commons.wikimedia.org/wiki/File:Flag_of_Huntington_Beach,_California.svg
+Author: FOX 52. Commons identifies the work as public domain.
+
+usa.svg: generated geometric SVG, 13 stripes and 50 stars.

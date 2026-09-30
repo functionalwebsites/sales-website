@@ -1428,3 +1428,18 @@ pre code {
     font-size: 16px;
   }
 }
+
+/* Hometown details and a clock fixed to Huntington Beach, not the visitor's zone. */
+.footer-local { max-width: 1200px; margin: 0 auto 28px; padding-top: 24px; border-top: 1px solid var(--text2); display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.footer-home { display: grid; gap: 10px; }
+.footer-hometown { color: var(--text); font-size: 16px; font-weight: 700; text-decoration: none; line-height: 1.5; }
+.footer-license { color: var(--text2); font-size: 11px; line-height: 1.7; text-underline-offset: 4px; }
+.footer-local a:hover { color: var(--rust, var(--fw-rust)); }
+.footer-local a:focus-visible { outline: 3px solid var(--rust, var(--fw-rust)); outline-offset: 5px; }
+.footer-clock { display: grid; gap: 10px; flex-shrink: 0; }
+.footer-clock-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--text2); font-size: 10px; line-height: 1.6; }
+.footer-flags { display: inline-flex; align-items: center; gap: 7px; }
+.footer-flags img { display: block; height: 19px; width: auto; object-fit: contain; border: 0; box-shadow: none; }
+.footer-local-time { color: var(--text); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.footer-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media(max-width: 768px) { .footer-local { align-items: flex-start; flex-direction: column; } .footer-clock { flex-shrink: 1; max-width: 100%; } }
