@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 480" role="img" aria-labelledby="hb-art-title hb-art-desc">
+<title id="hb-art-title">Surf City: a love letter to Huntington Beach</title><desc id="hb-art-desc">An original paper-and-ink illustration of Huntington Beach Pier with a warm sunset, moving ocean waves, seabirds, and Surf City lettering.</desc>
+<style>
+.hb-wave{animation:hb-swell 4s ease-in-out 1}.hb-wave-back{animation-delay:.2s}.hb-bird{animation:hb-flight 4s ease-in-out 1}.hb-pier{animation:hb-arrive 1.5s ease-out 1}
+@keyframes hb-swell{0%,100%{transform:translateX(0)}35%{transform:translateX(-12px)}70%{transform:translateX(10px)}}
+@keyframes hb-flight{0%,100%{transform:translate(0,0)}50%{transform:translate(9px,-7px)}}
+@keyframes hb-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.hb-wave,.hb-bird,.hb-pier{animation:none}}
+</style>
+<defs><clipPath id="hb-scene"><rect x="25" y="27" width="550" height="425" rx="3"/></clipPath></defs>
+<g stroke="#10100d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<rect x="32" y="34" width="550" height="425" rx="3" fill="#10100d"/><rect x="25" y="27" width="550" height="425" rx="3" fill="#f5efe0"/>
+<g clip-path="url(#hb-scene)">
+<path d="M25 277H575V452H25Z" fill="#244d67"/>
+<circle cx="455" cy="166" r="69" fill="#e2ad30"/>
+<path d="M402 128h99m-113 25h133m-133 26h133m-113 25h99" fill="none" stroke="#f5efe0" stroke-width="4"/>
+<path d="M48 239H367m132 0h57M49 256h165m293 0h50" stroke="#dfd2b8"/>
+<g fill="#10100d" stroke="none" font-family="'Courier New',monospace" font-weight="900"><text x="54" y="123" font-size="62" letter-spacing="-4">SURF</text><text x="54" y="181" font-size="62" letter-spacing="-4">CITY.</text><text x="59" y="198" font-size="12" letter-spacing="2">HUNTINGTON BEACH, CA</text></g>
+<g class="hb-bird" fill="none"><path d="M288 92q12-13 24 0 12-13 24 0M338 127q8-9 16 0 8-9 16 0M498 80q8-9 16 0 8-9 16 0"/></g>
+<g class="hb-wave hb-wave-back" fill="none" stroke="#87b8cf"><path d="M-5 310q30-13 60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0M-35 367q30-13 60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0t60 0"/></g>
+<g class="hb-pier">
+<path d="M57 276v117h14V276m83 0v108h14V276m88 0v109h14V276m87 0v110h14V276m91 0v117h14V276m83 0v122h14V276" fill="#dfd2b8"/>
+<path d="m71 292 83 79m-83 0 83-79m114 0 79 79m-79 0 79-79m119 0 83 79m-83 0 83-79" fill="none" stroke="#dfd2b8" stroke-width="5"/>
+<path d="M26 264H574v18H26Z" fill="#dfd2b8"/>
+<path d="M26 245H574M40 246v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17m25-17v17" fill="none"/>
+<path d="M356 228h129v36H356Z" fill="#f5efe0"/><path d="m344 229 33-34h88l32 34Z" fill="#b9482e"/>
+<path d="M390 196v-27h57v27Z" fill="#f5efe0"/><path d="m381 170 38-27 37 27Z" fill="#b9482e"/><path d="M419 143v-17"/>
+<path d="M369 239h19v18h-19zm34 0h19v18h-19zm35 0h19v18h-19zm-38-61h12v14h-12zm23 0h12v14h-12z" fill="#244d67"/>
+<path d="M122 243v-35m-7 0h14m-11-8h8v8h-8M299 243v-35m-7 0h14m-11-8h8v8h-8M534 243v-35m-7 0h14m-11-8h8v8h-8" fill="#e2ad30"/>
+</g>
+<g class="hb-wave" fill="none" stroke="#f5efe0" stroke-width="4"><path d="M-20 339q33-17 66 0t66 0t66 0t66 0t66 0t66 0t66 0t66 0t66 0t66 0M-54 402q33-17 66 0t66 0t66 0t66 0t66 0t66 0t66 0t66 0t66 0t66 0"/></g>
+<path d="M25 439q100-26 203-10t347-8v31H25Z" fill="#e2ad30"/>
+</g></g></svg>

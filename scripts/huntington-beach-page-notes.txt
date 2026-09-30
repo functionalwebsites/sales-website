@@ -1,0 +1,21 @@
+# Huntington Beach landing page
+
+Route: `/huntington-beach-web-design/`.
+
+The page uses the owner's supplied biography and licensed-business statement. It does not invent a business address, license number, reviews, opening hours, or search ranking. Organization, Service, WebPage, and BreadcrumbList structured data describe the known facts. This is not a claim of eligibility for a Google local-business rich result.
+
+Internal links on the homepage and services page and an entry in the existing sitemap make the page discoverable after deployment. The marketing host's existing robots policy allows crawling. After deployment, request indexing for the canonical URL in Google Search Console and submit the updated sitemap. Ranking for a particular query is not guaranteed.
+
+References: [Google Organization structured data](https://developers.google.com/search/docs/appearance/structured-data/organization), [Google LocalBusiness requirements](https://developers.google.com/search/docs/appearance/structured-data/local-business).
+
+## Artwork
+
+- `img/surf-city-pier.svg`: original native vector scene, animated once for four seconds and static for reduced-motion users. Also embedded inline on the page.
+- `img/hb-mark-cream.png`: supplied HB logo recolored using the built-in image generation/editing tool; resized for web use. Original user image and full-size generated version were preserved outside this repository.
+- `img/surf-city-pier.png`: 1200 × 630 social sharing image rendered from the scene, logo, and page headline.
+
+Exact built-in edit prompt:
+
+> Use case: precise-object-edit. Edit target: supplied Huntington Beach HB monogram logo (sailboat, park tree/house, atom, surfer). Asset type: small flat website badge. Change ONLY its palette and background, preserve exact HB silhouette, rounded rectangular frame, four pictograms, all spacing and proportions. Replace bright red with muted rust #b9482e; navy with denim #244d67; dark green with ink #10100d; white accents and any transparent/black background areas with warm cream #f5efe0. Flat solid colors, crisp clean edges, no gradient, no textures, no shadows, no added lettering, no reinterpretation. Square image with entire existing mark centered, narrow even cream margin. This is an existing mark recoloring, not a new logo. Save edited asset for use in website.
+
+Verification: `node scripts/smoke-huntington-beach.mjs`. Browser checks covered desktop and mobile layouts, FAQ expansion, image loading, and reduced motion.
