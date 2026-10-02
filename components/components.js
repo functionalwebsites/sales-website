@@ -718,8 +718,9 @@ footer {
       <a href="https://functionalwebsites.com/blog">Blog</a>
       <a href="https://docs.functionalwebsites.com/">Docs</a>
     </div>
-    <div class="footer-section">
+    <div class="footer-section footer-contact">
       <h4>Company</h4>
+      <button type="button" class="fw-phone-button" data-phone-contact aria-label="Call or text 714-988-3466" aria-haspopup="dialog">714-988-3466</button>
       <a class="footer-action-button footer-email-button" href="mailto:cooper@functionalwebsites.com">Email</a>
       <a class="footer-action-button footer-pay-button" href="https://functionalwebsites.com/pay">Pay</a>
     </div>
@@ -731,7 +732,7 @@ footer {
     </div>
     <div class="footer-clock">
       <div class="footer-clock-heading"><span class="footer-flags"><img src="/img/flags/huntington-beach.svg" width="30" height="19" alt="Huntington Beach flag"><img src="/img/flags/usa.svg" width="30" height="16" alt="USA flag"></span><span>Local time · Huntington Beach</span></div>
-      <time class="footer-local-time" aria-label="Current time in Huntington Beach">Pacific Time</time>
+      <div class="footer-clock-status"><time class="footer-local-time" aria-label="Current time in Huntington Beach">Pacific Time</time><span class="fw-business-status" data-business-status></span></div><span class="fw-business-hours">Mon–Fri · 9 AM–5 PM Pacific</span>
     </div>
   </div>
   <div class="footer-bottom">
@@ -746,7 +747,7 @@ footer {
       root = placeholder.attachShadow({ mode: 'open' });
     }
 
-    root.innerHTML = `<style>${fallbackStyles}</style><link rel="stylesheet" href="/styles/shared.css"><div class="site-component" data-theme="light">${markup}</div>`;
+    root.innerHTML = `<style>${fallbackStyles}</style><link rel="stylesheet" href="/styles/shared.css"><link rel="stylesheet" href="/styles/phone-contact.css"><div class="site-component" data-theme="light">${markup}</div>`;
 
     if (name === 'header') {
       markActiveNav(root);
@@ -945,6 +946,9 @@ footer {
       loadComponent('header', '#header-placeholder'),
       loadComponent('footer', '#footer-placeholder')
     ]);
+    const phoneScript = document.createElement('script');
+    phoneScript.src = '/components/phone-contact.js';
+    document.head.append(phoneScript);
     bindGlobalBuilderShortcut();
   }
 

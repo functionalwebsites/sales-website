@@ -1,0 +1,40 @@
+/* Shared contact controls, including inside the footer's shadow root. */
+.fw-phone-button,
+.site-component .fw-phone-button {
+  box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center;
+  width: fit-content; max-width: 100%; margin: 2px 0 12px; padding: 8px 14px;
+  border: 3px solid #10100d; border-radius: 4px; background: #7cff6b; color: #10100d;
+  font: 800 13px/1 'JetBrains Mono', monospace; white-space: nowrap;
+  cursor: pointer; box-shadow: 4px 4px 0 #10100d;
+  transition: transform .22s ease, box-shadow .22s ease, background-color .18s ease;
+}
+.fw-phone-button:hover { background: #a2ff96; transform: translate(2px, 2px); box-shadow: 2px 2px 0 #10100d; }
+.footer-contact { display: flex; flex-direction: column; align-items: flex-start; }
+.footer-clock-status { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+.fw-business-hours { font-size: 10px; line-height: 1.6; }
+.fw-business-status {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px;
+  border: 1px solid currentColor; border-radius: 5px; font: 700 11px/1.3 'JetBrains Mono', monospace;
+  color: #72501f; background: #fff0d6; vertical-align: middle;
+}
+.fw-business-status:empty { display: none; }
+.fw-business-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.fw-business-status[data-open="true"] { color: #215331; background: #dff5df; }
+.fw-phone-dialog {
+  box-sizing: border-box; width: min(440px, calc(100% - 40px)); max-height: calc(100dvh - 40px); overflow: auto;
+  margin: auto; padding: 28px; border: 3px solid #10100d; border-radius: 4px;
+  color: #10100d; background: #f5efe0; box-shadow: 8px 8px 0 #10100d;
+  font: 14px/1.6 'JetBrains Mono', monospace; text-align: left;
+}
+.fw-phone-dialog::backdrop { background: #10100d99; }
+.fw-phone-dialog .fw-phone-eyebrow { margin: 0 38px 20px 0; color: #b9482e; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.fw-phone-dialog h2 { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 0; font: 800 24px/1.3 'JetBrains Mono', monospace; letter-spacing: -.5px; }
+.fw-phone-dialog .fw-phone-number { margin: 18px 0 6px; font-size: 22px; font-weight: 800; }
+.fw-phone-dialog #fw-phone-hours { margin: 0; color: #625d50; font-size: 12px; }
+.fw-phone-dialog #fw-phone-message { margin: 20px 0 24px; padding-top: 18px; border-top: 2px solid #10100d; }
+.fw-phone-dialog .fw-phone-close { position: absolute; right: 14px; top: 14px; width: 32px; height: 32px; padding: 0; border: 2px solid #10100d; border-radius: 4px; box-shadow: 2px 2px 0 #10100d; background: #ebe2ce; color: #10100d; font: 800 22px/1 'JetBrains Mono', monospace; cursor: pointer; }
+.fw-phone-actions { display: flex; gap: 14px; }
+.fw-phone-actions a { flex: 1; padding: 12px; border: 3px solid #10100d; border-radius: 4px; box-shadow: 4px 4px 0 #10100d; background: #f5efe0; color: #10100d; text-align: center; font-weight: 800; text-transform: uppercase; text-decoration: none; transition: transform .22s ease, box-shadow .22s ease; }
+.fw-phone-actions a:last-child { background: #7cff6b; }
+.fw-phone-actions a:hover, .fw-phone-dialog .fw-phone-close:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #10100d; }
+.fw-phone-button:focus-visible, .fw-phone-dialog :focus-visible { outline: 3px solid #b9482e; outline-offset: 4px; }
