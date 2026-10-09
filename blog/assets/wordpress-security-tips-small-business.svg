@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">WordPress website security checklist</title>
+  <desc id="desc">A website window, a checked maintenance list, and a protective shield in the Functional Websites paper and ink style.</desc>
+  <rect width="1200" height="630" fill="#f5efe0"/>
+  <rect x="54" y="54" width="1092" height="522" fill="#ebe2ce" stroke="#10100d" stroke-width="8"/>
+  <g opacity="0.16" stroke="#10100d" stroke-width="3">
+    <path d="M112 142h976M112 222h976M112 302h976M112 382h976M112 462h976"/>
+    <path d="M180 96v438M300 96v438M420 96v438M540 96v438M660 96v438M780 96v438M900 96v438M1020 96v438"/>
+  </g>
+  <rect x="156" y="134" width="630" height="372" fill="#10100d"/>
+  <g stroke="#10100d" stroke-width="8">
+    <rect x="140" y="118" width="630" height="372" fill="#f5efe0"/>
+    <path d="M140 184h630"/>
+    <rect x="190" y="228" width="228" height="210" fill="#dfd2b8"/>
+  </g>
+  <g fill="#b9482e">
+    <circle cx="180" cy="151" r="10"/>
+    <circle cx="218" cy="151" r="10"/>
+    <circle cx="256" cy="151" r="10"/>
+  </g>
+  <g fill="none" stroke="#10100d" stroke-width="8">
+    <rect x="470" y="232" width="36" height="36"/>
+    <rect x="470" y="310" width="36" height="36"/>
+    <rect x="470" y="388" width="36" height="36"/>
+    <path d="M532 250h158M532 328h128M532 406h100"/>
+    <path d="M222 275h164M222 319h120M222 363h144M222 407h98"/>
+  </g>
+  <g fill="none" stroke="#b9482e" stroke-width="8">
+    <path d="m474 245 12 12 28-34M474 323l12 12 28-34M474 401l12 12 28-34"/>
+  </g>
+  <path d="m888 187 154 60v111c0 80-70 137-154 169-84-32-154-89-154-169V247Z" fill="#10100d"/>
+  <path d="m874 173 154 60v111c0 80-70 137-154 169-84-32-154-89-154-169V233Z" fill="#7cff6b" stroke="#10100d" stroke-width="8"/>
+  <path d="m805 336 48 48 91-105" fill="none" stroke="#10100d" stroke-width="20"/>
+</svg>
