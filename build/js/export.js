@@ -135,45 +135,16 @@ function getImageIssues(projectData) {
 function confirmPreflight(actionLabel) {
   const issues = getDesignHealthIssues(_projectData).filter(issue => issue.level !== 'info').map(issue => issue.message);
   if (!issues.length) return true;
+  if (actionLabel === 'deploying' && getDesignHealthIssues(_projectData).some(issue => issue.level === 'error')) { openDesignHealthModal(); return false; }
   const shown = issues.slice(0, 8).map(item => `- ${item}`).join('\n');
   const extra = issues.length > 8 ? `\n- ${issues.length - 8} more issue(s).` : '';
   return confirm(`Before ${actionLabel}, check these items:\n\n${shown}${extra}\n\nContinue anyway?`);
 }
 
 function getDesignHealthIssues(projectData) {
-  const issues = [];
-  const pages = projectData.pages || [];
-  if (!pages.length) issues.push({ level: 'error', message: 'Site has no pages.' });
-  if (!String(projectData.meta?.description || '').trim()) issues.push({ level: 'warning', message: 'Site-wide SEO description is empty.' });
-  if (!projectData.navbars || !Object.keys(projectData.navbars).length) issues.push({ level: 'warning', message: 'No reusable navbar settings found.' });
-
-  const hasActionPage = pages.some(page => /contact|reserve|booking|donate|checkout/i.test(page.name || ''));
-  pages.forEach((page, pageIndex) => {
-    const blocks = page.blocks || [];
-    if (!blocks.length) issues.push({ level: 'error', message: `${page.name}: page has no sections.` });
-    if (!String(page.meta?.description || projectData.meta?.description || '').trim()) issues.push({ level: 'warning', message: `${page.name}: missing page or site description.` });
-
-    const h1Like = blocks.filter(block => block.type === 'hero' && String(block.props?.heading || '').trim()).length
-      + blocks.filter(block => block.type === 'heading' && (block.props?.level || 'h2') === 'h1').length;
-    if (h1Like === 0) issues.push({ level: 'warning', message: `${page.name}: no clear H1 or hero heading.` });
-    if (h1Like > 1) issues.push({ level: 'warning', message: `${page.name}: multiple H1-like headings. Keep one primary page heading.` });
-    if (pageIndex === 0 && !blocks.some(block => block.type === 'nav')) issues.push({ level: 'warning', message: 'Home page has no navigation block.' });
-    if (!blocks.some(block => block.type === 'footer')) issues.push({ level: 'info', message: `${page.name}: no footer block.` });
-    if (!blocks.some(block => ['hero', 'button', 'cta', 'form'].includes(block.type))) issues.push({ level: 'warning', message: `${page.name}: no obvious call to action.` });
-
-    blocks.forEach(block => {
-      const p = block.props || {};
-      if (block.type === 'hero' && (!String(p.heading || '').trim() || !String(p.subheading || '').trim())) issues.push({ level: 'warning', message: `${page.name}: hero should have a heading and supporting copy.` });
-      if (block.type === 'button' && (!p.href || p.href === '#')) issues.push({ level: 'warning', message: `${page.name}: button "${p.text || 'Button'}" needs a real link.` });
-      if (block.type === 'cta' && (!p.buttonHref || p.buttonHref === '#')) issues.push({ level: 'warning', message: `${page.name}: CTA button needs a real link.` });
-      if (block.type === 'form' && (!p.action || p.action === '#')) issues.push({ level: 'info', message: `${page.name}: form action is a placeholder. Connect it before launch.` });
-      if (block.type === 'image' && p.src && !String(p.alt || '').trim()) issues.push({ level: 'warning', message: `${page.name}: image block is missing alt text.` });
-      if (['columns2', 'columns3'].includes(block.type)) issues.push({ level: 'info', message: `${page.name}: check column sections in mobile preview.` });
-    });
-  });
-
-  if (!hasActionPage) issues.push({ level: 'info', message: 'Consider adding a Contact, Booking, Donate, or Reservation page.' });
-  getImageIssues(projectData).forEach(message => issues.push({ level: 'warning', message }));
+  const issues = siteMetadataIssues(projectData);
+  const bytes = (projectData.images || []).reduce((sum,img)=>sum+dataUrlBytes(img.dataURL),0);
+  if(bytes>12*1024*1024)issues.push({level:'warning',message:`Image library totals ${formatBytes(bytes)}. Consider smaller images for a faster site.`});
   return issues;
 }
 
@@ -198,7 +169,7 @@ function renderDesignHealthReport() {
     const items = issues.filter(issue => issue.level === level);
     if (!items.length) return '';
     const color = level === 'error' ? 'var(--red)' : level === 'warning' ? 'var(--yellow)' : 'var(--text)';
-    return `<div style="margin-bottom:14px;"><strong style="display:block;color:${color};margin-bottom:6px;">${title}</strong><ul style="padding-left:18px;margin:0;">${items.map(issue => `<li>${escapeHtmlForTextarea(issue.message)}</li>`).join('')}</ul></div>`;
+    return `<div style="margin-bottom:14px;"><strong style="display:block;color:${color};margin-bottom:6px;">${title}</strong><ul style="padding-left:18px;margin:0;">${items.map(issue => `<li>${escapeHtmlForTextarea(issue.message)} <button class="btn btn-ghost btn-sm" onclick="focusHealthIssue(${issues.indexOf(issue)})">Review</button></li>`).join('')}</ul></div>`;
   }).join('');
   body.innerHTML = `<div style="margin-bottom:12px;color:var(--text);">Found ${counts.error} error(s), ${counts.warning} warning(s), and ${counts.info} suggestion(s).</div>${groups}`;
 }
@@ -245,14 +216,13 @@ function compileDesignerPageHTML(projectData, pageIndex, imageMap) {
   let blocksHTML = (page.blocks || []).map(b => renderBlock(b, false, renderCtx)).join('\n');
   blocksHTML = resolveImageSrcs(blocksHTML, imageMap);
   blocksHTML = resolveCompiledImageRefs(blocksHTML, projectData, imageMap);
-  const titleOverride = (page.meta || {}).titleOverride;
-  const title = titleOverride || (page.name + (projectData.name ? ' — ' + projectData.name : ''));
+  const title = pageTitle(projectData, page);
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${escAttr(projectData.meta?.language || 'en')}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title}</title>
+<title>${escAttr(title)}</title>
 ${buildMetaTags(renderCtx, page)}
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
@@ -346,7 +316,7 @@ async function downloadProjectZip(id) {
     const filename = faviconMap[asset.name] || asset.name;
     if (!filename) return;
     if (asset.content) {
-      folder.file(filename, asset.content);
+      folder.file(filename, faviconContent(asset, data));
       return;
     }
     const b64 = String(asset.dataURL || '').split(',')[1];
@@ -380,6 +350,7 @@ async function downloadProjectZip(id) {
   }, null, 2));
   folder.file(BUILDER_PROJECT_FILE, JSON.stringify(createPortableProjectData(data, imageMap), null, 2));
 
+  Object.entries(siteDiscoveryFiles(data)).forEach(([name, content]) => folder.file(name, content));
   folder.file('README.md', designerReadme(data));
 
   const blob = await zip.generateAsync({type: 'blob'});

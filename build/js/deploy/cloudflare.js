@@ -62,6 +62,10 @@ async function deployToCloudflare() {
         files[`/images/${fname}`] = { content: new Blob([byteArr], { type: img.type }), type: img.type, binary: true };
       }
     }
+    deploymentSupportFiles(_projectData).forEach(file => {
+      const content = file.binary ? new Blob([Uint8Array.from(atob(file.content), c => c.charCodeAt(0))], {type:file.type}) : file.content;
+      files['/'+file.name] = {content, type:file.type, binary:!!file.binary};
+    });
     setStepDone(s2, `${Object.keys(files).length} files`);
   } catch(e) { setStepDone(s2, e.message, false); return showDeployDone(false); }
 

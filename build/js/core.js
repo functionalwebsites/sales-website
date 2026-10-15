@@ -97,7 +97,7 @@ function setSaveStatus(state, text = '') {
   const el = document.getElementById('save-status');
   if (!el) return;
   el.dataset.state = state;
-  el.textContent = text || (state === 'dirty' ? 'Unsaved changes' : state === 'saving' ? 'Saving...' : 'Saved');
+  el.textContent = text || (state === 'dirty' ? 'Unsaved changes' : state === 'saving' ? 'Saving...' : state === 'error' ? 'Save failed' : 'Saved in this browser');
 }
 
 function markDirty() {
@@ -108,6 +108,9 @@ function markDirty() {
 function _snapshot() {
   return JSON.stringify({
     pages:     _projectData.pages,
+    brand: _projectData.brand,
+    name: _projectData.name,
+    brandName: _projectData.brandName,
     globalCSS: _projectData.globalCSS,
     globalJS:  _projectData.globalJS,
     meta:      _projectData.meta,
@@ -122,6 +125,9 @@ function _snapshot() {
 function _restore(snap) {
   const s = JSON.parse(snap);
   _projectData.pages     = s.pages;
+  if (s.brand) _projectData.brand = s.brand;
+  if (s.name) _projectData.name = s.name;
+  if (s.brandName) _projectData.brandName = s.brandName;
   _projectData.globalCSS = s.globalCSS;
   _projectData.globalJS  = s.globalJS;
   _projectData.meta      = s.meta;
@@ -152,10 +158,12 @@ function pushUndoDebounced() {
   markDirty();
   if (_undoPending) return;
   _undoPending = true;
-  setTimeout(() => { pushUndo(); _undoPending = false; }, 600);
+  pushUndo();
+  setTimeout(() => { _undoPending = false; }, 600);
 }
 
 function undo() {
+  _undoPending = false;
   if (!_undoStack.length) return;
   _redoStack.push(_snapshot());
   _restore(_undoStack.pop());
@@ -170,6 +178,7 @@ function undo() {
 }
 
 function redo() {
+  _undoPending = false;
   if (!_redoStack.length) return;
   _undoStack.push(_snapshot());
   _restore(_redoStack.pop());
@@ -197,7 +206,7 @@ function _updateUndoUI() {
 }
 
 // Clear stacks when a new project is opened
-function _resetUndo() { _undoStack = []; _redoStack = []; _updateUndoUI(); }
+function _resetUndo() { _undoPending = false; _undoStack = []; _redoStack = []; _updateUndoUI(); }
 
 // ============================================================
 // STORAGE

@@ -28,19 +28,32 @@ function openEditor(id, options = {}) {
   showView('editor');
 }
 
-function saveProject(silent = false) {
+async function saveProject(silent = false) {
   if (!STATE.currentProjectId) return;
+  const savingId = STATE.currentProjectId;
+  let before;
   setSaveStatus('saving');
-  if (STATE.currentMode === 'code') applyCode();
-  saveProjectData(STATE.currentProjectId, _projectData);
-  const p = STATE.projects.find(p=>p.id===STATE.currentProjectId);
-  if (p) {
-    p.modified = Date.now();
-    p.name = _projectData.name;
-    saveProjectsMeta();
+  try {
+    if (STATE.currentMode === 'code') applyCode();
+    before = JSON.stringify(_projectData);
+    saveProjectData(savingId, _projectData);
+    const project = STATE.projects.find(p => p.id === savingId);
+    if (project) {
+      project.modified = Date.now();
+      project.name = _projectData.name;
+      saveProjectsMeta();
+    }
+    await ProjectStorage.flush();
+    if (STATE.currentProjectId === savingId) {
+      setSaveStatus(JSON.stringify(_projectData) === before ? 'saved' : 'dirty');
+    }
+    if (!silent) toast('Saved in this browser', 'success');
+    return true;
+  } catch (error) {
+    if (STATE.currentProjectId === savingId) setSaveStatus('error');
+    toast('Save failed. Download a ZIP backup before closing.', 'error');
+    return false;
   }
-  setSaveStatus('saved');
-  if (!silent) toast('Saved!', 'success');
 }
 
 // ============================================================

@@ -184,12 +184,13 @@ function renderProps() {
   }
   if (!STATE.selectedBlockId) {
     panel.innerHTML = buildSitePropsHTML();
+    refreshMetadataPreview();
     return;
   }
   const block = findBlockById(STATE.selectedBlockId);
   if (!block) { panel.innerHTML = '<div class="text-muted text-sm">Block not found.</div>'; return; }
 
-  panel.innerHTML = buildPropsForm(block);
+  panel.innerHTML = buildSelectionTools(block) + buildPropsForm(block);
 }
 
 function switchPropsTab(tab) {
@@ -205,36 +206,16 @@ function buildSitePropsHTML() {
 
   let html = `<div class="props-tabs" style="position:relative;">
     <button class="props-tab-btn ${tab==='page'?'active':''}" onclick="switchPropsTab('page')">Page</button>
-    <button class="props-tab-btn ${tab==='site'?'active':''}" onclick="switchPropsTab('site')">Site</button>
+    <button class="props-tab-btn ${tab==='site'?'active':''}" onclick="switchPropsTab('site')">Design</button>
+    <button class="props-tab-btn ${tab==='sharing'?'active':''}" onclick="switchPropsTab('sharing')">Sharing</button>
     <button class="props-tab-btn m-only" style="margin-left:auto;font-size:11px;" onclick="switchMobileTab('canvas')">Canvas →</button>
   </div>`;
 
-  if (tab === 'page') {
-    html += `<div class="props-section">
-      <div class="props-section-title">Page Meta</div>
-      <div class="field"><label class="label">Title Override</label><input class="input" type="text" value="${(pm.titleOverride||'').replace(/"/g,'&quot;')}" placeholder="Leave blank to use page name" oninput="updatePageMeta('titleOverride',this.value)"></div>
-      <div class="field"><label class="label">Description</label><textarea class="input" rows="3" oninput="updatePageMeta('description',this.value)">${pm.description||''}</textarea></div>
-      <div class="field"><label class="label">OG Title</label><input class="input" type="text" value="${(pm.ogTitle||'').replace(/"/g,'&quot;')}" placeholder="Defaults to page title" oninput="updatePageMeta('ogTitle',this.value)"></div>
-      <div class="field"><label class="label">OG Description</label><textarea class="input" rows="2" oninput="updatePageMeta('ogDescription',this.value)">${pm.ogDescription||''}</textarea></div>
-      <div class="field"><label class="label">OG Image URL</label><input class="input" type="text" value="${(pm.ogImage||'').replace(/"/g,'&quot;')}" placeholder="https://… or leave blank for site default" oninput="updatePageMeta('ogImage',this.value)"></div>
-    </div>`;
+  if (tab === 'page' || tab === 'sharing') {
+    html += buildSharingSettings(tab === 'page' ? 'page' : 'site');
   } else {
     html += buildSiteIdentityHTML();
-    html += `<div class="props-section">
-      <div class="props-section-title">Site Meta Defaults</div>
-      <div class="field"><label class="label">Description</label><textarea class="input" rows="3" oninput="updateSiteMeta('description',this.value)">${sm.description||''}</textarea></div>
-      <div class="field"><label class="label">Keywords</label><input class="input" type="text" value="${(sm.keywords||'').replace(/"/g,'&quot;')}" placeholder="keyword1, keyword2" oninput="updateSiteMeta('keywords',this.value)"></div>
-      <div class="field"><label class="label">Author</label><input class="input" type="text" value="${(sm.author||'').replace(/"/g,'&quot;')}" oninput="updateSiteMeta('author',this.value)"></div>
-      <div class="field"><label class="label">Favicon URL</label><input class="input" type="text" value="${(sm.favicon||'').replace(/"/g,'&quot;')}" placeholder="favicon.ico" oninput="updateSiteMeta('favicon',this.value)"></div>
-      <div class="field"><label class="label">Default OG Image</label><input class="input" type="text" value="${(sm.ogImage||'').replace(/"/g,'&quot;')}" placeholder="https://…" oninput="updateSiteMeta('ogImage',this.value)"></div>
-      <div class="field"><label class="label">Twitter Card</label>
-        <select class="input" onchange="updateSiteMeta('twitterCard',this.value)">
-          ${['summary','summary_large_image','app','player'].map(v=>`<option value="${v}" ${(sm.twitterCard||'summary_large_image')===v?'selected':''}>${v}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-`;
-    html += buildSiteLogoHTML();
+    html += buildDesignPresetPicker();
     // Brand colors
     const br = _projectData.brand || {};
     html += `<div class="props-section">
@@ -802,6 +783,12 @@ function buildPropsForm(block, options = {}) {
   };
 
   switch(type) {
+    case 'faq':
+    case 'tabs':
+    case 'gallery':
+    case 'comparison':
+      html += buildEnhancedProps(block);
+      break;
     case 'nav': {
       // Legacy blocks without navbarId
       if (!p.navbarId) {
@@ -1190,6 +1177,7 @@ function buildPropsForm(block, options = {}) {
       html += '<div class="text-muted text-sm">No properties available.</div>';
   }
 
+  html += buildVisualEffectsControls(block);
   html += buildResponsiveControls(block);
   html += '</div>';
 
@@ -1297,12 +1285,13 @@ function buildContactFormFieldEditor(block) {
 
 function buildResponsiveControls(block) {
   const p = block.props || {};
-  const gridTypes = ['columns2', 'columns3', 'cards', 'features', 'testimonialWall'];
+  const gridTypes = ['columns2', 'columns3', 'cards', 'features', 'testimonialWall', 'gallery'];
   return `<details class="props-advanced" style="margin-top:12px;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
     <summary style="padding:8px 12px;cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);background:var(--bg3);user-select:none;">
-      Responsive
+      Responsive ${['mobilePadding','mobileTextAlign','mobileMinHeight','hideOnMobile','mobileBreakpoint'].some(k=>p[k] && p[k]!=='inherit') || p.mobileGrid && p.mobileGrid !== 'stack' ? '· overrides active' : '· using defaults'}
     </summary>
     <div style="padding:12px;">
+      <button class="btn btn-ghost btn-sm" onclick="resetResponsiveOverrides('${block.id}')">Reset mobile overrides</button>
       <div class="field">
         <label class="label">Mobile Breakpoint (px)</label>
         <input class="input" type="number" min="320" max="1400" step="1" value="${p.mobileBreakpoint || '760'}" oninput="updateProp('${block.id}','mobileBreakpoint',this.value)">

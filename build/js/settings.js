@@ -102,7 +102,7 @@ function updateStorageInfo() {
   let total = 0;
   let count = 0;
   LS.keys().filter(k=>k.startsWith('proj_')).forEach(k => {
-    const v = localStorage.getItem(LS.PREFIX+k);
+    const v = JSON.stringify(LS.get(k));
     if (v) { total += v.length; count++; }
   });
   const kb = (total / 1024).toFixed(1);
@@ -183,6 +183,7 @@ async function clearAllData() {
   });
   if (!confirmed) return;
   LS.keys().forEach(k => LS.del(k));
+  await ProjectStorage.flush();
   loadProjects();
   toast('All data cleared', 'info');
 }

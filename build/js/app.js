@@ -157,12 +157,14 @@ window.handleBuilderShortcut = function(eventLike = {}) {
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded', function init() {
+document.addEventListener('DOMContentLoaded', async function init() {
   console.log('DOM loaded, initializing app');
   applyBuilderLightAppearance();
   applyBuilderPanelState();
   initBuilderPanelResizers();
   initProFeatures();
+  await ProjectStorage.init();
+  refreshDesignRecipes();
   loadProjects();
   importContactFormFromUrlParam();
   if (!restoreProjectFromUrl()) {
@@ -204,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function init() {
   });
 
   window.addEventListener('beforeunload', e => {
-    if (_saveState !== 'dirty') return;
+    if (!['dirty','saving','error'].includes(_saveState)) return;
     e.preventDefault();
     e.returnValue = '';
   });

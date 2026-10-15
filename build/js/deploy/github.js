@@ -97,6 +97,10 @@ async function deployToGithub(asRelease = false) {
         }
       });
 
+      deploymentSupportFiles(_projectData).forEach(file => {
+        folder.file(file.name, file.content, {base64: !!file.binary});
+        blobs.push({path: subfolder ? `${subfolder}/${file.name}` : file.name, content: file.binary ? file.content : btoa(unescape(encodeURIComponent(file.content))), binary: !!file.binary});
+      });
       zipBlob = await zip.generateAsync({ type: 'blob' });
       setStepDone(s2, `ZIP built and ${blobs.length} files ready`);
     } else {
@@ -118,6 +122,7 @@ async function deployToGithub(asRelease = false) {
           blobs.push({ path: imgPath, content: b64, binary: true });
         }
       });
+      deploymentSupportFiles(_projectData).forEach(file => blobs.push({path: subfolder ? `${subfolder}/${file.name}` : file.name, content: file.binary ? file.content : btoa(unescape(encodeURIComponent(file.content))), binary: !!file.binary}));
       setStepDone(s2, `${blobs.length} files ready`);
     }
   } catch(e) { setStepDone(s2, e.message, false); return showDeployDone(false); }

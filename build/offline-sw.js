@@ -1,4 +1,4 @@
-const FW_BUILDER_CACHE = 'fw-builder-offline-2026-09-25-light-only';
+const FW_BUILDER_CACHE = 'fw-builder-offline-2026-10-14-builder-settings';
 const FW_IS_ROOT_WORKER = new URL(self.location.href).pathname === '/sw.js';
 
 const FW_BUILDER_ASSETS = [
@@ -19,6 +19,9 @@ const FW_BUILDER_ASSETS = [
   '/build/js/deploy/github.js',
   '/build/js/deploy/cloudflare.js',
   '/build/js/app.js',
+  '/build/js/site-settings.js',
+  '/build/js/design-tools.js',
+  '/build/js/project-storage.js',
   '/styles/shared.css',
   '/styles/fonts/JetBrainsMono-Regular.woff2',
   '/styles/fonts/JetBrainsMono-Bold.woff2',

@@ -20,19 +20,17 @@ function showSettings() {
   setTimeout(() => loadDeploymentHistory(true), 100); // Small delay to ensure DOM is ready
   showView('settings');
 }
-function exitEditor() {
-  if (_saveState === 'dirty') {
+async function exitEditor() {
+  if (['dirty','error','saving'].includes(_saveState)) {
     openModal('modal-unsaved-exit');
     return;
   }
-  saveProject(true);
-  showDashboard();
+  if (await saveProject(true)) showDashboard();
 }
 
-function saveAndExitEditor() {
+async function saveAndExitEditor() {
   closeModal('modal-unsaved-exit');
-  saveProject(true);
-  showDashboard();
+  if (await saveProject(true)) showDashboard();
 }
 
 function continueWithoutSaving() {

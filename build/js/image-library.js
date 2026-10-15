@@ -80,6 +80,7 @@ function uploadImages(input) {
       _projectData.images.push({ id: uid(), name: file.name, dataURL: e.target.result, type: file.type });
       done++;
       if (done === files.length) {
+        markDirty();
         renderImageLibraryGrid();
         toast(`${files.length} image${files.length > 1 ? 's' : ''} uploaded`, 'success');
       }
@@ -125,6 +126,7 @@ async function importImageFromUrl() {
       if (!_projectData.images) _projectData.images = [];
       pushUndo();
       _projectData.images.push({ id: uid(), name, dataURL: e.target.result, type: blob.type });
+      markDirty();
       closeModal('modal-import-url');
       openModal('modal-img-lib');
       renderImageLibraryGrid();

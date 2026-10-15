@@ -41,8 +41,8 @@ function columnResizeHandles(block, count, editing) {
 }
 
 function renderBlock(block, editing = false, ctx = null) {
-  const html = _renderBlockInner(block, editing, ctx);
-  const responsiveCSS = buildBlockResponsiveCSS(block);
+  const html = renderEnhancedBlock(block, editing, ctx) ?? _renderBlockInner(block, editing, ctx);
+  const responsiveCSS = buildBlockResponsiveCSS(block) + buildVisualEffectsCSS(block, editing);
   const outWithResponsiveCSS = responsiveCSS ? `<style>\n${responsiveCSS}\n</style>\n${html}` : html;
   if (editing) {
     return `<div data-block-id="${block.id}" data-block-type="${escAttr(block.type)}" class="block-wrapper" draggable="false" style="position:relative;cursor:pointer;" onclick="event.stopPropagation();window.parent.selectBlock('${block.id}')">${outWithResponsiveCSS}${blockResizeHandles(block)}<div class="block-controls"><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',-1)" title="Move up" aria-label="Move up">↑</button><button class="block-ctrl-btn" onclick="event.stopPropagation();window.parent.moveBlock('${block.id}',1)" title="Move down" aria-label="Move down">↓</button><button class="block-ctrl-btn block-ctrl-danger" onclick="event.stopPropagation();window.parent.removeBlock('${block.id}')" title="Delete" aria-label="Delete">✕</button></div></div>`;
@@ -452,7 +452,7 @@ function _renderBlockInner(block, editing = false, ctx = null) {
 // ============================================================
 // PROJECT COMPILATION
 // ============================================================
-function escAttr(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+function escAttr(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function safeJsonForScript(value) {
   return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
@@ -700,35 +700,7 @@ function toYouTubeEmbedUrl(url, privacyMode = true, autoplay = false, showContro
 }
 
 function buildMetaTags(projectData, page) {
-  const sm = projectData.meta || {};
-  const pm = page.meta || {};
-  const tags = [];
-  const desc = pm.description || sm.description;
-  if (desc) tags.push(`<meta name="description" content="${escAttr(desc)}">`);
-  if (sm.keywords) tags.push(`<meta name="keywords" content="${escAttr(sm.keywords)}">`);
-  if (sm.author) tags.push(`<meta name="author" content="${escAttr(sm.author)}">`);
-  const favicons = Array.isArray(projectData.favicons) ? projectData.favicons : [];
-  if (favicons.length) {
-    favicons.forEach(asset => {
-      const href = resolveFaviconHref(asset, projectData);
-      if (!href) return;
-      const sizes = asset.sizes ? ` sizes="${escAttr(asset.sizes)}"` : '';
-      const type = asset.type && asset.rel !== 'manifest' ? ` type="${escAttr(asset.type)}"` : '';
-      tags.push(`<link rel="${escAttr(asset.rel || 'icon')}"${sizes}${type} href="${escAttr(href)}">`);
-    });
-  } else if (sm.favicon) {
-    const href = resolveImageAsset(sm.favicon, projectData);
-    tags.push(`<link rel="icon" href="${escAttr(href || sm.favicon)}">`);
-  }
-  const ogTitle = pm.ogTitle || pm.titleOverride || (page.name + (projectData.name ? ' \u2014 ' + projectData.name : ''));
-  const ogDesc = pm.ogDescription || desc;
-  const ogImg = pm.ogImage || sm.ogImage;
-  tags.push(`<meta property="og:type" content="${escAttr(sm.ogType||'website')}">`);
-  tags.push(`<meta property="og:title" content="${escAttr(ogTitle)}">`);
-  if (ogDesc) tags.push(`<meta property="og:description" content="${escAttr(ogDesc)}">`);
-  if (ogImg) tags.push(`<meta property="og:image" content="${escAttr(ogImg)}">`);
-  tags.push(`<meta name="twitter:card" content="${escAttr(sm.twitterCard||'summary_large_image')}">`);
-  return tags.join('\n');
+  return buildSiteMetaTags(projectData, page);
 }
 
 function buildSiteThemeCSS(projectData) {
@@ -744,15 +716,14 @@ function resolveImageSrcs(html, imageMap) {
 
 function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = null) {
   const page = projectData.pages[pageIndex];
-  const renderCtx = imageMap ? Object.assign({}, projectData, { _imageMap: imageMap }) : projectData;
+  const renderCtx = imageMap ? Object.assign({}, projectData, { _imageMap: imageMap, _faviconMap: buildFaviconAssetMap(projectData) }) : projectData;
   let blocksHTML = (page.blocks||[]).map(b => renderBlock(b, false, renderCtx)).join('\n');
   if (imageMap) {
     blocksHTML = resolveImageSrcs(blocksHTML, imageMap);
     blocksHTML = resolveCompiledImageRefs(blocksHTML, projectData, imageMap);
   }
-  const titleOverride = (page.meta||{}).titleOverride;
-  const title = titleOverride || (page.name + (projectData.name ? ' \u2014 ' + projectData.name : ''));
-  const metaTags = buildMetaTags(projectData, page);
+  const title = pageTitle(projectData, page);
+  const metaTags = buildMetaTags(renderCtx, page);
 
   const brandCSS = buildBrandCSS(projectData);
   const styleSystemCSS = buildStyleSystemCSS(projectData);
@@ -761,11 +732,11 @@ function compilePageHTML(projectData, pageIndex, minimal = false, imageMap = nul
 
   if (minimal) {
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${escAttr(projectData.meta?.language || 'en')}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title}</title>
+<title>${escAttr(title)}</title>
 ${metaTags}
 <style>${brandCSS}${styleSystemCSS}${siteThemeCSS}${componentCSS}${projectData.globalCSS||''}</style>
 </head>
@@ -776,11 +747,11 @@ ${blocksHTML}
 </html>`;
   }
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${escAttr(projectData.meta?.language || 'en')}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${title}</title>
+<title>${escAttr(title)}</title>
 ${metaTags}
 <style>
 ${brandCSS}

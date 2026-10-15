@@ -10,7 +10,7 @@ const storage = new Map();
 const localStorage = { getItem: k => storage.get(k) || null, setItem: (k,v) => storage.set(k,String(v)), removeItem: k => storage.delete(k) };
 const context = vm.createContext({ console, URL, URLSearchParams, localStorage, location: { origin: 'https://audit.test' } });
 context.window = context;
-for (const file of ['core', 'renderers', 'props-panel']) vm.runInContext(await read(`build/js/${file}.js`), context, { filename: file });
+for (const file of ['core', 'renderers', 'props-panel', 'site-settings', 'design-tools']) vm.runInContext(await read(`build/js/${file}.js`), context, { filename: file });
 const blocks = await Promise.all(['testimonial-wall', 'youtube-embed'].map(async name => JSON.parse(await read(`build/blocks/${name}-block.json`))));
 const templatePack = JSON.parse(await read('build/templates/plumber-website-template.json'));
 const template = templatePack.pageTemplates[0];

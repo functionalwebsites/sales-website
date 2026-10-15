@@ -680,7 +680,8 @@ textarea,
   border-radius: var(--radius) !important;
 }
 
-.btn {
+.btn,
+.editor-mode-tab {
   border: 1px solid var(--ink) !important;
   box-shadow: var(--shadow-sm);
   font-weight: 900 !important;
@@ -1051,6 +1052,12 @@ select:hover {
     box-shadow: none !important;
   }
 }
+.builder-tools { position:relative; }.builder-tools summary { list-style:none;cursor:pointer; }.builder-tools-menu { position:absolute;right:0;top:calc(100% + 10px);background:var(--bg2);border:2px solid var(--border);border-radius:8px;padding:8px;min-width:180px;z-index:100;box-shadow:4px 4px 0 #222; }.builder-tools-menu button { display:block;width:100%;text-align:left;margin:4px 0; }
+.settings-actions { display:flex;flex-wrap:wrap;gap:6px;margin:10px 0; }
+.search-preview,.social-preview { border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden;overflow-wrap:anywhere; }
+.search-preview { padding:14px; }.search-preview>div { color:#5269c7;font-size:18px;margin-top:6px; }.search-preview p,.social-preview p { font-size:12px;margin:6px 0;color:var(--text2); }
+.social-preview img { width:100%;aspect-ratio:1200/630;object-fit:cover;display:block; }.social-preview>div { padding:14px; }.social-placeholder { background:var(--bg3);aspect-ratio:1200/630;display:grid;place-items:center; }
+.selection-tools { border-bottom:1px solid var(--border);padding:10px; }.selection-tools button { margin:2px; }.props-section details summary { cursor:pointer;padding:12px 0;font-weight:600; }
 </style>
 </head>
 <body class="builder-light">
@@ -1248,12 +1255,19 @@ select:hover {
         <button class="editor-mode-tab active" data-mode="visual" onclick="switchEditorMode('visual')">Visual</button>
         <button class="editor-mode-tab" data-mode="code" onclick="switchEditorMode('code')">Code</button>
       </div>
-      <button class="btn btn-secondary btn-sm d-only" onclick="openLibraryModal()">▦ Library</button>
-      <button class="btn btn-secondary btn-sm d-only" onclick="openImageLibrary(null)"><span style="color:var(--green);">▧</span> Images</button>
-      <button class="btn btn-secondary btn-sm d-only" onclick="openHelpDocs()">? Help</button>
-      <button class="btn btn-secondary btn-sm d-only" onclick="openDesignHealthModal()">◇ Health</button>
-      <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()"><span style="color:var(--green);">◉</span> Preview</button>
-      <button class="btn btn-secondary btn-sm d-only" onclick="downloadZip()">⬇ Download ZIP</button>
+      <details class="builder-tools d-only">
+        <summary class="btn btn-secondary btn-sm">Tools ▾</summary>
+        <div class="builder-tools-menu" onclick="if(event.target.closest('button'))this.parentElement.open=false">
+          <button class="btn btn-ghost btn-sm" onclick="openLibraryModal()">Section library</button>
+          <button class="btn btn-ghost btn-sm" onclick="openImageLibrary(null)">Images</button>
+          <button class="btn btn-ghost btn-sm" onclick="openDesignHealthModal()">Design health</button>
+          <button class="btn btn-ghost btn-sm" onclick="openProjectRevisions()">Saved revisions</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadZip()">Download ZIP</button>
+          <button class="btn btn-ghost btn-sm" onclick="openHelpDocs()">Help</button>
+        </div>
+      </details>
+      <button class="btn btn-secondary btn-sm d-only" onclick="openSiteSettings()">Site & Sharing</button>
+      <button class="btn btn-secondary btn-sm d-only" onclick="previewProject()">Preview</button>
       <button class="btn btn-primary btn-sm" onclick="saveProject()"><span style="color:var(--green);">▣</span> Save</button>
       <button class="btn btn-green btn-sm d-only" id="btn-deploy-desktop" onclick="openDeployModal()">▲ Deploy</button>
       <!-- Mobile overflow trigger -->
@@ -1267,9 +1281,11 @@ select:hover {
     <button class="mob-overflow-item" onclick="closeMobileOverflow();redo()" id="mob-btn-redo">↪ &nbsp;Redo</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();openImageLibrary(null)"><span style="color:var(--green);">▧</span> &nbsp;Images</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openLibraryModal()">▦ &nbsp;Custom Library</button>
+    <button class="mob-overflow-item" onclick="closeMobileOverflow();openSiteSettings()">Site & Sharing</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openHelpDocs()">? &nbsp;Help / Docs</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();openDesignHealthModal()">◇ &nbsp;Design Health</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();previewProject()"><span style="color:var(--green);">◉</span> &nbsp;Preview</button>
+    <button class="mob-overflow-item" onclick="closeMobileOverflow();openProjectRevisions()">Saved revisions</button>
     <button class="mob-overflow-item" onclick="closeMobileOverflow();downloadZip()">⬇ &nbsp;Download ZIP</button>
     <button class="mob-overflow-item" id="btn-deploy-mobile" onclick="closeMobileOverflow();openDeployModal()">▲ &nbsp;Deploy</button>
     <button class="mob-overflow-item divider" onclick="closeMobileOverflow();switchEditorMode('code')">＜/＞ &nbsp;Code Editor</button>
@@ -1289,12 +1305,13 @@ select:hover {
       <!-- Add / Layout tabs -->
       <div class="left-tabs">
         <button class="left-tab active" id="left-tab-add" onclick="switchLeftTab('add')">Add</button>
-        <button class="left-tab" id="left-tab-layout" onclick="switchLeftTab('layout')">Layout</button>
+        <button class="left-tab" id="left-tab-layout" onclick="switchLeftTab('layout')">Layers</button>
       </div>
       <!-- Add blocks panel -->
       <div class="left-tab-panel active" id="left-add-panel" style="overflow-y:auto;flex:1;">
         <div class="blocks-section">
-          <div class="blocks-section-label">Recipes</div>
+          <div class="blocks-section-label">Section presets</div>
+          <div id="design-recipes"></div>
           <button class="block-btn" onclick="insertSectionRecipe('offer')"><span class="block-icon">◆</span> Offer Section</button>
           <button class="block-btn" onclick="insertSectionRecipe('proof')"><span class="block-icon">★</span> Proof Section</button>
           <button class="block-btn" onclick="insertSectionRecipe('process')"><span class="block-icon">①</span> Process Section</button>
@@ -1857,6 +1874,9 @@ select:hover {
 <script src="/build/js/deploy/ui.js"></script>
 <script src="/build/js/deploy/github.js"></script>
 <script src="/build/js/deploy/cloudflare.js"></script>
+<script src="/build/js/site-settings.js"></script>
+<script src="/build/js/design-tools.js"></script>
+<script src="/build/js/project-storage.js"></script>
 <script src="/build/js/app.js"></script>
 <script>
   (() => {
