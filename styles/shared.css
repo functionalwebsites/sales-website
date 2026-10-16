@@ -766,6 +766,15 @@ footer {
   color: var(--fw-rust) !important;
 }
 
+/* Callouts use the same ink border on every side, never an accent stripe. */
+.static-note,
+.funnel-featured,
+.blog-callout,
+.section-intro,
+.prep-note {
+  border: var(--fw-border-width) solid var(--fw-ink) !important;
+}
+
 .note-box,
 .cta-button.secondary,
 .comparison-wrap {

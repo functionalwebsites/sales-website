@@ -196,7 +196,6 @@
   padding: 18px;
   background: var(--fw-paper);
   border: var(--fw-border-width) solid var(--fw-ink);
-  border-left: 10px solid var(--fw-rust);
   border-radius: var(--fw-radius);
   box-shadow: var(--fw-shadow-sm);
 }

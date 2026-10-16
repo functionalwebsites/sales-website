@@ -210,12 +210,12 @@
     }
 
     .static-note {
+      width: calc(100% - 48px);
       max-width: 1000px;
       margin: 0 auto 72px;
       padding: 20px 24px;
       background: var(--bg2);
-      border: 1px solid var(--border);
-      border-left: 8px solid var(--fw-rust);
+      border: var(--fw-border-width) solid var(--fw-ink);
       border-radius: 12px;
       box-shadow: var(--fw-shadow-sm);
     }
@@ -240,6 +240,14 @@
       border: var(--fw-border-width) solid var(--fw-ink);
       border-radius: var(--fw-radius);
       box-shadow: var(--fw-shadow-sm);
+    }
+
+    .comparison-footnote {
+      margin: 0;
+      padding: 16px;
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.7;
     }
 
     .comparison-table {
@@ -278,7 +286,7 @@
       background: rgba(74,222,128,0.05);
     }
 
-    .check { color: var(--green); font-weight: 600; }
+    .check { color: var(--fw-rust); font-weight: 600; }
     .x { color: var(--red); }
     .mobile-only { display: none; }
     .desktop-only { display: inline; }
@@ -504,7 +512,9 @@
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 32px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
       position: relative;
       transition: all 0.3s;
     }
@@ -547,16 +557,17 @@
     .pricing-card .period {
       color: var(--text2);
       font-size: 13px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
 
     .pricing-features {
       list-style: none;
-      margin-bottom: 32px;
+      margin-bottom: 16px;
+      flex: 1;
     }
 
     .pricing-features li {
-      padding: 8px 0;
+      padding: 6px 0;
       color: var(--text2);
       font-size: 13px;
       border-bottom: 1px solid var(--border);
@@ -564,7 +575,7 @@
 
     .pricing-features li:before {
       content: "✓ ";
-      color: var(--green);
+      color: var(--fw-rust);
       font-weight: 600;
       margin-right: 8px;
     }
@@ -1013,7 +1024,8 @@
       }
 
       .static-note {
-        margin: 0 16px 56px;
+        width: calc(100% - 32px);
+        margin: 0 auto 56px;
       }
 
       .comparison h2 {
@@ -1211,21 +1223,15 @@
         </h1>
         <p class="home-hero-note">Less maintenance. More control. We build and rebuild clean websites in plain HTML, CSS, and assets—without plugin bloat or platform lock-in.</p>
         <nav class="hero-buttons" aria-label="Next steps">
-          <a class="btn btn-secondary btn-large" href="/get-a-quote/"><span class="shop-action-copy"><small>01 / Built for you · From $1,500*</small><span>Get a website quote</span></span><span aria-hidden="true">↗</span></a>
-          <a class="btn btn-primary btn-large" href="/build/"><span class="shop-action-copy"><small>02 / Do it yourself · $0 to start</small><span>Start with a free template</span></span><span aria-hidden="true">↗</span></a>
+          <a class="btn btn-secondary btn-large" href="/get-a-quote/"><span class="shop-action-copy"><small>01 / Built for you · From $1,500*</small><span>Get a website quote</span></span></a>
+          <a class="btn btn-primary btn-large" href="/build/"><span class="shop-action-copy"><small>02 / Do it yourself · $0 to start</small><span>Start with a free template</span></span></a>
         </nav>
         <div class="shop-board-bottom"><span>*Planning price. Final scope quoted.</span><span aria-hidden="true">&lt;/&gt;</span></div>
       </div>
     </div>
   </section>
 
-<section class="funnel-directory" aria-labelledby="find-your-fit"><h2 id="find-your-fit">Find the right website for your business</h2><p>Explore a relevant design concept, starting price, estimated work time, and what’s included.</p><div class="funnel-grid"><a class="funnel-link funnel-local" href="/huntington-beach-web-design/"><strong>Huntington Beach web design ↗</strong><span>Born and raised in Surf City. Websites built by a licensed Huntington Beach business.</span></a><a class="funnel-link" href="/services/web-design-for-contractors/"><strong>Web design for contractors ↗</strong><span>Services &amp; service areas · From $1,500 planning estimate</span></a>
-<a class="funnel-link" href="/services/web-design-for-therapists/"><strong>Web design for therapists ↗</strong><span>Approach &amp; specialties · From $1,500 planning estimate</span></a>
-<a class="funnel-link" href="/services/web-design-for-consultants/"><strong>Web design for consultants ↗</strong><span>Advisory services · From $1,500 planning estimate</span></a>
-<a class="funnel-link" href="/services/wordpress-to-static-rebuilds/"><strong>WordPress-to-static rebuilds ↗</strong><span>Keep the content · From $1,500 planning estimate</span></a>
-<a class="funnel-link" href="/services/fast-websites-for-local-businesses/"><strong>Fast websites for local businesses ↗</strong><span>Hours &amp; location · From $1,500 planning estimate</span></a>
-<a class="funnel-link" href="/services/website-templates-for-freelancers/"><strong>Website templates for freelancers ↗</strong><span>Introduce yourself · Free starters</span></a>
-</div></section>
+
 
   <!-- FEATURES -->
   <section class="features" id="features">
@@ -1250,7 +1256,7 @@
         <p>Export plain HTML, CSS, and assets. Your site can move anywhere that hosts static files.</p>
       </div>
       <div class="feature-card" tabindex="0">
-        <div class="feature-icon">↗</div>
+        <div class="feature-icon">⌕</div>
         <h3>Search Friendly</h3>
         <p>Fast pages, clear metadata, and clean URLs give search engines less friction.</p>
       </div>
@@ -1319,7 +1325,7 @@
           </tr>
         </tbody>
       </table>
-      <p style="margin-top: 16px; color: var(--text2); font-size: 13px;">*Static files reduce server-side attack surfaces. Hosting accounts, scripts, forms, and payment integrations still need security controls. No website is risk-free.</p>
+      <p class="comparison-footnote">*Static files reduce server-side attack surfaces. Hosting accounts, scripts, forms, and payment integrations still need security controls. No website is risk-free.</p>
     </div>
   </section>
 
@@ -1367,6 +1373,24 @@
         </div>
       </div>
     </div>
+
+  <section class="website-menu-section" aria-labelledby="find-your-fit">
+    <div class="website-menu">
+      <header class="website-menu-heading">
+        <p class="website-menu-kicker">The website menu</p>
+        <h2 id="find-your-fit">Something for Everybody</h2>
+      </header>
+      <ul class="website-menu-list" role="list">
+        <li><a class="website-menu-link" href="/huntington-beach-web-design/" aria-label="Learn more about Huntington Beach"><span class="website-menu-name">Huntington Beach</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+        <li><a class="website-menu-link" href="/services/web-design-for-contractors/" aria-label="Learn more about Contractors"><span class="website-menu-name">Contractors</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+        <li><a class="website-menu-link" href="/services/web-design-for-therapists/" aria-label="Learn more about Therapists"><span class="website-menu-name">Therapists</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+        <li><a class="website-menu-link" href="/services/web-design-for-consultants/" aria-label="Learn more about Consultants"><span class="website-menu-name">Consultants</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+        <li><a class="website-menu-link" href="/services/wordpress-to-static-rebuilds/" aria-label="Learn more about WordPress rebuilds"><span class="website-menu-name">WordPress rebuilds</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+        <li><a class="website-menu-link" href="/services/fast-websites-for-local-businesses/" aria-label="Learn more about Local businesses"><span class="website-menu-name">Local businesses</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+        <li><a class="website-menu-link" href="/services/website-templates-for-freelancers/" aria-label="Learn more about Freelancers"><span class="website-menu-name">Freelancers</span><span class="website-menu-leader" aria-hidden="true"></span><span class="website-menu-action">Learn More</span></a></li>
+      </ul>
+    </div>
+  </section>
 
     <div class="services-overview">
       <p>Functional Websites builds simple static websites, rebuilds or cleans up sites you already own, and creates custom systems when your project needs more than a basic page builder.</p>
@@ -1428,12 +1452,10 @@
         <div class="price">$0</div>
         <div class="period">forever</div>
         <ul class="pricing-features">
-          <li>Full site builder access</li>
+          <li>Full drag-and-drop builder</li>
           <li>Built-in starter templates</li>
-          <li>Drag-and-drop editor</li>
-          <li>Mobile-responsive sites</li>
-          <li>Local preview</li>
-          <li>Export as HTML/ZIP</li>
+          <li>Responsive sites & local preview</li>
+          <li>HTML / ZIP export</li>
           <li>No custom blocks or templates</li>
         </ul>
         <button class="btn btn-large btn-secondary" style="width: 100%;" onclick="window.location.href='https://build.functionalwebsites.com/'">Get Started</button>
@@ -1448,13 +1470,9 @@
         <ul class="pricing-features">
           <li>Everything in Free</li>
           <li>Direct deploy to GitHub & Cloudflare</li>
-          <li>Marketplace access</li>
-          <li>Premium templates</li>
-          <li>Custom blocks & templates</li>
-          <li>Create your own blocks</li>
-          <li>Upload your own blocks</li>
-          <li>Create your own templates</li>
-          <li>Upload your own templates</li>
+          <li>Marketplace & premium templates</li>
+          <li>Create & upload custom blocks</li>
+          <li>Create & upload custom templates</li>
         </ul>
         <button class="btn btn-large btn-primary" style="width: 100%; background: var(--green); color: #000;" onclick="startStripeCheckout(event)">Buy Pro — $9.99</button>
       </div>
@@ -1466,10 +1484,8 @@
         <div class="period">tailored setup</div>
         <ul class="pricing-features">
           <li>Everything in Pro</li>
-          <li>White-label builder</li>
-          <li>Custom branded version</li>
-          <li>Reseller-ready setup</li>
-          <li>Internal business version</li>
+          <li>White-label, branded builder</li>
+          <li>Reseller or internal business setup</li>
           <li>Tailored implementation</li>
           <li>Custom feature planning</li>
         </ul>
@@ -1477,6 +1493,8 @@
       </div>
     </div>
   </section>
+
+
 
   <section class="questions" aria-labelledby="questions-heading">
     <div class="questions-panel">
@@ -1499,7 +1517,6 @@
       <div class="questions-actions">
         <a class="btn btn-large btn-secondary" href="/docs/">Read the Docs</a>
         <a class="btn btn-large btn-primary" href="mailto:cooper@functionalwebsites.com">Book a Discovery Call</a>
-        <button type="button" class="fw-phone-button" data-phone-contact aria-label="Call or text 714-988-3466" aria-haspopup="dialog">714-988-3466</button>
       </div>
     </div>
   </section>

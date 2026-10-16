@@ -728,7 +728,7 @@ footer {
   <div class="footer-local">
     <div class="footer-home">
       <a class="footer-hometown" href="https://functionalwebsites.com/huntington-beach-web-design/">Based in Surf City, USA</a>
-      <a class="footer-license" href="https://aca-prod.accela.com/COHB/Cap/CapDetail.aspx?Module=Licenses&amp;TabName=Licenses&amp;capID1=26LIC&amp;capID2=00000&amp;capID3=16112&amp;agencyCode=COHB&amp;IsToShowInspection=" target="_blank" rel="noopener noreferrer">Huntington Beach business license · A326075 <span aria-hidden="true">↗</span><span class="footer-sr-only"> (opens in a new tab)</span></a>
+      <a class="footer-license" href="https://aca-prod.accela.com/COHB/Cap/CapDetail.aspx?Module=Licenses&amp;TabName=Licenses&amp;capID1=26LIC&amp;capID2=00000&amp;capID3=16112&amp;agencyCode=COHB&amp;IsToShowInspection=" target="_blank" rel="noopener noreferrer">Huntington Beach business license · A326075<span class="footer-sr-only"> (opens in a new tab)</span></a>
     </div>
     <div class="footer-clock">
       <div class="footer-clock-heading"><span class="footer-flags"><img src="/img/flags/huntington-beach.svg" width="30" height="19" alt="Huntington Beach flag"><img src="/img/flags/usa.svg" width="30" height="16" alt="USA flag"></span><span>Local time · Huntington Beach</span></div>

@@ -61,7 +61,7 @@
 .delivery-included ul { padding: 0; list-style: none; }
 .delivery-included li { padding: 14px 0 14px 26px; position: relative; border-bottom: 1px solid var(--fw-panel-strong); font-size: 14px; line-height: 1.6; }
 .delivery-included li::before { content: '✓'; position: absolute; left: 0; color: var(--fw-rust); font-weight: 700; }
-.prep-note { border: 3px solid var(--fw-ink); border-top: 10px solid var(--fw-gold); padding: 28px; background: var(--fw-panel); box-shadow: var(--fw-shadow-sm); }
+.prep-note { border: 3px solid var(--fw-ink); padding: 28px; background: var(--fw-panel); box-shadow: var(--fw-shadow-sm); }
 .note-label { font-size: 10px; letter-spacing: .08em; display: block; margin-bottom: 20px; color: var(--text2); }
 .prep-note h3 { font-size: 24px; line-height: 1.25; }
 .prep-note .scope-note { font-size: 11px; border-top: 1px solid var(--fw-muted); padding-top: 20px; margin-top: 24px; }
@@ -96,4 +96,34 @@
 @media(prefers-reduced-motion: reduce) { .landing-art * { animation: none !important; } }
 
 /* Local business entry spans the existing homepage and services directory. */
-.funnel-local { grid-column: 1 / -1; border-left: 8px solid var(--fw-rust); }
+.funnel-featured { grid-column: 1 / -1; }
+
+/* Shared service menu: one compact list, with actions in the price column. */
+.website-menu-section { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+.services > .website-menu-section { max-width: none; margin: 0 0 32px; padding: 0; }
+.website-menu { padding: 24px 32px; background: var(--fw-paper); border: var(--fw-border-width) solid var(--fw-ink); border-radius: var(--fw-radius); box-shadow: var(--fw-shadow-sm); }
+.website-menu-heading { margin-bottom: 12px; text-align: center; }
+.website-menu-kicker { color: var(--fw-muted); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 8px; }
+.website-menu-heading h2 { color: var(--fw-rust); font-size: clamp(24px, 3vw, 36px); line-height: 1.15; letter-spacing: -.04em; margin: 0; }
+.website-menu-list { list-style: none; margin: 0; padding: 0; }
+.website-menu-list li { position: relative; padding-left: 18px; }
+.website-menu-list li::before { content: ""; position: absolute; left: 0; top: 50%; width: 5px; height: 5px; background: var(--fw-rust); transform: translateY(-50%); }
+.website-menu-link { display: flex; align-items: center; gap: 16px; min-height: 52px; color: var(--fw-ink); text-decoration: none; }
+.website-menu-name { font-size: 17px; font-weight: 700; line-height: 1.3; }
+.website-menu-leader { flex: 1; min-width: 8px; border-bottom: 1px dotted var(--fw-muted); }
+.website-menu-action { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 6px 12px; border: 1px solid var(--fw-ink); border-radius: var(--fw-radius); background: var(--fw-green); box-shadow: 2px 2px 0 var(--fw-ink); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.website-menu-link:hover .website-menu-name { text-decoration: underline; text-underline-offset: 4px; }
+.website-menu-link:hover .website-menu-action { background: var(--fw-gold); }
+.website-menu-link:focus-visible { outline: 2px solid var(--fw-ink); outline-offset: 3px; border-radius: var(--fw-radius); }
+@media (max-width: 760px) {
+  .website-menu-section { padding: 24px 16px; }
+  .website-menu { padding: 18px 14px; }
+  .website-menu-heading { margin-bottom: 10px; }
+  .website-menu-heading h2 { font-size: 24px; }
+  .website-menu-kicker { font-size: 9px; margin-bottom: 6px; }
+  .website-menu-list li { padding-left: 12px; }
+  .website-menu-link { min-height: 44px; gap: 8px; }
+  .website-menu-name { font-size: 12px; }
+  .website-menu-action { min-height: 32px; padding: 5px 7px; font-size: 9px; }
+  .website-menu-leader { min-width: 4px; }
+}

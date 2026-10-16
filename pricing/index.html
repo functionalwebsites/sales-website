@@ -23,8 +23,8 @@
       max-width: 100%;
       background: var(--hero-gradient);
       margin: 0 auto;
-      min-height: 100svh;
-      padding: 80px 24px;
+      min-height: 0 !important;
+      padding: 56px 24px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -36,7 +36,7 @@
     .hero h1 {
       font-size: 48px;
       font-weight: 700;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       line-height: 1.2;
     }
 
@@ -82,17 +82,17 @@
     .pricing-grid {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 48px 24px 80px;
+      padding: 28px 24px 88px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 32px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
     }
 
     .pricing-card {
       background: var(--bg2);
       border: 2px solid var(--border);
       border-radius: 12px;
-      padding: 40px;
+      padding: 24px;
       position: relative;
       transition: all 0.3s;
       display: flex;
@@ -123,7 +123,7 @@
     }
 
     .pricing-header {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .pricing-card h2 {
@@ -135,7 +135,7 @@
     .pricing-description {
       color: var(--text2);
       font-size: 13px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .price-display {
@@ -164,17 +164,17 @@
     .price-note {
       color: var(--text2);
       font-size: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .pricing-features {
       list-style: none;
-      margin-bottom: 32px;
+      margin-bottom: 20px;
       flex: 1;
     }
 
     .pricing-features li {
-      padding: 12px 0;
+      padding: 8px 0;
       color: var(--text);
       font-size: 13px;
       border-bottom: 1px solid var(--border);
@@ -189,7 +189,7 @@
 
     .pricing-features li:before {
       content: "✓";
-      color: var(--green);
+      color: var(--fw-rust);
       font-weight: 700;
       min-width: 18px;
     }
@@ -236,7 +236,7 @@
     .faq {
       max-width: 900px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 56px 24px;
     }
 
     .faq h2 {
@@ -247,7 +247,7 @@
     }
 
     .faq-item {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 24px;
@@ -307,35 +307,53 @@
       }
 
       .pricing-grid {
-        display: flex;
-        grid-template-columns: none;
-        gap: 16px;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        padding: 48px 28px 80px;
-        margin: 0;
-        -webkit-overflow-scrolling: touch;
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 24px 20px 72px;
       }
 
       .pricing-card {
-        flex: 0 0 min(82vw, 360px);
-        scroll-snap-align: center;
+        padding: 20px;
       }
+
+    }
+    .builder-pricing-intro {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px 0;
+    }
+    .builder-pricing-intro h2 { font-size: clamp(26px, 4vw, 36px); margin-bottom: 12px; }
+    .builder-pricing-intro p { max-width: 740px; color: var(--text2); }
+    .pricing-page .hero { min-height: 0 !important; }
+    .pricing-page .pricing-card.featured { transform: none !important; }
+    .pricing-page .pricing-header { margin-bottom: 12px; }
+    .pricing-page .pricing-description { margin-bottom: 0; }
+    .pricing-page .price-note { margin-bottom: 8px; }
+    .pricing-page .pricing-features { margin-top: 12px; }
+    .pricing-page .pricing-cta { display: flex; justify-content: center; align-items: center; min-height: 48px; text-align: center; }
+    @media (max-width: 768px) {
+      .builder-pricing-intro { padding: 32px 20px 0; }
     }
   </style>
   <script src="/stripe-checkout.js" defer></script>
 </head>
-<body>
+<body class="pricing-page">
   <div id="header-placeholder"></div>
 
   <!-- HERO -->
   <section class="hero gear-hero">
     <h1>Simple, Transparent Pricing</h1>
-    <p>Build for free. Upgrade when you're ready to publish.</p>
+    <p>Want us to build your website? Tell us what you have in mind and we’ll put together a quote.</p>
+    <a class="btn btn-primary" href="/get-a-quote/">Get a website quote</a>
 
   </section>
 
-  <!-- PRICING CARDS -->
+  <!-- BUILDER PRICING -->
+  <section class="builder-pricing" aria-labelledby="builder-pricing-title">
+    <div class="builder-pricing-intro">
+      <h2 id="builder-pricing-title">Builder pricing</h2>
+      <p>Building it yourself? Start free, unlock Pro, or get a custom version of the builder.</p>
+    </div>
   <div class="pricing-grid">
     <!-- FREE -->
     <div class="pricing-card">
@@ -350,14 +368,11 @@
       </div>
 
       <ul class="pricing-features">
-        <li>Full site builder access</li>
+        <li>Full drag-and-drop builder</li>
         <li>Built-in starter templates</li>
-        <li>Drag-and-drop editor</li>
-        <li>Mobile-responsive sites</li>
-        <li>Local preview</li>
-        <li>Export as HTML/ZIP</li>
-        <li class="disabled">No custom blocks</li>
-        <li class="disabled">No custom templates</li>
+        <li>Responsive sites & local preview</li>
+        <li>HTML / ZIP export</li>
+        <li class="disabled">Custom blocks & templates require Pro</li>
       </ul>
 
       <button class="pricing-cta secondary" onclick="window.location.href='https://build.functionalwebsites.com/'">Get Started</button>
@@ -380,13 +395,9 @@
       <ul class="pricing-features">
         <li>Everything in Free</li>
         <li>Direct deploy to GitHub & Cloudflare</li>
-        <li>Marketplace access</li>
-        <li>Premium templates</li>
-        <li>Custom blocks & templates</li>
-        <li>Create your own blocks</li>
-        <li>Upload your own blocks</li>
-        <li>Create your own templates</li>
-        <li>Upload your own templates</li>
+        <li>Marketplace & premium templates</li>
+        <li>Create & upload custom blocks</li>
+        <li>Create & upload custom templates</li>
       </ul>
 
       <button class="pricing-cta primary" onclick="startStripeCheckout(event)">Get Pro — $9.99</button>
@@ -406,18 +417,17 @@
 
       <ul class="pricing-features">
         <li>Everything in Pro</li>
-        <li>White-label builder</li>
-        <li>Custom branded version</li>
-        <li>Reseller-ready setup</li>
-        <li>Internal business version</li>
+        <li>White-label, branded builder</li>
+        <li>Reseller or internal business setup</li>
         <li>Tailored implementation</li>
         <li>Custom feature planning</li>
       </ul>
 
-      <button class="pricing-cta secondary" onclick="window.location.href='mailto:cooper@functionalwebsites.com'">Contact Sales</button>
-      <button type="button" class="fw-phone-button" data-phone-contact aria-label="Call or text 714-988-3466" aria-haspopup="dialog">714-988-3466</button>
+      <a class="pricing-cta secondary" href="mailto:cooper@functionalwebsites.com">Contact Sales</a>
     </div>
   </div>
+
+  </section>
 
   <!-- FAQ -->
   <section class="faq" id="faq">
