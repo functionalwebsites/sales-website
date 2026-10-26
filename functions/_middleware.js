@@ -1,3 +1,5 @@
+import { isInvoicePath, protectInvoice } from './_utils/invoice-auth.js';
+
 const BUILDER_HOST = 'build.functionalwebsites.com';
 const DOCS_HOST = 'docs.functionalwebsites.com';
 const DOCS_ROUTES = new Set([
@@ -17,6 +19,8 @@ const PRO_MARKETPLACE_ASSET_PATHS = new Set([
 
 export async function onRequest(context) {
   const url = new URL(context.request.url);
+
+  if (isInvoicePath(url.pathname)) return protectInvoice(context);
 
   // The sample article is an unpublished writing template, not a public post.
   if (/^\/blog\/hello-world(?:\/index\.html|\/)?$/.test(url.pathname)) {
@@ -85,6 +89,8 @@ function robotsForHost(hostname) {
   if (hostname === DOCS_HOST) {
     return [
       'User-agent: *',
+      'Disallow: /tools/invoice',
+      'Disallow: /invoice/tools',
       'Allow: /',
       'Sitemap: https://docs.functionalwebsites.com/sitemap.xml'
     ].join('\n') + '\n';
@@ -92,6 +98,8 @@ function robotsForHost(hostname) {
 
   return [
     'User-agent: *',
+    'Disallow: /tools/invoice',
+    'Disallow: /invoice/tools',
     'Allow: /',
     'Sitemap: https://functionalwebsites.com/sitemap.xml'
   ].join('\n') + '\n';

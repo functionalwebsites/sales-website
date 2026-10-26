@@ -35,6 +35,10 @@
   let loadFailed = false;
   let toastTimer;
   function toast(message) { $('#toast').textContent = message; $('#toast').classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('visible'), 4500); }
+  function updateBusinessPhone(doc) {
+    // Update only the former default phone line; preserve custom contact details.
+    doc.businessDetails = doc.businessDetails.replace(/^714-369-0148$/gm, '714-988-3466');
+  }
   function validStore(data) {
     const texts = ['id','type','number','issued','due','currency','project','customer','email','address','paymentMode','paymentUrl','notes','business','businessDetails','website'];
     const numeric = (v, max) => (typeof v === 'number' || typeof v === 'string') && Number.isFinite(Number(v)) && Math.abs(Number(v)) <= max;
@@ -45,7 +49,7 @@
       (!d.issued || validDate(d.issued)) && (!d.due || validDate(d.due)) && numeric(d.tax,100000000) && numeric(d.discount,100000000) && numeric(d.paid,100000000) &&
       Array.isArray(d.items) && d.items.length > 0 && d.items.length <= 500 && d.items.every(i => i && typeof i.description === 'string' && i.description.length <= 50000 && numeric(i.qty,100000) && numeric(i.rate,100000000)));
   }
-  try { const saved = localStorage.getItem(KEY); if (saved) { const parsed = JSON.parse(saved); if (!validStore(parsed)) throw new Error('Invalid backup'); store = parsed; } }
+  try { const saved = localStorage.getItem(KEY); if (saved) { const parsed = JSON.parse(saved); if (!validStore(parsed)) throw new Error('Invalid backup'); parsed.documents.forEach(updateBusinessPhone); store = parsed; } }
   catch { loadFailed = true; storageBlocked = true; }
   const current = () => store.documents.find(d => d.id === store.activeId);
   function nextNumber(type) {
@@ -59,7 +63,7 @@
     const doc = source ? JSON.parse(JSON.stringify(source)) : {
       customer:'',email:'',address:'',project:'',currency:'USD',discount:0,tax:0,paid:0,
       business:previous?.business || 'Functional Websites',
-      businessDetails:previous?.businessDetails || 'Cooper Carrasco\ncooper@functionalwebsites.com\n714-369-0148',
+      businessDetails:previous?.businessDetails || 'Cooper Carrasco\ncooper@functionalwebsites.com\n714-988-3466',
       website:previous?.website || 'functionalwebsites.com',
       paymentMode:previous?.paymentMode || 'website',paymentUrl:previous?.paymentUrl || '',
       notes:type === 'quote' ? 'This quote is valid until the date shown above. Please confirm the scope and payment schedule before work begins.\nThank you for considering Functional Websites.' : 'Thank you for your business. Please include the invoice number with your payment.',
@@ -181,7 +185,7 @@
       if (!validStore(imported) || !imported.documents.length) throw new Error('This is not a valid Business Desk backup.');
       if (!confirm(`Import ${imported.documents.length} documents? Copies will be added; existing documents will be kept.`)) return;
       if (store.documents.length + imported.documents.length > 2000) throw new Error('Maximum 2,000 documents.');
-      for (const d of imported.documents) d.id = uid();
+      for (const d of imported.documents) { d.id = uid(); updateBusinessPhone(d); }
       store.documents.unshift(...imported.documents); store.activeId = imported.documents[0].id;
       persist(); hydrate(); toast(storageBlocked ? 'Imported in memory. Export a backup before closing.' : 'Backup imported. Existing documents were kept.');
     } catch (error) { toast(error instanceof SyntaxError ? 'That file is not valid JSON.' : error.message); }
