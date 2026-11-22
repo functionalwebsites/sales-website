@@ -15,8 +15,8 @@ Sales project: sales-website
 
 Builder project: funweb-builder
   Build root: funweb
-  Command: cd .. && node scripts/package-sites.mjs && node scripts/check-site-split.mjs
-  Output relative to build root: ../dist/funweb
+  Command: cd .. && node scripts/package-sites.mjs --cloudflare-funweb && node scripts/check-site-split.mjs
+  Output relative to build root: dist (generated funweb/dist)
   Pages host: funweb-builder.pages.dev
   Intended custom host: funweb.dev
 

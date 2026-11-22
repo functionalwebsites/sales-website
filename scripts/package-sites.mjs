@@ -88,4 +88,10 @@ await writeFile(join(funweb, '_redirects'), '/get-a-quote/* https://functionalwe
 await writeFile(join(funweb, 'wrangler.toml'), 'name = "funweb-builder"\ncompatibility_date = "2024-01-01"\npages_build_output_dir = "."\n');
 await writeFile(join(sales, 'wrangler.toml'), (await readFile(join(root, 'wrangler.toml'), 'utf8')).replace('pages_build_output_dir = "dist/sales"', 'pages_build_output_dir = "."'));
 await writeFile(join(funweb, '404.html'), '<!doctype html><html lang="en"><meta charset="utf-8"><title>Page not found · Funweb</title><h1>Page not found</h1><p><a href="/">Return to the builder</a></p></html>');
+if (process.argv.includes('--cloudflare-funweb')) {
+  // Pages requires the output to stay inside its configured build root.
+  const cloudflareOutput = join(root, 'funweb/dist');
+  await rm(cloudflareOutput, { recursive: true, force: true });
+  await cp(funweb, cloudflareOutput, { recursive: true });
+}
 console.log('Packaged dist/sales and dist/funweb. Neither has been deployed.');
