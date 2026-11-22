@@ -52,6 +52,7 @@ for (const folder of ['docs', 'tools', 'marketplace', 'pricing', 'qr']) {
         let html = await readFile(path, 'utf8');
         html = html.replaceAll('Functional Websites', 'Funweb').replaceAll('functional(Websites)', 'funweb.dev');
         if (folder === 'tools') {
+          html = html.replace(/<header class="topbar">[\s\S]*?<\/header>/, '<div id="header-placeholder" style="height:72px"></div>');
           html = html.replace(/<footer>[\s\S]*?<\/footer>/, '<div id="footer-placeholder"></div>');
           html = html.replace('</body>', '<script src="/components/components.js" defer></script></body>');
         }
@@ -67,6 +68,13 @@ for (const file of ['index.html', 'build/index.html']) {
   const path = join(funweb, file);
   let html = await readFile(path, 'utf8');
   html = html.replace('href="https://funweb.dev/">Open the old builder', 'href="https://build.functionalwebsites.com/">Open the old builder');
+  const dashboardHeader = html.match(/<header class="header">[\s\S]*?<\/header>/);
+  if (!dashboardHeader) throw new Error('Builder dashboard header not found');
+  const controls = dashboardHeader[0].match(/<button[^>]*id="btn-(?:settings|unlock-pro)"[\s\S]*?<\/button>/g);
+  if (controls?.length !== 2) throw new Error('Builder account controls not found');
+  html = html.replace(dashboardHeader[0], '<div id="header-placeholder" style="height:72px;min-height:72px;flex-shrink:0"></div><div aria-label="Builder account" style="display:flex;justify-content:flex-end;gap:8px;padding:8px 24px;flex-shrink:0">' + controls.join('') + '</div>');
+  html = html.replace(/<nav aria-label="Workshop resources"[\s\S]*?<\/nav>/, '');
+  html = html.replace('</body>', '<script src="/components/components.js" defer></script></body>');
   await writeFile(path, html);
 }
 
