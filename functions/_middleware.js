@@ -52,6 +52,10 @@ export async function onRequest(context) {
     return Response.redirect(url.toString(), 308);
   }
 
+  if (url.hostname === BUILDER_HOST && /^\/pricing(?:\/index\.html|\/)?$/.test(url.pathname)) {
+    return context.env.ASSETS.fetch(new Request(new URL('/build/pricing/', url), context.request));
+  }
+
   if (url.hostname === BUILDER_HOST && (url.pathname === '/' || url.pathname === '/index.html')) {
     const builderUrl = new URL('/build/', url);
     return context.env.ASSETS.fetch(new Request(builderUrl, context.request));

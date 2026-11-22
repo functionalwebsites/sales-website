@@ -4,7 +4,7 @@
 <meta name="color-scheme" content="only light">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Functional Websites pricing — use the builder free with ZIP export, unlock Pro for direct deployment, marketplace access, custom templates, and custom blocks, or get a white-label custom version.">
+  <meta name="description" content="Website design, rebuilds, and hosting from Functional Websites. New builds start with a $1,500 planning estimate; final scope is quoted.">
   <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
@@ -334,6 +334,9 @@
     @media (max-width: 768px) {
       .builder-pricing-intro { padding: 32px 20px 0; }
     }
+      .faq-item summary { cursor: pointer; font-size: 1rem; font-weight: 700; padding: 1rem; }
+    .faq-item p { padding: 0 1rem 1rem; line-height: 1.7; }
+    .faq-item summary:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
   </style>
   <script src="/stripe-checkout.js" defer></script>
 </head>
@@ -348,170 +351,27 @@
 
   </section>
 
-  <!-- BUILDER PRICING -->
-  <section class="builder-pricing" aria-labelledby="builder-pricing-title">
+  <main id="main-content">
+  <section class="builder-pricing" aria-labelledby="services-pricing-title">
     <div class="builder-pricing-intro">
-      <h2 id="builder-pricing-title">Builder pricing</h2>
-      <p>Building it yourself? Start free, unlock Pro, or get a custom version of the builder.</p>
+      <h2 id="services-pricing-title">A clear scope before we build</h2>
+      <p>New website builds start with a $1,500 planning estimate. Your final quote depends on the pages, content, and functionality you need.</p>
     </div>
-  <div class="pricing-grid">
-    <!-- FREE -->
-    <div class="pricing-card">
-      <div class="pricing-header">
-        <h2>Free</h2>
-        <p class="pricing-description">Perfect for getting started</p>
-      </div>
-
-      <div class="price-display">
-        <span class="amount">$0</span>
-        <span class="period">forever</span>
-      </div>
-
-      <ul class="pricing-features">
-        <li>Full drag-and-drop builder</li>
-        <li>Built-in starter templates</li>
-        <li>Responsive sites & local preview</li>
-        <li>HTML / ZIP export</li>
-        <li class="disabled">Custom blocks & templates require Pro</li>
-      </ul>
-
-      <button class="pricing-cta secondary" onclick="window.location.href='https://build.functionalwebsites.com/'">Get Started</button>
-    </div>
-
-    <!-- PRO -->
-    <div class="pricing-card featured">
-      <div class="pricing-badge">RECOMMENDED</div>
-      <div class="pricing-header">
-        <h2>Pro</h2>
-        <p class="pricing-description">Unlock the full builder</p>
-      </div>
-
-      <div class="price-display">
-        <span class="currency">$</span>
-        <span class="amount">9.99</span>
-        <span class="period">one-time</span>
-      </div>
-
-      <ul class="pricing-features">
-        <li>Everything in Free</li>
-        <li>Direct deploy to GitHub & Cloudflare</li>
-        <li>Marketplace & premium templates</li>
-        <li>Create & upload custom blocks</li>
-        <li>Create & upload custom templates</li>
-      </ul>
-
-      <button class="pricing-cta primary" onclick="startStripeCheckout(event)">Get Pro — $9.99</button>
-    </div>
-
-    <!-- BUSINESS -->
-    <div class="pricing-card">
-      <div class="pricing-header">
-        <h2>Custom</h2>
-        <p class="pricing-description">White-label or tailored version</p>
-      </div>
-
-      <div class="price-display">
-        <span class="amount">Custom</span>
-      </div>
-      <p class="price-note">Pricing varies — contact for details</p>
-
-      <ul class="pricing-features">
-        <li>Everything in Pro</li>
-        <li>White-label, branded builder</li>
-        <li>Reseller or internal business setup</li>
-        <li>Tailored implementation</li>
-        <li>Custom feature planning</li>
-      </ul>
-
-      <a class="pricing-cta secondary" href="mailto:cooper@functionalwebsites.com">Contact Sales</a>
-    </div>
-  </div>
-
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq" id="faq">
-    <h2>Frequently Asked Questions</h2>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        What happens when I upgrade to Pro?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-        Your free projects carry over. You immediately unlock direct deployment, marketplace access, custom blocks, custom templates, and the rest of the Pro builder features. No setup needed.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        Can I export my site and host it elsewhere?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-        Yes. Export your site as a ZIP file containing all HTML, CSS, and JavaScript. You can host it on Netlify, GitHub Pages, AWS S3, or anywhere static files are served.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        Do I need technical skills?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-        No. The builder is designed for non-technical users. Drag, drop, and publish. For advanced users, you can edit the HTML directly.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        What's the difference between exporting and deploying?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-        Export downloads your site as files and stays free. Deploy publishes your site directly from the builder to the web with a custom domain and HTTPS, and that direct deployment feature requires Pro.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        Is there a storage limit?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-        Your project is stored in local storage on your device, so there's no fixed limit. However, very large projects may impact performance. We recommend keeping individual project sizes under 100MB for optimal experience.
-        Because of this, we can NOT recover your projects if you lose them, make sure to deploy to github often or download the project files as a backup!
-        </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        What about SEO?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-        Pro plans and above include SEO tools: meta tag editors, automatic sitemaps, Open Graph tags, and structured data generation. Static sites also load faster, which helps ranking.
-      </div>
-    </div>
-
-      <div class="faq-item">
-      <div class="faq-question">
-        What happens if I lose my project?
-        <span class="faq-icon">▼</span>
-      </div>
-      <div class="faq-answer">
-      Because projects are stored in your browser's local storage, we cannot recover lost projects. To prevent loss, we recommend regularly exporting your project files as a backup or deploying to GitHub Pages for safekeeping.
-      </div>
+    <div class="pricing-grid">
+      <article class="pricing-card"><h2>New website</h2><p class="price-note">From $1,500 · planning estimate</p><p>A fast, portable website built around your business and the people you want to reach.</p><ul class="pricing-features"><li>Design and development scoped to your needs</li><li>Responsive layouts and accessibility at the core</li><li>Plain website files you can keep</li></ul><a class="pricing-cta primary" href="/get-a-quote/">Get a website quote</a></article>
+      <article class="pricing-card"><h2>Rebuild or cleanup</h2><p class="price-note">Quoted after reviewing your site</p><p>Keep what works. Resolve the structure, maintenance, or performance problems holding your current site back.</p><ul class="pricing-features"><li>Existing-site review</li><li>Content and URL planning</li><li>Rebuild or focused improvements</li></ul><a class="pricing-cta secondary" href="/get-a-quote/">Discuss your current site</a></article>
+      <article class="pricing-card"><h2>Hosting and custom work</h2><p class="price-note">Scoped to your requirements</p><p>Hosting help, integrations, and custom systems when your project needs more than a set of pages.</p><ul class="pricing-features"><li>Hosting options explained</li><li>Integration planning</li><li>Clear responsibilities and handoff</li></ul><a class="pricing-cta secondary" href="/get-a-quote/?service=custom-system">Discuss your project</a></article>
     </div>
   </section>
+  <section class="faq" id="faq" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">Before you request a quote</h2>
+    <details class="faq-item"><summary>Is $1,500 a fixed price?</summary><p>No. It is a starting planning estimate for a new build. We agree on the scope and final price before work begins.</p></details>
+    <details class="faq-item"><summary>Can you work with my existing website?</summary><p>Yes. Share your current URL and what you want to improve. We can discuss a focused cleanup or a rebuild.</p></details>
+    <details class="faq-item"><summary>Can I host the finished website elsewhere?</summary><p>Yes. Static website files are portable. Hosting and any external services are discussed as part of your project.</p></details>
+    <details class="faq-item"><summary>What should I include in my request?</summary><p>Your business, current website if you have one, the pages or features you need, and your preferred timing.</p></details>
+  </section>
+  </main>
   <div id="footer-placeholder"></div>
-  <script>
-    document.querySelectorAll('.faq-item').forEach((item) => {
-      item.addEventListener('click', function() {
-        this.classList.toggle('open');
-      });
-    });
-  </script>
   <script src="/components/components.js" defer></script>
 </body>
 </html>

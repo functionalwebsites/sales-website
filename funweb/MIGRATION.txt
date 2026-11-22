@@ -1,0 +1,54 @@
+Functional Websites / Funweb deployments
+
+GitHub source: functionalwebsites/sales-website
+Production branch: main
+
+Cloudflare builds both sites through its native GitHub integration.
+No GitHub Actions deployment credentials or repository secrets are required.
+Cloudflare runtime secrets remain in Cloudflare project settings.
+
+Sales project: sales-website
+  Build root: repository root
+  Command: node scripts/package-sites.mjs && node scripts/check-site-split.mjs
+  Output: dist/sales
+  Host: functionalwebsites.com
+
+Builder project: funweb-builder
+  Build root: funweb
+  Command: cd .. && node scripts/package-sites.mjs && node scripts/check-site-split.mjs
+  Output relative to build root: ../dist/funweb
+  Pages host: funweb-builder.pages.dev
+  Intended custom host: funweb.dev
+
+Migration status: Git-connected replacement prepared; validate first Git build,
+then move funweb.dev from the original direct-upload project named funweb.
+Original project at funweb-67a.pages.dev is retained as a rollback deployment.
+
+Updating
+  Edit source, run the package and check scripts, commit and push to main.
+  Both Cloudflare projects build automatically. Check deployment status before
+  declaring an update live. Generated dist folders are not committed.
+  No application bundler is required; the package script copies and adapts assets.
+
+Source ownership
+  build/: builder application and Free/Pro pricing
+  funweb/: builder-specific navigation, middleware and Cloudflare config
+  docs/, tools/, marketplace/: builder resources
+  index.html, pricing/, services/: sales content
+  functions/: sales backend, including shared billing and token validation
+  components/, styles/, img/: shared source assets
+
+Billing and recovery
+  Free and $9.99 one-time Pro are retained.
+  Funweb forwards four allowlisted backend paths to functionalwebsites.com.
+  Existing Stripe webhook, KV tokens, payment secrets and email stay on sales.
+  Keep old builder origins available for browser-local project recovery.
+  Export ZIPs there and use Upload Existing Site on Funweb. Re-enter Pro tokens
+  and integration credentials separately. Do not redirect old builder origins
+  until recovery is no longer needed.
+
+Validation
+  Package/routing/asset tests and Functions compilation pass.
+  Live HTML and invalid-token rejection were checked after the first cutover.
+  Visual desktop/mobile QA, real checkout and interactive export/import/offline
+  verification remain outstanding because browser automation was unavailable.

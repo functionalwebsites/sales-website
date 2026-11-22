@@ -676,16 +676,13 @@ footer {
         <a href="https://functionalwebsites.com/pricing">Pricing</a>
         <a href="https://functionalwebsites.com/services">Services</a>
         <a href="https://functionalwebsites.com/hosting">Hosting</a>
-        <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
         <a href="https://functionalwebsites.com/blog">Blog</a>
-        <a href="https://build.functionalwebsites.com/tools/">Tools</a>
-        <a href="https://docs.functionalwebsites.com/">Docs</a>
       </div>
       <div class="nav-actions desktop-builder-action">
-        <a href="https://build.functionalwebsites.com/" class="btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
+        <a href="https://functionalwebsites.com/get-a-quote/" class="btn btn-primary">Get a Quote</a>
       </div>
     </nav>
-    <a href="https://build.functionalwebsites.com/" class="mobile-builder-link btn btn-primary build-shortcut" aria-label="Open builder. Shortcut: B">Build</a>
+    <a href="https://functionalwebsites.com/get-a-quote/" class="mobile-builder-link btn btn-primary">Get a Quote</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
       <span class="menu-toggle-bar"></span>
     </button>
@@ -697,9 +694,9 @@ footer {
   </a>
   <div class="footer-content">
     <div class="footer-section">
-      <h4>Product</h4>
-      <a href="https://build.functionalwebsites.com/">Builder</a>
-      <a href="https://functionalwebsites.com/marketplace">Marketplace</a>
+      <h4>Build it yourself</h4>
+      <a href="https://funweb.dev/">Builder</a>
+      <a href="https://funweb.dev/marketplace">Marketplace</a>
     </div>
     <div class="footer-section">
       <h4>Services</h4>
@@ -712,11 +709,11 @@ footer {
     <div class="footer-section">
       <h4>Resources</h4>
       <a href="https://functionalwebsites.com/qr/">Free QR Code Generator</a>
-      <a href="https://docs.functionalwebsites.com/getting-started/">Getting Started</a>
-      <a href="https://build.functionalwebsites.com/tools/contact-form/">Contact Form Builder</a>
+      <a href="https://funweb.dev/docs/getting-started/">Getting Started</a>
+      <a href="https://funweb.dev/tools/contact-form/">Contact Form Builder</a>
       <a href="https://functionalwebsites.com/pricing#faq">FAQ</a>
       <a href="https://functionalwebsites.com/blog">Blog</a>
-      <a href="https://docs.functionalwebsites.com/">Docs</a>
+      <a href="https://funweb.dev/docs/">Docs</a>
     </div>
     <div class="footer-section footer-contact">
       <h4>Company</h4>
@@ -949,7 +946,7 @@ footer {
     const phoneScript = document.createElement('script');
     phoneScript.src = '/components/phone-contact.js';
     document.head.append(phoneScript);
-    bindGlobalBuilderShortcut();
+    // Sales navigation focuses on services and quotes.
   }
 
   function bindGlobalBuilderShortcut() {
@@ -975,7 +972,7 @@ footer {
       }
 
       event.preventDefault();
-      window.location.href = 'https://build.functionalwebsites.com/';
+      window.location.href = 'https://funweb.dev/';
     });
   }
 

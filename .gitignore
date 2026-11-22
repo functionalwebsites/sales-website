@@ -20,3 +20,8 @@ npm-debug.log*
 other-docs/
 other-files/
 *.md
+
+# Local Cloudflare credentials must never enter source control.
+.dev.vars
+.dev.vars.*
+.env.*

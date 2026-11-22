@@ -6,7 +6,7 @@ const DEFAULT_PRO_PRICE_ID = 'price_1TMd9XQtO2WgU350cTZRFc4y';
 function isSameOrigin(value, origin) {
   if (typeof value !== 'string') return false;
   try {
-    return new URL(value).origin === origin;
+    return new URL(value).origin === origin || new URL(value).origin === 'https://funweb.dev';
   } catch {
     return false;
   }

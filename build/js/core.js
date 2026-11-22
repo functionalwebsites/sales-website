@@ -642,7 +642,7 @@ function showProUpsell(featureName, featureDescription) {
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 8px;">
-        <button class="btn btn-primary" style="background: var(--green); color: #000;" onclick="window.open('/pricing/', '_blank'); this.closest('.modal-overlay').remove();">
+        <button class="btn btn-primary" style="background: var(--green); color: #000;" onclick="window.open('https://funweb.dev/pricing/', '_blank'); this.closest('.modal-overlay').remove();">
           Buy Pro
         </button>
         <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove(); showPromoCodeModal();">
@@ -723,7 +723,7 @@ function showProTokenModal() {
         />
 
         <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
-          Don't have a token? <a href="/pricing/" target="_blank" rel="noopener" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
+          Don't have a token? <a href="https://funweb.dev/pricing/" target="_blank" rel="noopener" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
         </p>
       </div>
 
@@ -745,7 +745,7 @@ function showProTokenModal() {
         />
 
         <p style="color: var(--text2); font-size: 12px; margin-bottom: 16px;">
-          Don't have a promo code? <a href="/pricing/" target="_blank" rel="noopener" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
+          Don't have a promo code? <a href="https://funweb.dev/pricing/" target="_blank" rel="noopener" style="color: var(--green); text-decoration: underline; cursor: pointer;">Buy Pro for $9.99</a>
         </p>
 
         <div

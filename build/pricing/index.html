@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="color-scheme" content="only light">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Funweb pricing — use the builder free with ZIP export, unlock Pro for direct deployment, marketplace access, custom templates, and custom blocks, or get a white-label custom version.">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/img/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#10100d">
+  <link rel="shortcut icon" href="/img/favicon/favicon-32x32.png">
+  <meta name="msapplication-TileColor" content="#f5efe0">
+  <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#f5efe0">
+  <title>Free &amp; Pro — Funweb</title>
+  <link rel="stylesheet" href="/styles/shared.css">
+  <link rel="stylesheet" href="/components/hero-gear.css">
+  <style>
+    /* HERO */
+    .hero {
+      max-width: 100%;
+      background: var(--hero-gradient);
+      margin: 0 auto;
+      min-height: 0 !important;
+      padding: 56px 24px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text2);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero > :last-child {
+      margin-bottom: 0;
+    }
+
+    /* BILLING TOGGLE */
+    .billing-toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    .toggle-button {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 16px;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-button.active {
+      background: var(--green);
+      color: #000;
+      border-color: var(--green);
+    }
+
+    /* PRICING GRID */
+    .pricing-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 24px 88px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .pricing-card {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card:hover {
+      border-color: var(--green);
+      box-shadow: 0 10px 40px rgba(74, 222, 128, 0.1);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--green);
+      transform: scale(1.05);
+      box-shadow: 0 20px 60px rgba(74, 222, 128, 0.15);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: var(--green);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pricing-header {
+      margin-bottom: 16px;
+    }
+
+    .pricing-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .pricing-description {
+      color: var(--text2);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .price-display .amount {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .price-display .currency {
+      font-size: 18px;
+      color: var(--text2);
+    }
+
+    .price-display .period {
+      color: var(--text2);
+      font-size: 13px;
+    }
+
+    .price-note {
+      color: var(--text2);
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+
+    .pricing-features li {
+      padding: 8px 0;
+      color: var(--text);
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pricing-features li:last-child {
+      border-bottom: none;
+    }
+
+    .pricing-features li:before {
+      content: "✓";
+      color: var(--fw-rust);
+      font-weight: 700;
+      min-width: 18px;
+    }
+
+    .pricing-features li.disabled {
+      color: var(--text2);
+    }
+
+    .pricing-features li.disabled:before {
+      content: "✗";
+      color: var(--border);
+    }
+
+    .pricing-cta {
+      width: 100%;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .pricing-cta.primary {
+      background: var(--green);
+      color: #000;
+    }
+
+    .pricing-cta.primary:hover {
+      background: #3dc76e;
+      transform: translateY(-2px);
+    }
+
+    .pricing-cta.secondary {
+      background: var(--bg3);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .pricing-cta.secondary:hover {
+      border-color: var(--text);
+    }
+
+    /* FAQ */
+    .faq {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+
+    .faq h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    .faq-item {
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      background: var(--bg2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .faq-item:hover {
+      border-color: var(--accent2);
+    }
+
+    .faq-item.open {
+      border-color: var(--green);
+    }
+
+    .faq-question {
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-icon {
+      font-size: 18px;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      display: none;
+      margin-top: 16px;
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding: 40px 24px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 24px 20px 72px;
+      }
+
+      .pricing-card {
+        padding: 20px;
+      }
+
+    }
+    .builder-pricing-intro {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px 0;
+    }
+    .builder-pricing-intro h2 { font-size: clamp(26px, 4vw, 36px); margin-bottom: 12px; }
+    .builder-pricing-intro p { max-width: 740px; color: var(--text2); }
+    .pricing-page .hero { min-height: 0 !important; }
+    .pricing-page .pricing-card.featured { transform: none !important; }
+    .pricing-page .pricing-header { margin-bottom: 12px; }
+    .pricing-page .pricing-description { margin-bottom: 0; }
+    .pricing-page .price-note { margin-bottom: 8px; }
+    .pricing-page .pricing-features { margin-top: 12px; }
+    .pricing-page .pricing-cta { display: flex; justify-content: center; align-items: center; min-height: 48px; text-align: center; }
+    @media (max-width: 768px) {
+      .builder-pricing-intro { padding: 32px 20px 0; }
+    }
+  .faq-item summary { padding: 1rem; cursor: pointer; font-size: 1rem; font-weight: 700; } .faq-item[open] .faq-answer { display: block; max-height: none; padding: 1rem; } .faq-item summary:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+</style>
+  <script src="/stripe-checkout.js" defer></script>
+</head>
+<body class="pricing-page">
+  <div id="header-placeholder"></div>
+
+  <!-- HERO -->
+  <section class="hero gear-hero">
+    <h1>Build for free. Go further with Pro.</h1>
+    <p>A browser-based workshop for static websites. Keep your files, experiment with layouts, and export whenever you want.</p>
+    <a class="btn btn-primary" href="/">Open the builder</a>
+
+  </section>
+
+  <!-- BUILDER PRICING -->
+  <section class="builder-pricing" aria-labelledby="builder-pricing-title">
+    <div class="builder-pricing-intro">
+      <h2 id="builder-pricing-title">Builder pricing</h2>
+      <p>Building it yourself? Start free, unlock Pro, or get a custom version of the builder.</p>
+    </div>
+  <div class="pricing-grid">
+    <!-- FREE -->
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h2>Free</h2>
+        <p class="pricing-description">Perfect for getting started</p>
+      </div>
+
+      <div class="price-display">
+        <span class="amount">$0</span>
+        <span class="period">forever</span>
+      </div>
+
+      <ul class="pricing-features">
+        <li>Full drag-and-drop builder</li>
+        <li>Built-in starter templates</li>
+        <li>Responsive sites & local preview</li>
+        <li>HTML / ZIP export</li>
+        <li class="disabled">Custom blocks & templates require Pro</li>
+      </ul>
+
+      <button class="pricing-cta secondary" onclick="window.location.href='https://build.functionalwebsites.com/'">Get Started</button>
+    </div>
+
+    <!-- PRO -->
+    <div class="pricing-card featured">
+      <div class="pricing-badge">RECOMMENDED</div>
+      <div class="pricing-header">
+        <h2>Pro</h2>
+        <p class="pricing-description">Unlock the full builder</p>
+      </div>
+
+      <div class="price-display">
+        <span class="currency">$</span>
+        <span class="amount">9.99</span>
+        <span class="period">one-time</span>
+      </div>
+
+      <ul class="pricing-features">
+        <li>Everything in Free</li>
+        <li>Direct deploy to GitHub & Cloudflare</li>
+        <li>Marketplace & premium templates</li>
+        <li>Create & upload custom blocks</li>
+        <li>Create & upload custom templates</li>
+      </ul>
+
+      <button class="pricing-cta primary" onclick="startStripeCheckout(event)">Get Pro — $9.99</button>
+    </div>
+
+    <!-- BUSINESS -->
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h2>Custom</h2>
+        <p class="pricing-description">White-label or tailored version</p>
+      </div>
+
+      <div class="price-display">
+        <span class="amount">Custom</span>
+      </div>
+      <p class="price-note">Pricing varies — contact for details</p>
+
+      <ul class="pricing-features">
+        <li>Everything in Pro</li>
+        <li>White-label, branded builder</li>
+        <li>Reseller or internal business setup</li>
+        <li>Tailored implementation</li>
+        <li>Custom feature planning</li>
+      </ul>
+
+      <a class="pricing-cta secondary" href="mailto:cooper@functionalwebsites.com">Contact Sales</a>
+    </div>
+  </div>
+
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <h2>Frequently Asked Questions</h2>
+
+    <details class="faq-item"><summary>
+        What happens when I upgrade to Pro?
+        </summary><div class="faq-answer">
+        Your free projects carry over. You immediately unlock direct deployment, marketplace access, custom blocks, custom templates, and the rest of the Pro builder features. No setup needed.
+      </div></details>
+
+    <details class="faq-item"><summary>
+        Can I export my site and host it elsewhere?
+        </summary><div class="faq-answer">
+        Yes. Export your site as a ZIP file containing all HTML, CSS, and JavaScript. You can host it on Netlify, GitHub Pages, AWS S3, or anywhere static files are served.
+      </div></details>
+
+    <details class="faq-item"><summary>
+        Do I need technical skills?
+        </summary><div class="faq-answer">
+        No. The builder is designed for non-technical users. Drag, drop, and publish. For advanced users, you can edit the HTML directly.
+      </div></details>
+
+    <details class="faq-item"><summary>
+        What's the difference between exporting and deploying?
+        </summary><div class="faq-answer">
+        Export downloads your site as files and stays free. Deploy publishes your site directly from the builder to the web with a custom domain and HTTPS, and that direct deployment feature requires Pro.
+      </div></details>
+
+    <details class="faq-item"><summary>
+        Is there a storage limit?
+        </summary><div class="faq-answer">
+        Projects are saved in this browser using IndexedDB. Available space depends on your browser and device; large projects may exceed its storage quota.
+        Because of this, we can NOT recover your projects if you lose them, make sure to deploy to github often or download the project files as a backup!
+        </div></details>
+
+    <details class="faq-item"><summary>
+        What about SEO?
+        </summary><div class="faq-answer">
+        Pro plans and above include SEO tools: meta tag editors, automatic sitemaps, Open Graph tags, and structured data generation. Static sites also load faster, which helps ranking.
+      </div></details>
+
+      <details class="faq-item"><summary>
+        What happens if I lose my project?
+        </summary><div class="faq-answer">
+      Because projects are stored in your browser's local storage, we cannot recover lost projects. To prevent loss, we recommend regularly exporting your project files as a backup or deploying to GitHub Pages for safekeeping.
+      </div></details>
+  </section>
+  <div id="footer-placeholder"></div>
+
+  <script src="/components/components.js" defer></script>
+</body>
+</html>
